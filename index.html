@@ -774,7 +774,7 @@
       <div class="filter-card mb-4">
         <div class="row g-3 align-items-end">
           <div class="col-md-5">
-            <label class="form-label fw-bold">بحث في الداشبورد</label>
+            <label class="form-label fw-bold">بحث في لوحة التحكم</label>
             <input type="search" class="form-control" id="dashboardSearchInput" placeholder="ابحث بالاسم أو العائلة..." oninput="renderDashboardTable()">
           </div>
 
@@ -1321,7 +1321,7 @@
           <tr>
             <td colspan="6" class="text-center text-muted py-4">
               <span class="spinner-border spinner-border-sm ms-1"></span>
-              جاري تحميل بيانات الداشبورد...
+              جاري تحميل بيانات لوحة التحكم...
             </td>
           </tr>
         `;
@@ -1330,7 +1330,7 @@
       apiRequest('getAdminDashboardData')
         .then(res => {
           if (!res || !res.success) {
-            showToast('تعذر تحميل بيانات الداشبورد.');
+            showToast('تعذر تحميل بيانات لوحة التحكم.');
             return;
           }
 
@@ -1342,10 +1342,10 @@
           updateDashboardStats();
           renderDashboardTable();
 
-          if (showMsg) showToast('تم تحديث الداشبورد.');
+          if (showMsg) showToast('تم تحديث لوحة التحكم.');
         })
         .catch(err => {
-          showToast(err.message || 'حدث خطأ أثناء تحميل الداشبورد.');
+          showToast(err.message || 'حدث خطأ أثناء تحميل لوحة التحكم.');
         });
     }
 
