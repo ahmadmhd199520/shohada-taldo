@@ -7,9 +7,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>توثيق شهداء مدينة تلدو</title>
+
   <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w64">
-<link rel="shortcut icon" type="image/png" href="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w64">
-<link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w180">
+  <link rel="shortcut icon" type="image/png" href="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w64">
+  <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w180">
+  <meta property="og:title" content="توثيق شهداء مدينة تلدو">
+  <meta property="og:description" content="منصة توثيقية إنسانية لحفظ أسماء شهداء مدينة تلدو وبياناتهم.">
+  <meta property="og:image" content="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w1200">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="توثيق شهداء مدينة تلدو">
+  <meta name="twitter:description" content="منصة توثيقية إنسانية لحفظ أسماء شهداء مدينة تلدو وبياناتهم.">
+  <meta name="twitter:image" content="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w1200">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
@@ -718,6 +727,89 @@
       }
     }
 
+
+    .highlight-submit-btn {
+      position: relative;
+      animation: yellowPulseGlow 1.8s ease-in-out infinite;
+      border-color: rgba(255, 193, 7, 0.9) !important;
+    }
+
+    @keyframes yellowPulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 0 rgba(255, 193, 7, 0), 0 8px 22px rgba(15, 23, 42, 0.10);
+        transform: translateY(0);
+      }
+      50% {
+        box-shadow: 0 0 0 5px rgba(255, 193, 7, 0.24), 0 0 22px rgba(255, 193, 7, 0.72);
+        transform: translateY(-1px);
+      }
+    }
+
+    .martyrs-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 18px;
+    }
+
+    .martyrs-pagination .page-btn {
+      min-width: 38px;
+      padding: 8px 11px;
+      border-radius: 12px;
+    }
+
+    .dashboard-tabs {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 8px;
+      box-shadow: var(--soft-shadow);
+      gap: 8px;
+    }
+
+    .dashboard-tabs .nav-link {
+      border-radius: 14px;
+      font-weight: 800;
+      color: #495057;
+    }
+
+    .dashboard-tabs .nav-link.active {
+      background: #0d6efd;
+      color: #fff;
+    }
+
+    .dashboard-tab-pane.d-none {
+      display: none !important;
+    }
+
+    @media (max-width: 576px) {
+      .hero-title {
+        font-size: 1.02rem;
+        white-space: nowrap;
+      }
+
+      .hero .d-flex.align-items-center.gap-2.flex-wrap {
+        flex-wrap: nowrap !important;
+      }
+
+      .hero .btn-sm {
+        white-space: nowrap;
+        padding: 5px 7px;
+        font-size: 0.72rem;
+      }
+
+      .home-btn-text {
+        display: inline;
+      }
+
+      .martyrs-pagination .page-btn {
+        min-width: 34px;
+        padding: 7px 9px;
+        font-size: .86rem;
+      }
+    }
+
   </style>
 </head>
 
@@ -726,6 +818,7 @@
   const IS_ADMIN_FROM_URL = false;
 
   const API_URL = 'https://nameless-night-1208.al-shwikh-1995-sultan.workers.dev/';
+  const SHARE_PREVIEW_URL = 'https://nameless-night-1208.al-shwikh-1995-sultan.workers.dev/';
 
   async function apiRequest(action, data = {}) {
     const response = await fetch(API_URL, {
@@ -788,7 +881,7 @@
 
         <div class="col-lg-4">
           <div class="top-actions">
-            <button class="btn btn-light text-primary" onclick="showDuplicateWarning()">
+            <button class="btn btn-light text-primary highlight-submit-btn" onclick="showDuplicateWarning()">
               <i class="fa-solid fa-plus ms-1"></i>
               توثيق شهيد
             </button>
@@ -860,12 +953,12 @@
         <div class="row g-3 align-items-end">
           <div class="col-lg-3 col-md-6">
             <label class="form-label fw-bold">البحث</label>
-            <input type="search" id="searchInput" class="form-control" placeholder="ابحث بالاسم، الأب، العائلة..." oninput="renderMartyrs()">
+            <input type="search" id="searchInput" class="form-control" placeholder="ابحث بالاسم، الأب، العائلة..." oninput="resetMartyrsPageAndRender()">
           </div>
 
           <div class="col-lg-3 col-md-6">
             <label class="form-label fw-bold">فلترة حسب العائلة</label>
-            <select id="familyFilter" class="form-select" onchange="renderMartyrs()">
+            <select id="familyFilter" class="form-select" onchange="resetMartyrsPageAndRender()">
               <option value="">كل العوائل</option>
             </select>
           </div>
@@ -881,7 +974,7 @@
 
           <div class="col-lg-2 col-md-6">
             <label class="form-label fw-bold">الفرز</label>
-            <select id="sortSelect" class="form-select" onchange="renderMartyrs()">
+            <select id="sortSelect" class="form-select" onchange="resetMartyrsPageAndRender()">
               <option value="name">أبجديًا حسب الاسم</option>
               <option value="family">أبجديًا حسب العائلة</option>
             </select>
@@ -1005,6 +1098,28 @@
         </div>
       </div>
 
+      <ul class="nav nav-pills dashboard-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="dashMartyrsTabBtn" type="button" onclick="showDashboardTab('martyrs')">
+            <i class="fa-solid fa-list-check ms-1"></i>
+            التوثيقات
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="dashDataUpdatesTabBtn" type="button" onclick="showDashboardTab('dataUpdates')">
+            <i class="fa-solid fa-pen-to-square ms-1"></i>
+            استكمال البيانات
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="dashJoinTabBtn" type="button" onclick="showDashboardTab('joinRequests')">
+            <i class="fa-solid fa-user-plus ms-1"></i>
+            طلبات الانضمام
+          </button>
+        </li>
+      </ul>
+
+      <div id="dashboardMartyrsTab" class="dashboard-tab-pane">
       <div class="filter-card mb-4">
         <div class="row g-3 align-items-end">
           <div class="col-md-5">
@@ -1054,7 +1169,8 @@
           </table>
         </div>
       </div>
-      <div class="dashboard-section-card">
+      </div>
+      <div id="dashboardDataUpdatesTab" class="dashboard-section-card dashboard-tab-pane d-none">
         <div class="dashboard-section-header">
           <h5 class="fw-bold mb-0">
             <i class="fa-solid fa-pen-to-square text-primary ms-1"></i>
@@ -1083,7 +1199,7 @@
         </div>
       </div>
 
-      <div class="dashboard-section-card">
+      <div id="dashboardJoinRequestsTab" class="dashboard-section-card dashboard-tab-pane d-none">
         <div class="dashboard-section-header">
           <h5 class="fw-bold mb-0">
             <i class="fa-solid fa-user-plus text-success ms-1"></i>
@@ -1121,7 +1237,7 @@
         <a href="https://www.facebook.com/ahmadshwikh1995" target="_blank" rel="noopener">
           أحمد الشويخ أبو أسامة
         </a>
-        <!-- <i class="fa-solid fa-heart me-1"></i> -->
+        <i class="fa-solid fa-heart me-1"></i>
       </div>
 
       <button class="btn btn-light text-primary" onclick="openJoinTeamModal()">
@@ -1147,7 +1263,7 @@
             وإتاحة المجال لأهل المدينة وذوي الشهداء للمساهمة في تصحيح المعلومات واستكمالها.
             <br><br>
             نؤكد أن هذا المشروع ليس مشروعًا ربحيًا، ولا يهدف إلى جمع التبرعات أو استجلاب الدعم
-            أو استخدام أسماء الشهداء لأي غرض مادي.
+            أو استخدام أسماء الشهداء لأي غرض مادي أو سياسي.
             <br><br>
             جميع البيانات المرسلة ستخضع للمراجعة قبل اعتمادها ونشرها، وذلك حفاظًا على الدقة ومنع التكرار أو الخطأ.
           </p>
@@ -1590,6 +1706,8 @@
     let lastPageBeforeDetails = 'homePage';
     let isAdminLoggedIn = false;
     let currentAdmin = null;
+    let currentMartyrsPage = 1;
+    const MARTYRS_PAGE_SIZE = 50;
 
     const modals = {};
 
@@ -1829,6 +1947,7 @@
 
       updateAdminButtons();
       showPage('dashboardPage');
+      showDashboardTab('martyrs');
       refreshDashboardData(false);
     }
 
@@ -1836,6 +1955,24 @@
       document.getElementById('dashVerifiedCount').textContent = statsData?.verified || 0;
       document.getElementById('dashPendingCount').textContent = statsData?.pending || 0;
       document.getElementById('dashTotalCount').textContent = statsData?.total || 0;
+    }
+
+
+    function showDashboardTab(tabName) {
+      const tabs = {
+        martyrs: ['dashboardMartyrsTab', 'dashMartyrsTabBtn'],
+        dataUpdates: ['dashboardDataUpdatesTab', 'dashDataUpdatesTabBtn'],
+        joinRequests: ['dashboardJoinRequestsTab', 'dashJoinTabBtn']
+      };
+
+      Object.values(tabs).forEach(([paneId, btnId]) => {
+        document.getElementById(paneId)?.classList.add('d-none');
+        document.getElementById(btnId)?.classList.remove('active');
+      });
+
+      const selected = tabs[tabName] || tabs.martyrs;
+      document.getElementById(selected[0])?.classList.remove('d-none');
+      document.getElementById(selected[1])?.classList.add('active');
     }
 
     function renderDashboardTable() {
@@ -1977,11 +2114,16 @@
       return mobile || desktop;
     }
 
+    function resetMartyrsPageAndRender() {
+      currentMartyrsPage = 1;
+      renderMartyrs();
+    }
+
     function syncMobileSearch() {
       const mobileValue = document.getElementById('mobileSearchInput')?.value || '';
       const desktopInput = document.getElementById('searchInput');
       if (desktopInput) desktopInput.value = mobileValue;
-      renderMartyrs();
+      resetMartyrsPageAndRender();
     }
 
     function openMobileFilterModal() {
@@ -2024,6 +2166,7 @@
 
     function changeStatusFilter() {
       currentStatusFilter = document.getElementById('statusFilter').value;
+      currentMartyrsPage = 1;
 
       if (currentStatusFilter === 'بانتظار التوثيق' && !isAdminLoggedIn) {
         apiRequest('getMartyrsPublicData', { statusFilter: 'بانتظار التوثيق' })
@@ -2046,7 +2189,7 @@
 
     function renderMartyrs(customList) {
       const container = document.getElementById('martyrsContainer');
-      const search = normalizeText(getCurrentSearchValue());
+      const search = normalizeText(document.getElementById('searchInput')?.value || '');
       const family = document.getElementById('familyFilter')?.value || '';
       const sortBy = document.getElementById('sortSelect')?.value || 'name';
 
@@ -2094,19 +2237,68 @@
         return;
       }
 
-      if (viewMode === 'cards') {
-        container.innerHTML = `
-          <div class="martyrs-grid">
-            ${list.map(renderMartyrCard).join('')}
-          </div>
-        `;
-      } else {
-        container.innerHTML = `
-          <div>
-            ${list.map(renderMartyrListItem).join('')}
-          </div>
-        `;
+      const totalPages = Math.max(1, Math.ceil(list.length / MARTYRS_PAGE_SIZE));
+      if (currentMartyrsPage > totalPages) currentMartyrsPage = totalPages;
+      if (currentMartyrsPage < 1) currentMartyrsPage = 1;
+
+      const start = (currentMartyrsPage - 1) * MARTYRS_PAGE_SIZE;
+      const pageList = list.slice(start, start + MARTYRS_PAGE_SIZE);
+
+      const contentHtml = viewMode === 'cards'
+        ? `<div class="martyrs-grid">${pageList.map(renderMartyrCard).join('')}</div>`
+        : `<div>${pageList.map(renderMartyrListItem).join('')}</div>`;
+
+      container.innerHTML = contentHtml + renderMartyrsPagination(totalPages, list.length);
+    }
+
+    function renderMartyrsPagination(totalPages, totalItems) {
+      if (totalPages <= 1) return '';
+
+      const pages = [];
+      const start = Math.max(1, currentMartyrsPage - 2);
+      const end = Math.min(totalPages, currentMartyrsPage + 2);
+
+      if (start > 1) {
+        pages.push(1);
+        if (start > 2) pages.push('...');
       }
+
+      for (let i = start; i <= end; i++) pages.push(i);
+
+      if (end < totalPages) {
+        if (end < totalPages - 1) pages.push('...');
+        pages.push(totalPages);
+      }
+
+      const buttons = pages.map(page => {
+        if (page === '...') {
+          return `<span class="px-2 text-muted">...</span>`;
+        }
+
+        const active = page === currentMartyrsPage ? 'btn-primary' : 'btn-outline-primary';
+        return `<button class="btn ${active} page-btn" onclick="goToMartyrsPage(${page})">${page}</button>`;
+      }).join('');
+
+      return `
+        <div class="martyrs-pagination">
+          <button class="btn btn-outline-primary page-btn" onclick="goToMartyrsPage(${currentMartyrsPage - 1})" ${currentMartyrsPage === 1 ? 'disabled' : ''}>
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+          ${buttons}
+          <button class="btn btn-outline-primary page-btn" onclick="goToMartyrsPage(${currentMartyrsPage + 1})" ${currentMartyrsPage === totalPages ? 'disabled' : ''}>
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="w-100 text-center text-muted small mt-1">
+            عرض ${Math.min(totalItems, (currentMartyrsPage - 1) * MARTYRS_PAGE_SIZE + 1)} - ${Math.min(totalItems, currentMartyrsPage * MARTYRS_PAGE_SIZE)} من ${totalItems}
+          </div>
+        </div>
+      `;
+    }
+
+    function goToMartyrsPage(page) {
+      currentMartyrsPage = page;
+      renderMartyrs();
+      document.getElementById('martyrsContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function renderMartyrCard(item) {
@@ -2282,6 +2474,18 @@ function openFamiliesStatsPage() {
       `;
     }
 
+    function isAllowUpdatesEnabled(value) {
+      const text = String(value || '').trim().toLowerCase();
+      if (!text) return true;
+      const normalized = text
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/[ًٌٍَُِّْـ]/g, '')
+        .replace(/\s+/g, ' ');
+      return !['لا', 'كلا', 'no', 'false', '0', 'غير مفعل', 'مغلق', 'لا يسمح', 'لايسمح'].includes(normalized);
+    }
+
     function openMartyrDetails(martyrId, fromPage) {
       const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
       const item = source.find(x => x.martyr_id === martyrId);
@@ -2296,7 +2500,7 @@ function openFamiliesStatsPage() {
       }
 
       const img = getImageSrc(item);
-      const canUpdate = String(item.allow_updates || 'نعم').trim() !== 'لا';
+      const canUpdate = isAllowUpdatesEnabled(item.allow_updates);
 
       document.getElementById('detailsContainer').innerHTML = `
         <div class="row g-4">
@@ -2361,7 +2565,7 @@ function openFamiliesStatsPage() {
                 ` : ''}
               </div>
 
-              ${isAdminLoggedIn ? renderAdminActions(item) : ''}
+              ${isAdminLoggedIn && item.verification_status !== 'موثق' ? renderAdminActions(item) : ''}
             </div>
           </div>
         </div>
@@ -2442,7 +2646,8 @@ function openFamiliesStatsPage() {
     }
 
     function buildMartyrShareUrl(martyrId) {
-      return `${window.location.origin}${window.location.pathname}?m=${encodeURIComponent(martyrId)}`;
+      const targetUrl = `${window.location.origin}${window.location.pathname}?m=${encodeURIComponent(martyrId)}`;
+      return `${SHARE_PREVIEW_URL}?share=${encodeURIComponent(martyrId)}&target=${encodeURIComponent(targetUrl)}`;
     }
 
     async function shareMartyr(martyrId) {
