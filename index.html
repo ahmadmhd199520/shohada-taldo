@@ -3072,18 +3072,31 @@ function selectFamily(family) {
 
 
     function renderDataUpdateRequestsTable() {
-      const tbody = document.getElementById('dataUpdatesTableBody');
-      const count = document.getElementById('dataUpdatesCount');
+  const tbody = document.getElementById('dataUpdatesTableBody');
+  const countBadge = document.getElementById('dataUpdatesCount');
 
-      if (!tbody) return;
+  if (!tbody) return;
 
-      const list = dataUpdateRequests.slice();
-      if (count) count.textContent = list.length;
+  const list = (dataUpdateRequests || []).filter(item => {
+    const status = String(item.status || '').trim();
+    return status === 'بانتظار المراجعة' || status === 'بانتظار التوثيق' || status === '';
+  });
 
-      if (!list.length) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">لا توجد طلبات استكمال بيانات.</td></tr>`;
-        return;
-      }
+  if (countBadge) {
+    countBadge.textContent = list.length;
+  }
+
+  if (!list.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="text-center text-muted py-4">
+          لا توجد طلبات استكمال بانتظار المراجعة.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
 
       tbody.innerHTML = list.map(item => {
         const requestId = item.update_id || item.request_id || '';
