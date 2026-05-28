@@ -886,7 +886,7 @@
               توثيق شهيد
             </button>
 
-            <button class="btn btn-outline-light" onclick="showPage('homePage')">
+            <button class="btn btn-outline-light" onclick="goHome()">
               <i class="fa-solid fa-house ms-1"></i>
               <span class="home-btn-text">الرئيسية</span>
             </button>
@@ -1008,7 +1008,7 @@
           <i class="fa-solid fa-chart-simple text-primary ms-2"></i>
           إحصائيات بحسب العائلة
         </h3>
-        <button class="btn btn-outline-primary" onclick="showPage('homePage')">
+        <button class="btn btn-outline-primary" onclick="goHome()">
           <i class="fa-solid fa-arrow-right ms-1"></i>
           رجوع
         </button>
@@ -1054,7 +1054,7 @@
           <div class="text-muted" id="adminWelcomeText"></div>
         </div>
 
-        <button class="btn btn-outline-primary" onclick="showPage('homePage')">
+        <button class="btn btn-outline-primary" onclick="goHome()">
           <i class="fa-solid fa-house ms-1"></i>
           الرئيسية
         </button>
@@ -3144,6 +3144,21 @@ function selectFamily(family) {
         behavior: 'smooth'
       });
     }
+
+    function goHome() {
+  const cleanUrl = window.location.origin + window.location.pathname;
+
+  window.history.pushState({}, '', cleanUrl);
+
+  currentStatusFilter = 'موثق';
+
+  const statusFilter = document.getElementById('statusFilter');
+  if (statusFilter) {
+    statusFilter.value = 'موثق';
+  }
+
+  showPage('homePage');
+}
 
     function showToast(message) {
       document.getElementById('toastBody').textContent = message;
