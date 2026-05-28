@@ -491,6 +491,230 @@
         font-size: 0.88rem;
       }
     }
+  
+    .mobile-search-filter {
+      display: none;
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      padding: 10px;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .site-footer {
+      margin-top: 28px;
+      background: linear-gradient(135deg, #0d6efd, #084298);
+      color: #ffffff;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: var(--soft-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .site-footer a {
+      color: #ffffff;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .details-action-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .dashboard-section-card {
+      background: white;
+      border-radius: 22px;
+      box-shadow: var(--soft-shadow);
+      overflow: hidden;
+      margin-top: 18px;
+    }
+
+    .dashboard-section-header {
+      padding: 16px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #edf0f3;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .request-text-cell {
+      max-width: 320px;
+      white-space: normal;
+      line-height: 1.7;
+    }
+
+    .modal textarea {
+      resize: vertical;
+    }
+
+  
+    @media (max-width: 576px) {
+      .app-shell {
+        padding: 8px;
+      }
+
+      .top-login-bar {
+        margin-bottom: 8px;
+        gap: 6px;
+      }
+
+      .top-login-bar .btn {
+        padding: 7px 9px;
+        font-size: 0.78rem;
+      }
+
+      .hero {
+        padding: 12px 12px;
+        border-radius: 18px;
+        margin-bottom: 12px !important;
+      }
+
+      .hero .row {
+        gap: 8px !important;
+      }
+
+      .hero-title {
+        font-size: 1.18rem;
+        line-height: 1.45;
+      }
+
+      .hero .btn-sm {
+        padding: 6px 9px;
+        font-size: 0.78rem;
+      }
+
+      .hero-subtitle {
+        display: none;
+      }
+
+      .top-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .top-actions .btn {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 0.86rem;
+      }
+
+      .home-btn-text {
+        display: inline;
+      }
+
+      .home-stats-row {
+        --bs-gutter-x: .4rem;
+        --bs-gutter-y: .4rem;
+        margin-bottom: 10px !important;
+      }
+
+      .home-stats-row > [class*="col-"] {
+        width: 33.333333%;
+        flex: 0 0 auto;
+      }
+
+      .home-stats-row .card-body {
+        padding: 9px 6px;
+        justify-content: center;
+        gap: 5px !important;
+        text-align: center;
+      }
+
+      .home-stats-row .stat-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 12px;
+        font-size: 1rem;
+      }
+
+      .home-stats-row .text-muted {
+        display: none;
+      }
+
+      .home-stats-row h3 {
+        font-size: 1.05rem;
+      }
+
+      .home-stats-row h5 {
+        font-size: .85rem;
+      }
+
+      .home-stats-row .family-details-text {
+        display: inline;
+      }
+
+      .desktop-filter-card {
+        display: none;
+      }
+
+      .mobile-search-filter {
+        display: flex;
+      }
+
+      .mobile-search-filter .form-control {
+        padding: 9px 11px;
+      }
+
+      .mobile-search-filter .btn {
+        width: 46px;
+        min-width: 46px;
+        padding: 8px 0;
+      }
+
+      .martyrs-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .martyr-image-wrap {
+        height: 132px;
+      }
+
+      .martyr-body {
+        padding: 9px;
+      }
+
+      .martyr-name {
+        font-size: 0.9rem;
+      }
+
+      .martyr-family {
+        font-size: 0.8rem;
+      }
+
+      .site-footer {
+        border-radius: 18px;
+        padding: 12px;
+        justify-content: center;
+        text-align: center;
+        font-size: .85rem;
+      }
+
+      .site-footer .btn {
+        width: 100%;
+      }
+
+      .details-action-bar .btn {
+        flex: 1 1 auto;
+      }
+    }
+
   </style>
 </head>
 
@@ -568,7 +792,7 @@
 
             <button class="btn btn-outline-light" onclick="showPage('homePage')">
               <i class="fa-solid fa-house ms-1"></i>
-              الرئيسية
+              <span class="home-btn-text">الرئيسية</span>
             </button>
           </div>
         </div>
@@ -577,8 +801,8 @@
 
     <section id="homePage" class="page-section active">
 
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
+      <div class="row g-3 mb-4 home-stats-row">
+        <div class="col-md-4 col-4">
           <div class="card stat-card">
             <div class="card-body d-flex align-items-center gap-3">
               <div class="stat-icon bg-primary-subtle text-primary">
@@ -592,7 +816,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 col-4">
           <div class="card stat-card">
             <div class="card-body d-flex align-items-center gap-3">
               <div class="stat-icon bg-warning-subtle text-warning">
@@ -606,7 +830,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 col-4">
           <button class="card stat-card w-100 text-start" onclick="openFamiliesStatsPage()">
             <div class="card-body d-flex align-items-center gap-3">
               <div class="stat-icon bg-success-subtle text-success">
@@ -614,7 +838,7 @@
               </div>
               <div class="flex-grow-1">
                 <div class="text-muted">إحصائيات بحسب العائلة</div>
-                <h5 class="fw-bold mb-0">عرض التفاصيل</h5>
+                <h5 class="fw-bold mb-0"><span class="family-details-text">تفاصيل</span></h5>
               </div>
               <i class="fa-solid fa-chevron-left text-muted"></i>
             </div>
@@ -622,7 +846,14 @@
         </div>
       </div>
 
-      <div class="filter-card mb-4">
+      <div class="mobile-search-filter">
+        <input type="search" id="mobileSearchInput" class="form-control" placeholder="ابحث بالاسم أو العائلة..." oninput="syncMobileSearch()">
+        <button class="btn btn-primary" onclick="openMobileFilterModal()" aria-label="فلترة">
+          <i class="fa-solid fa-filter"></i>
+        </button>
+      </div>
+
+      <div class="filter-card desktop-filter-card mb-4">
         <div class="row g-3 align-items-end">
           <div class="col-lg-3 col-md-6">
             <label class="form-label fw-bold">البحث</label>
@@ -820,8 +1051,81 @@
           </table>
         </div>
       </div>
+      <div class="dashboard-section-card">
+        <div class="dashboard-section-header">
+          <h5 class="fw-bold mb-0">
+            <i class="fa-solid fa-pen-to-square text-primary ms-1"></i>
+            طلبات استكمال بيانات الشهداء
+          </h5>
+          <span class="badge text-bg-light" id="dataUpdatesCount">0</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>اسم الشهيد</th>
+                <th>العائلة</th>
+                <th>الطلب</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="dataUpdatesTableBody">
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">لا توجد بيانات بعد.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="dashboard-section-card">
+        <div class="dashboard-section-header">
+          <h5 class="fw-bold mb-0">
+            <i class="fa-solid fa-user-plus text-success ms-1"></i>
+            طلبات الانضمام لفريق التوثيق
+          </h5>
+          <span class="badge text-bg-light" id="joinRequestsCount">0</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الاسم</th>
+                <th>العائلة</th>
+                <th>المواليد</th>
+                <th>الهاتف</th>
+                <th>ملاحظات</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="joinRequestsTableBody">
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">لا توجد طلبات بعد.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
+    <footer class="site-footer">
+      <div>
+        © تم إنشاء هذا الموقع بواسطة
+        <a href="https://www.facebook.com/ahmadshwikh1995" target="_blank" rel="noopener">
+          أحمد الشويخ أبو أسامة
+        </a>
+        <i class="fa-solid fa-heart me-1"></i>
+      </div>
+
+      <button class="btn btn-light text-primary" onclick="openJoinTeamModal()">
+        <i class="fa-solid fa-user-plus ms-1"></i>
+        انضم إلى فريق التوثيق
+      </button>
+    </footer>
   </div>
 
   <!-- Intro Modal -->
@@ -1071,6 +1375,157 @@
     </div>
   </div>
 
+
+  <div class="modal fade" id="mobileFilterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-filter text-primary ms-2"></i>
+            خيارات الفلترة
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <div class="mb-3">
+            <label class="form-label fw-bold">فلترة حسب العائلة</label>
+            <select id="mobileFamilyFilter" class="form-select"></select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">الحالة</label>
+            <select id="mobileStatusFilter" class="form-select">
+              <option value="موثق">الأسماء الموثقة</option>
+              <option value="بانتظار التوثيق">أسماء بانتظار التوثق</option>
+              <option value="">الكل</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">الفرز</label>
+            <select id="mobileSortSelect" class="form-select">
+              <option value="name">أبجديًا حسب الاسم</option>
+              <option value="family">أبجديًا حسب العائلة</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label fw-bold">طريقة العرض</label>
+            <div class="btn-group w-100">
+              <button class="btn btn-outline-primary" onclick="setViewMode('cards')">
+                <i class="fa-solid fa-grip ms-1"></i>
+                بطاقات
+              </button>
+              <button class="btn btn-outline-primary" onclick="setViewMode('list')">
+                <i class="fa-solid fa-list ms-1"></i>
+                قائمة
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" onclick="applyMobileFilters()">
+            تطبيق
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="dataUpdateModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-pen-to-square text-primary ms-2"></i>
+            استكمال بيانات الشهيد
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <div class="alert alert-info">
+            اكتب البيانات الناقصة أو التعديل المطلوب، وسيقوم فريق التوثيق بمراجعتها قبل اعتمادها.
+          </div>
+
+          <input type="hidden" id="dataUpdateMartyrId">
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">اسم الشهيد</label>
+            <input type="text" class="form-control" id="dataUpdateMartyrName" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">البيانات أو التعديل المطلوب <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="dataUpdateText" rows="6" placeholder="اكتب هنا المعلومات الناقصة أو التعديل المطلوب..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" id="dataUpdateSubmitBtn" onclick="submitDataUpdateForm()">
+            إرسال للمراجعة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="joinTeamModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-user-plus text-primary ms-2"></i>
+            طلب الانضمام إلى فريق التوثيق
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <form id="joinTeamForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">الاسم الثلاثي <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="full_name" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">رقم الهاتف للتواصل <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" name="phone" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">اسم العائلة <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="family_name" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">المواليد</label>
+                <input type="number" class="form-control" name="birth_year" min="1900" max="2100">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-bold">ملاحظات</label>
+                <textarea class="form-control" name="notes" rows="4" placeholder="اكتب أي معلومات إضافية تراها مناسبة..."></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" id="joinTeamSubmitBtn" onclick="submitJoinTeamForm()">
+            إرسال الطلب
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="loginModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -1125,6 +1580,8 @@
     let allFamilies = [];
     let statsData = null;
     let dashboardData = [];
+    let dataUpdateRequests = [];
+    let joinRequests = [];
     let viewMode = 'cards';
     let currentStatusFilter = 'موثق';
     let lastPageBeforeDetails = 'homePage';
@@ -1148,6 +1605,9 @@
         'duplicateWarningModal',
         'submitModal',
         'submitSuccessModal',
+        'mobileFilterModal',
+        'dataUpdateModal',
+        'joinTeamModal',
         'loginModal'
       ].forEach(id => {
         const el = document.getElementById(id);
@@ -1297,6 +1757,11 @@
           updateStatsCards();
           renderMartyrs();
 
+          const martyrFromUrl = getMartyrIdFromUrl();
+          if (martyrFromUrl) {
+            setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage'), 250);
+          }
+
           if (isAdminLoggedIn) {
             refreshDashboardData(false);
           }
@@ -1336,11 +1801,15 @@
 
           statsData = res.stats || statsData;
           dashboardData = res.all || [];
+          dataUpdateRequests = res.dataUpdates || [];
+          joinRequests = res.joinRequests || [];
           allMartyrs = dashboardData.filter(x => x.verification_status === 'موثق');
 
           updateStatsCards();
           updateDashboardStats();
           renderDashboardTable();
+          renderDataUpdateRequestsTable();
+          renderJoinRequestsTable();
 
           if (showMsg) showToast('تم تحديث لوحة التحكم.');
         })
@@ -1488,15 +1957,61 @@
 
     function fillFamiliesSelects() {
       const familyFilter = document.getElementById('familyFilter');
+      const mobileFamilyFilter = document.getElementById('mobileFamilyFilter');
 
-      familyFilter.innerHTML = '<option value="">كل العوائل</option>';
+      const optionsHtml = ['<option value="">كل العوائل</option>']
+        .concat(allFamilies.map(family => `<option value="${escapeAttr(family)}">${escapeHtml(family)}</option>`))
+        .join('');
 
-      allFamilies.forEach(family => {
-        const opt = document.createElement('option');
-        opt.value = family;
-        opt.textContent = family;
-        familyFilter.appendChild(opt);
-      });
+      if (familyFilter) familyFilter.innerHTML = optionsHtml;
+      if (mobileFamilyFilter) mobileFamilyFilter.innerHTML = optionsHtml;
+    }
+
+
+    function getCurrentSearchValue() {
+      const desktop = document.getElementById('searchInput')?.value || '';
+      const mobile = document.getElementById('mobileSearchInput')?.value || '';
+      return mobile || desktop;
+    }
+
+    function syncMobileSearch() {
+      const mobileValue = document.getElementById('mobileSearchInput')?.value || '';
+      const desktopInput = document.getElementById('searchInput');
+      if (desktopInput) desktopInput.value = mobileValue;
+      renderMartyrs();
+    }
+
+    function openMobileFilterModal() {
+      const family = document.getElementById('familyFilter')?.value || '';
+      const status = document.getElementById('statusFilter')?.value || '';
+      const sort = document.getElementById('sortSelect')?.value || 'name';
+
+      const mobileFamily = document.getElementById('mobileFamilyFilter');
+      const mobileStatus = document.getElementById('mobileStatusFilter');
+      const mobileSort = document.getElementById('mobileSortSelect');
+
+      if (mobileFamily) mobileFamily.value = family;
+      if (mobileStatus) mobileStatus.value = status;
+      if (mobileSort) mobileSort.value = sort;
+
+      modals.mobileFilterModal.show();
+    }
+
+    function applyMobileFilters() {
+      const family = document.getElementById('mobileFamilyFilter')?.value || '';
+      const status = document.getElementById('mobileStatusFilter')?.value || '';
+      const sort = document.getElementById('mobileSortSelect')?.value || 'name';
+
+      const familyFilter = document.getElementById('familyFilter');
+      const statusFilter = document.getElementById('statusFilter');
+      const sortSelect = document.getElementById('sortSelect');
+
+      if (familyFilter) familyFilter.value = family;
+      if (statusFilter) statusFilter.value = status;
+      if (sortSelect) sortSelect.value = sort;
+
+      modals.mobileFilterModal.hide();
+      changeStatusFilter();
     }
 
     function updateStatsCards() {
@@ -1528,7 +2043,7 @@
 
     function renderMartyrs(customList) {
       const container = document.getElementById('martyrsContainer');
-      const search = normalizeText(document.getElementById('searchInput')?.value || '');
+      const search = normalizeText(getCurrentSearchValue());
       const family = document.getElementById('familyFilter')?.value || '';
       const sortBy = document.getElementById('sortSelect')?.value || 'name';
 
@@ -1772,7 +2287,13 @@ function openFamiliesStatsPage() {
 
       lastPageBeforeDetails = fromPage || 'homePage';
 
+      if (fromPage !== 'dashboardPage' && window.history && window.location) {
+        const newUrl = `${window.location.origin}${window.location.pathname}?m=${encodeURIComponent(martyrId)}`;
+        window.history.replaceState({}, '', newUrl);
+      }
+
       const img = getImageSrc(item);
+      const canUpdate = String(item.allow_updates || 'نعم').trim() !== 'لا';
 
       document.getElementById('detailsContainer').innerHTML = `
         <div class="row g-4">
@@ -1822,6 +2343,20 @@ function openFamiliesStatsPage() {
                 <h6 class="fw-bold">معلومات إضافية</h6>
                 <p class="lh-lg mb-0">${escapeHtml(item.extra_info)}</p>
               ` : ''}
+
+              <div class="details-action-bar">
+                <button class="btn btn-primary" onclick="shareMartyr('${escapeAttr(item.martyr_id)}')">
+                  <i class="fa-solid fa-share-nodes ms-1"></i>
+                  مشاركة
+                </button>
+
+                ${canUpdate ? `
+                  <button class="btn btn-outline-primary" onclick="openDataUpdateModal('${escapeAttr(item.martyr_id)}')">
+                    <i class="fa-solid fa-pen-to-square ms-1"></i>
+                    استكمال بيانات
+                  </button>
+                ` : ''}
+              </div>
 
               ${isAdminLoggedIn ? renderAdminActions(item) : ''}
             </div>
@@ -1890,6 +2425,140 @@ function openFamiliesStatsPage() {
         })
         .catch(err => {
           showToast(err.message || 'تعذر تحديث الحالة.');
+        });
+    }
+
+
+    function getMartyrIdFromUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('m') || '';
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function buildMartyrShareUrl(martyrId) {
+      return `${window.location.origin}${window.location.pathname}?m=${encodeURIComponent(martyrId)}`;
+    }
+
+    async function shareMartyr(martyrId) {
+      const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+      const item = source.find(x => x.martyr_id === martyrId);
+      const url = buildMartyrShareUrl(martyrId);
+      const title = item ? `صفحة الشهيد ${item.full_name}` : 'صفحة شهيد';
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title,
+            text: title,
+            url
+          });
+          return;
+        } catch (e) {
+          // إذا ألغى المستخدم المشاركة لا نعرض خطأ
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('تم نسخ رابط صفحة الشهيد.');
+      } catch (e) {
+        window.prompt('انسخ الرابط التالي:', url);
+      }
+    }
+
+    function openDataUpdateModal(martyrId) {
+      const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+      const item = source.find(x => x.martyr_id === martyrId);
+
+      if (!item) {
+        showToast('لم يتم العثور على بيانات الشهيد.');
+        return;
+      }
+
+      document.getElementById('dataUpdateMartyrId').value = martyrId;
+      document.getElementById('dataUpdateMartyrName').value = item.full_name || '';
+      document.getElementById('dataUpdateText').value = '';
+
+      modals.dataUpdateModal.show();
+    }
+
+    function submitDataUpdateForm() {
+      const martyrId = document.getElementById('dataUpdateMartyrId').value;
+      const requestText = document.getElementById('dataUpdateText').value.trim();
+
+      if (!requestText) {
+        showToast('يرجى كتابة البيانات أو التعديل المطلوب.');
+        return;
+      }
+
+      const btn = document.getElementById('dataUpdateSubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الإرسال...`;
+
+      apiRequest('submitDataUpdate', {
+        martyr_id: martyrId,
+        request_text: requestText
+      })
+        .then(res => {
+          btn.disabled = false;
+          btn.innerHTML = 'إرسال للمراجعة';
+
+          if (!res || !res.success) {
+            showToast(res?.message || 'تعذر إرسال الطلب.');
+            return;
+          }
+
+          modals.dataUpdateModal.hide();
+          showToast(res.message || 'تم إرسال الطلب.');
+        })
+        .catch(err => {
+          btn.disabled = false;
+          btn.innerHTML = 'إرسال للمراجعة';
+          showToast(err.message || 'تعذر إرسال الطلب.');
+        });
+    }
+
+    function openJoinTeamModal() {
+      const form = document.getElementById('joinTeamForm');
+      if (form) form.reset();
+      modals.joinTeamModal.show();
+    }
+
+    function submitJoinTeamForm() {
+      const form = document.getElementById('joinTeamForm');
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const btn = document.getElementById('joinTeamSubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الإرسال...`;
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      apiRequest('submitJoinRequest', data)
+        .then(res => {
+          btn.disabled = false;
+          btn.innerHTML = 'إرسال الطلب';
+
+          if (!res || !res.success) {
+            showToast(res?.message || 'تعذر إرسال الطلب.');
+            return;
+          }
+
+          modals.joinTeamModal.hide();
+          showToast(res.message || 'تم إرسال الطلب.');
+          loadInitialData();
+        })
+        .catch(err => {
+          btn.disabled = false;
+          btn.innerHTML = 'إرسال الطلب';
+          showToast(err.message || 'تعذر إرسال الطلب.');
         });
     }
 
@@ -2107,6 +2776,113 @@ function selectFamily(family) {
         dropdown.classList.add('d-none');
       }
     });
+
+
+    function renderDataUpdateRequestsTable() {
+      const tbody = document.getElementById('dataUpdatesTableBody');
+      const count = document.getElementById('dataUpdatesCount');
+
+      if (!tbody) return;
+
+      const list = dataUpdateRequests.slice();
+      if (count) count.textContent = list.length;
+
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">لا توجد طلبات استكمال بيانات.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => `
+        <tr>
+          <td>${escapeHtml(item.created_at || '')}</td>
+          <td class="fw-bold">${escapeHtml(item.martyr_name || '')}</td>
+          <td>${escapeHtml(item.family_name || '')}</td>
+          <td class="request-text-cell">${escapeHtml(item.request_text || '')}</td>
+          <td>${statusBadge(item.status)}</td>
+          <td>
+            <div class="d-flex gap-1 flex-wrap">
+              <button class="btn btn-sm btn-success" onclick="updateDataRequestStatusFromDashboard('${escapeAttr(item.request_id)}', 'موثق')">
+                تمت المراجعة
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="updateDataRequestStatusFromDashboard('${escapeAttr(item.request_id)}', 'مرفوض')">
+                رفض
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderJoinRequestsTable() {
+      const tbody = document.getElementById('joinRequestsTableBody');
+      const count = document.getElementById('joinRequestsCount');
+
+      if (!tbody) return;
+
+      const list = joinRequests.slice();
+      if (count) count.textContent = list.length;
+
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">لا توجد طلبات انضمام.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => `
+        <tr>
+          <td>${escapeHtml(item.created_at || '')}</td>
+          <td class="fw-bold">${escapeHtml(item.full_name || '')}</td>
+          <td>${escapeHtml(item.family_name || '')}</td>
+          <td>${escapeHtml(item.birth_year || '')}</td>
+          <td>${escapeHtml(item.phone || '')}</td>
+          <td class="request-text-cell">${escapeHtml(item.notes || '')}</td>
+          <td>${statusBadge(item.status)}</td>
+          <td>
+            <div class="d-flex gap-1 flex-wrap">
+              <button class="btn btn-sm btn-success" onclick="updateJoinRequestStatusFromDashboard('${escapeAttr(item.request_id)}', 'موثق')">
+                قبول
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="updateJoinRequestStatusFromDashboard('${escapeAttr(item.request_id)}', 'مرفوض')">
+                رفض
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateDataRequestStatusFromDashboard(requestId, status) {
+      const reviewerNotes = status === 'مرفوض' ? 'تم الرفض من لوحة التحكم' : 'تمت المراجعة من لوحة التحكم';
+
+      apiRequest('updateDataRequestStatus', {
+        requestId,
+        newStatus: status,
+        reviewerNotes
+      })
+        .then(res => {
+          showToast(res.message || 'تم تحديث حالة الطلب.');
+          refreshDashboardData(false);
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر تحديث حالة الطلب.');
+        });
+    }
+
+    function updateJoinRequestStatusFromDashboard(requestId, status) {
+      const reviewerNotes = status === 'مرفوض' ? 'تم الرفض من لوحة التحكم' : 'تم القبول من لوحة التحكم';
+
+      apiRequest('updateJoinRequestStatus', {
+        requestId,
+        newStatus: status,
+        reviewerNotes
+      })
+        .then(res => {
+          showToast(res.message || 'تم تحديث حالة الطلب.');
+          refreshDashboardData(false);
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر تحديث حالة الطلب.');
+        });
+    }
 
     function getImageSrc(item) {
       if (!item) return '';
