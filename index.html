@@ -242,6 +242,36 @@
       font-size: 1rem;
     }
 
+
+    .needs-completion-corner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #ffc107;
+      color: #212529;
+      padding: 6px 10px;
+      border-bottom-right-radius: 14px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      z-index: 3;
+      box-shadow: 0 6px 18px rgba(255, 193, 7, 0.35);
+      max-width: 92px;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .completed-info-box {
+      background: #fff8e1;
+      border: 1px solid rgba(255, 193, 7, 0.45);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .completed-info-box p {
+      white-space: pre-line;
+    }
+
     .list-item {
       background: white;
       border: 0;
@@ -1555,7 +1585,7 @@
   </div>
 
   <div class="modal fade" id="dataUpdateModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header px-4 pt-4">
           <h5 class="modal-title fw-bold">
@@ -1568,6 +1598,7 @@
         <div class="modal-body px-4">
           <div class="alert alert-info">
             اكتب البيانات الناقصة أو التعديل المطلوب، وسيقوم فريق التوثيق بمراجعتها قبل اعتمادها.
+            ويمكنك رفع صورة، وفي حال قبولها ستصبح صورة الشهيد المعتمدة.
           </div>
 
           <input type="hidden" id="dataUpdateMartyrId">
@@ -1578,8 +1609,16 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-bold">البيانات أو التعديل المطلوب <span class="text-danger">*</span></label>
-            <textarea class="form-control" id="dataUpdateText" rows="6" placeholder="اكتب هنا المعلومات الناقصة أو التعديل المطلوب..." required></textarea>
+            <label class="form-label fw-bold">البيانات أو التعديل المطلوب</label>
+            <textarea class="form-control" id="dataUpdateText" rows="6" placeholder="اكتب هنا المعلومات الناقصة أو التعديل المطلوب..."></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">رفع صورة للشهيد أو صورة داعمة</label>
+            <input type="file" class="form-control" id="dataUpdateImageInput" accept="image/*">
+            <div class="form-text">
+              إذا تم قبول الطلب وكانت الصورة مناسبة، ستُضاف الصورة إلى صفحة الشهيد مكان الصورة الحالية.
+            </div>
           </div>
         </div>
 
@@ -2303,11 +2342,14 @@
 
     function renderMartyrCard(item) {
       const verified = item.verification_status === 'موثق';
+      const needsCompletion = isNeedsCompletion(item);
       const img = getImageSrc(item);
 
       return `
         <div class="martyr-card" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'homePage')">
-          ${verified ? `
+          ${needsCompletion ? `
+            <div class="needs-completion-corner">يحتاج استكمال</div>
+          ` : verified ? `
             <div class="verified-corner">
               <i class="fa-solid fa-check"></i>
             </div>
@@ -2330,7 +2372,9 @@
             <h6 class="martyr-name">${escapeHtml(item.full_name || '')}</h6>
             <div class="martyr-family">عائلة ${escapeHtml(item.family_name || '')}</div>
 
-            ${!verified ? `
+            ${needsCompletion ? `
+              <span class="badge text-bg-warning mt-2">يحتاج استكمال</span>
+            ` : !verified ? `
               <span class="badge text-bg-warning mt-2">بانتظار التوثق</span>
             ` : `
               <span class="badge badge-soft-blue mt-2">موثق</span>
@@ -2443,11 +2487,14 @@ function openFamiliesStatsPage() {
 
     function renderMartyrCardForFamily(item) {
       const verified = item.verification_status === 'موثق';
+      const needsCompletion = isNeedsCompletion(item);
       const img = getImageSrc(item);
 
       return `
         <div class="martyr-card" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'familyMartyrsPage')">
-          ${verified ? `
+          ${needsCompletion ? `
+            <div class="needs-completion-corner">يحتاج استكمال</div>
+          ` : verified ? `
             <div class="verified-corner">
               <i class="fa-solid fa-check"></i>
             </div>
@@ -2484,6 +2531,18 @@ function openFamiliesStatsPage() {
         .replace(/[ًٌٍَُِّْـ]/g, '')
         .replace(/\s+/g, ' ');
       return !['لا', 'كلا', 'no', 'false', '0', 'غير مفعل', 'مغلق', 'لا يسمح', 'لايسمح'].includes(normalized);
+    }
+
+
+    function isNeedsCompletion(item) {
+      const value = String(item?.needs_completion || '').trim().toLowerCase();
+      const normalized = value
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/[ًٌٍَُِّْـ]/g, '')
+        .replace(/\s+/g, ' ');
+      return ['نعم', 'yes', 'true', '1', 'يحتاج', 'needs', 'بحاجة لاستكمال'].includes(normalized);
     }
 
     function openMartyrDetails(martyrId, fromPage) {
@@ -2549,6 +2608,16 @@ function openFamiliesStatsPage() {
                 <hr>
                 <h6 class="fw-bold">معلومات إضافية</h6>
                 <p class="lh-lg mb-0">${escapeHtml(item.extra_info)}</p>
+              ` : ''}
+
+              ${item.completed_info ? `
+                <div class="completed-info-box">
+                  <h6 class="fw-bold text-warning-emphasis mb-2">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                    بيانات مستكملة
+                  </h6>
+                  <p class="lh-lg mb-0">${escapeHtml(item.completed_info)}</p>
+                </div>
               ` : ''}
 
               <div class="details-action-bar">
@@ -2681,24 +2750,25 @@ function openFamiliesStatsPage() {
       const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
       const item = source.find(x => x.martyr_id === martyrId);
 
-      if (!item) {
-        showToast('لم يتم العثور على بيانات الشهيد.');
-        return;
-      }
-
       document.getElementById('dataUpdateMartyrId').value = martyrId;
-      document.getElementById('dataUpdateMartyrName').value = item.full_name || '';
+      document.getElementById('dataUpdateMartyrName').value = item ? item.full_name || '' : '';
       document.getElementById('dataUpdateText').value = '';
+
+      const imageInput = document.getElementById('dataUpdateImageInput');
+      if (imageInput) imageInput.value = '';
 
       modals.dataUpdateModal.show();
     }
 
-    function submitDataUpdateForm() {
+    async function submitDataUpdateForm() {
       const martyrId = document.getElementById('dataUpdateMartyrId').value;
+      const martyrName = document.getElementById('dataUpdateMartyrName').value;
       const requestText = document.getElementById('dataUpdateText').value.trim();
+      const imageInput = document.getElementById('dataUpdateImageInput');
+      const file = imageInput && imageInput.files ? imageInput.files[0] : null;
 
-      if (!requestText) {
-        showToast('يرجى كتابة البيانات أو التعديل المطلوب.');
+      if (!requestText && !file) {
+        showToast('يرجى كتابة البيانات أو رفع صورة.');
         return;
       }
 
@@ -2706,27 +2776,42 @@ function openFamiliesStatsPage() {
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الإرسال...`;
 
-      apiRequest('submitDataUpdate', {
+      const payload = {
         martyr_id: martyrId,
-        request_text: requestText
-      })
-        .then(res => {
-          btn.disabled = false;
-          btn.innerHTML = 'إرسال للمراجعة';
+        martyr_name: martyrName,
+        request_text: requestText,
+        submitted_text: requestText
+      };
 
-          if (!res || !res.success) {
-            showToast(res?.message || 'تعذر إرسال الطلب.');
-            return;
-          }
+      try {
+        if (file) {
+          payload.imageBase64 = await fileToBase64(file);
+          payload.imageName = file.name;
+        }
 
-          modals.dataUpdateModal.hide();
-          showToast(res.message || 'تم إرسال الطلب.');
-        })
-        .catch(err => {
-          btn.disabled = false;
-          btn.innerHTML = 'إرسال للمراجعة';
-          showToast(err.message || 'تعذر إرسال الطلب.');
-        });
+        apiRequest('submitDataUpdate', payload)
+          .then(res => {
+            btn.disabled = false;
+            btn.innerHTML = 'إرسال للمراجعة';
+
+            if (!res || !res.success) {
+              showToast(res?.message || 'تعذر إرسال الطلب.');
+              return;
+            }
+
+            modals.dataUpdateModal.hide();
+            showToast(res.message || 'تم إرسال الطلب.');
+          })
+          .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = 'إرسال للمراجعة';
+            showToast(err.message || 'تعذر إرسال الطلب.');
+          });
+      } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'إرسال للمراجعة';
+        showToast(error.message || 'تعذر قراءة الصورة.');
+      }
     }
 
     function openJoinTeamModal() {
@@ -3000,25 +3085,38 @@ function selectFamily(family) {
         return;
       }
 
-      tbody.innerHTML = list.map(item => `
-        <tr>
-          <td>${escapeHtml(item.created_at || '')}</td>
-          <td class="fw-bold">${escapeHtml(item.martyr_name || '')}</td>
-          <td>${escapeHtml(item.family_name || '')}</td>
-          <td class="request-text-cell">${escapeHtml(item.request_text || '')}</td>
-          <td>${statusBadge(item.status)}</td>
-          <td>
-            <div class="d-flex gap-1 flex-wrap">
-              <button class="btn btn-sm btn-success" onclick="updateDataRequestStatusFromDashboard('${escapeAttr(item.request_id)}', 'موثق')">
-                تمت المراجعة
-              </button>
-              <button class="btn btn-sm btn-outline-danger" onclick="updateDataRequestStatusFromDashboard('${escapeAttr(item.request_id)}', 'مرفوض')">
-                رفض
-              </button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = list.map(item => {
+        const requestId = item.update_id || item.request_id || '';
+        const requestText = item.submitted_text || item.request_text || '';
+        const img = item.image_file_id
+          ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(item.image_file_id)}&sz=w500`
+          : '';
+
+        return `
+          <tr>
+            <td>${escapeHtml(item.created_at || '')}</td>
+            <td class="fw-bold">${escapeHtml(item.martyr_name || '')}</td>
+            <td>${escapeHtml(item.family_name || '')}</td>
+            <td class="request-text-cell">
+              <div>${escapeHtml(requestText)}</div>
+              ${img ? `<a href="${escapeAttr(img)}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">عرض الصورة</a>` : ''}
+            </td>
+            <td>${statusBadge(item.status)}</td>
+            <td>
+              ${isPendingRequest(item.status) ? `
+                <div class="d-flex gap-1 flex-wrap">
+                  <button class="btn btn-sm btn-success" onclick="approveDataUpdateFromDashboard('${escapeAttr(requestId)}')">
+                    قبول وإضافة
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="rejectDataUpdateFromDashboard('${escapeAttr(requestId)}')">
+                    رفض
+                  </button>
+                </div>
+              ` : '-'}
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function renderJoinRequestsTable() {
@@ -3058,21 +3156,42 @@ function selectFamily(family) {
       `).join('');
     }
 
-    function updateDataRequestStatusFromDashboard(requestId, status) {
-      const reviewerNotes = status === 'مرفوض' ? 'تم الرفض من لوحة التحكم' : 'تمت المراجعة من لوحة التحكم';
+    function isPendingRequest(status) {
+      const value = String(status || '').trim();
+      return !value || value === 'بانتظار المراجعة' || value === 'بانتظار التوثيق' || value === 'قيد المراجعة';
+    }
 
-      apiRequest('updateDataRequestStatus', {
-        requestId,
-        newStatus: status,
-        reviewerNotes
-      })
+    function approveDataUpdateFromDashboard(requestId) {
+      apiRequest('approveDataUpdate', { updateId: requestId, requestId })
         .then(res => {
-          showToast(res.message || 'تم تحديث حالة الطلب.');
+          showToast(res.message || 'تم قبول البيانات المستكملة.');
+          refreshDashboardData(false);
+          loadInitialData();
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر قبول الطلب. تأكد من تحديث Code.gs أيضًا.');
+        });
+    }
+
+    function rejectDataUpdateFromDashboard(requestId) {
+      const reviewerNotes = prompt('سبب الرفض أو ملاحظات المراجع:') || '';
+
+      apiRequest('rejectDataUpdate', { updateId: requestId, requestId, reviewerNotes })
+        .then(res => {
+          showToast(res.message || 'تم رفض طلب الاستكمال.');
           refreshDashboardData(false);
         })
         .catch(err => {
-          showToast(err.message || 'تعذر تحديث حالة الطلب.');
+          showToast(err.message || 'تعذر رفض الطلب. تأكد من تحديث Code.gs أيضًا.');
         });
+    }
+
+    function updateDataRequestStatusFromDashboard(requestId, status) {
+      if (status === 'موثق') {
+        approveDataUpdateFromDashboard(requestId);
+      } else {
+        rejectDataUpdateFromDashboard(requestId);
+      }
     }
 
     function updateJoinRequestStatusFromDashboard(requestId, status) {
