@@ -1173,6 +1173,59 @@
 }
 </style>
 
+
+<style id="image-admin-and-refresh-fixes">
+.image-gallery {
+  position: relative;
+}
+
+.gallery-admin-tools {
+  margin-top: 10px;
+  background: rgba(248, 249, 250, .92);
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 10px;
+}
+
+.gallery-thumb-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.gallery-thumb-item {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.gallery-thumb-item img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid rgba(13, 110, 253, .15);
+}
+
+.gallery-delete-btn {
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  font-size: .72rem;
+}
+
+.section-refresh-btn {
+  border-radius: 12px;
+  white-space: nowrap;
+}
+</style>
+
 </head>
 
 <body>
@@ -2044,6 +2097,51 @@
     </div>
   </div>
 
+  
+  <div class="modal fade" id="approveImageModeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-images text-primary ms-2"></i>
+            طريقة اعتماد الصورة الجديدة
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <input type="hidden" id="approveImageModeRequestId">
+
+          <div class="alert alert-info">
+            هذا الطلب يحتوي على صورة، وللشهيد صورة قديمة. اختر هل تريد إضافة الصورة الجديدة إلى الصور القديمة، أم استبدال الصور القديمة بالجديدة.
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="radio" name="approveImageMode" id="approveImageAppend" value="append" checked>
+            <label class="form-check-label fw-bold" for="approveImageAppend">
+              إضافة الصورة الجديدة مع الإبقاء على الصور القديمة
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="approveImageMode" id="approveImageReplace" value="replace">
+            <label class="form-check-label fw-bold" for="approveImageReplace">
+              استبدال الصور القديمة بالصورة/الصور الجديدة
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" id="approveImageModeConfirmBtn" onclick="confirmApproveDataUpdateWithImageMode()">
+            قبول وإضافة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <div class="modal fade" id="loginModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -2129,6 +2227,7 @@
         'mobileFilterModal',
         'dataUpdateModal',
         'joinTeamModal',
+        'approveImageModeModal',
         'loginModal'
       ].forEach(id => {
         const el = document.getElementById(id);
@@ -5207,6 +5306,324 @@ submitDataUpdateForm = async function() {
     hideGlobalSpinner();
   }
 };
+
+
+/* ===== Image approval mode + admin image deletion + section refresh buttons ===== */
+function getUpdateRequestImages(item) {
+  const images = [];
+
+  if (!item) return images;
+
+  if (item.image_files_json) {
+    try {
+      const parsed = JSON.parse(item.image_files_json);
+      if (Array.isArray(parsed)) {
+        parsed.forEach(img => {
+          if (img && (img.image_file_id || img.image_url)) images.push(img);
+        });
+      }
+    } catch (e) {}
+  }
+
+  if (!images.length && (item.image_file_id || item.image_url)) {
+    images.push({
+      image_file_id: item.image_file_id || '',
+      image_url: item.image_url || ''
+    });
+  }
+
+  return images;
+}
+
+function findLocalMartyrById(martyrId) {
+  return (dashboardData || []).find(x => x.martyr_id === martyrId)
+    || (allMartyrs || []).find(x => x.martyr_id === martyrId)
+    || null;
+}
+
+function hasOldMartyrImages(martyr) {
+  if (!martyr) return false;
+  return normalizeImages(martyr).length > 0;
+}
+
+function approveDataUpdateFromDashboard(requestId) {
+  const item = (dataUpdateRequests || []).find(req => (req.update_id || req.request_id || '') === requestId);
+  const newImages = getUpdateRequestImages(item);
+  const martyr = item ? findLocalMartyrById(item.martyr_id) : null;
+
+  if (item && newImages.length && hasOldMartyrImages(martyr)) {
+    const hidden = document.getElementById('approveImageModeRequestId');
+    if (hidden) hidden.value = requestId;
+
+    const appendRadio = document.getElementById('approveImageAppend');
+    if (appendRadio) appendRadio.checked = true;
+
+    modals.approveImageModeModal?.show();
+    return;
+  }
+
+  approveDataUpdateWithMode(requestId, 'append');
+}
+
+function confirmApproveDataUpdateWithImageMode() {
+  const requestId = document.getElementById('approveImageModeRequestId')?.value || '';
+  const mode = document.querySelector('input[name="approveImageMode"]:checked')?.value || 'append';
+
+  modals.approveImageModeModal?.hide();
+  approveDataUpdateWithMode(requestId, mode);
+}
+
+function approveDataUpdateWithMode(requestId, imageMode) {
+  const btn = document.getElementById('approveImageModeConfirmBtn');
+  const oldHtml = btn ? btn.innerHTML : '';
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جار القبول...`;
+  }
+
+  showGlobalSpinner(true);
+
+  apiRequest('approveDataUpdate', { updateId: requestId, requestId, imageMode })
+    .then(res => {
+      if (!res || !res.success) {
+        showToast(res?.message || 'تعذر قبول الطلب.');
+        return;
+      }
+
+      showToast(res.message || 'تم قبول البيانات المستكملة.');
+      refreshDashboardData(false);
+      loadInitialData();
+    })
+    .catch(err => {
+      showToast(err.message || 'تعذر قبول الطلب. تأكد من تحديث Code.gs أيضًا.');
+    })
+    .finally(() => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = oldHtml || 'قبول وإضافة';
+      }
+      hideGlobalSpinner();
+    });
+}
+
+normalizeImages = function(item) {
+  const images = [];
+
+  if (Array.isArray(item?.images)) {
+    item.images.forEach(img => {
+      const src = img.image_file_id
+        ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(img.image_file_id)}&sz=w1000`
+        : (img.image_url || '');
+
+      if (src) {
+        images.push({
+          src,
+          image_id: img.image_id || '',
+          image_file_id: img.image_file_id || '',
+          image_url: img.image_url || '',
+          is_primary: img.is_primary || '',
+          source_type: img.source_type || ''
+        });
+      }
+    });
+  }
+
+  const main = getImageSrc(item);
+
+  if (main && !images.some(img => img.src === main)) {
+    images.unshift({
+      src: main,
+      image_id: '',
+      image_file_id: item?.image_file_id || extractDriveFileId(item?.image_url || ''),
+      image_url: item?.image_url || ''
+    });
+  }
+
+  return images;
+};
+
+renderImageGallery = function(item) {
+  const images = normalizeImages(item);
+
+  if (!images.length) {
+    return `<div class="detail-image-placeholder"><div><i class="fa-solid fa-user fa-4x text-secondary mb-3"></i><div>لا توجد صورة مرفقة</div></div></div>`;
+  }
+
+  if (currentGalleryIndex >= images.length) currentGalleryIndex = 0;
+
+  const first = images[currentGalleryIndex] || images[0];
+
+  return `
+    <div class="image-gallery">
+      <img id="galleryMainImage" src="${escapeAttr(first.src)}" class="gallery-main-image detail-image" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+      <div class="detail-image-placeholder" style="display:none;"><div>تعذر عرض الصورة</div></div>
+
+      ${images.length > 1 ? `
+        <div class="gallery-controls mt-2 d-flex justify-content-center align-items-center gap-2">
+          <button class="btn btn-outline-primary btn-sm" onclick="changeGalleryImage(-1)">السابق</button>
+          <span class="badge text-bg-light align-self-center" id="galleryCounter">${currentGalleryIndex + 1} / ${images.length}</span>
+          <button class="btn btn-outline-primary btn-sm" onclick="changeGalleryImage(1)">التالي</button>
+        </div>
+      ` : ''}
+
+      ${isAdminLoggedIn ? `
+        <div class="gallery-admin-tools">
+          <div class="small text-muted fw-bold mb-2">
+            <i class="fa-solid fa-user-shield ms-1"></i>
+            إدارة صور الشهيد
+          </div>
+          <div class="gallery-thumb-row">
+            ${images.map((img, index) => `
+              <div class="gallery-thumb-item">
+                <img src="${escapeAttr(img.src)}" alt="" onclick="setGalleryImageIndex(${index})" style="${index === currentGalleryIndex ? 'border-color:#0d6efd;' : ''}">
+                <button class="btn btn-danger gallery-delete-btn" title="حذف الصورة" onclick="deleteMartyrImageFromDetails(${index})">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>`;
+};
+
+function setGalleryImageIndex(index) {
+  const images = normalizeImages(currentDetailsItem || {});
+  if (!images.length) return;
+
+  currentGalleryIndex = Math.max(0, Math.min(index, images.length - 1));
+
+  const img = document.getElementById('galleryMainImage');
+  const counter = document.getElementById('galleryCounter');
+
+  if (img) img.src = images[currentGalleryIndex].src;
+  if (counter) counter.textContent = `${currentGalleryIndex + 1} / ${images.length}`;
+
+  const holder = document.querySelector('#detailsContainer .col-lg-5');
+  if (holder) holder.innerHTML = renderImageGallery(currentDetailsItem || {});
+}
+
+changeGalleryImage = function(step) {
+  const images = normalizeImages(currentDetailsItem || {});
+  if (!images.length) return;
+
+  currentGalleryIndex = (currentGalleryIndex + step + images.length) % images.length;
+
+  const img = document.getElementById('galleryMainImage');
+  const counter = document.getElementById('galleryCounter');
+
+  if (img) img.src = images[currentGalleryIndex].src;
+  if (counter) counter.textContent = `${currentGalleryIndex + 1} / ${images.length}`;
+
+  const holder = document.querySelector('#detailsContainer .col-lg-5');
+  if (holder) holder.innerHTML = renderImageGallery(currentDetailsItem || {});
+};
+
+function deleteMartyrImageFromDetails(index) {
+  if (!isAdminLoggedIn || !currentDetailsItem) return;
+
+  const images = normalizeImages(currentDetailsItem);
+  const img = images[index];
+
+  if (!img) return;
+
+  if (!confirm('هل تريد حذف هذه الصورة من صفحة الشهيد؟')) return;
+
+  showGlobalSpinner(true);
+
+  apiRequest('deleteMartyrImage', {
+    martyrId: currentDetailsItem.martyr_id,
+    martyr_id: currentDetailsItem.martyr_id,
+    imageId: img.image_id || '',
+    image_id: img.image_id || '',
+    imageFileId: img.image_file_id || '',
+    image_file_id: img.image_file_id || ''
+  })
+    .then(res => {
+      if (!res || !res.success) {
+        showToast(res?.message || 'تعذر حذف الصورة.');
+        return;
+      }
+
+      showToast(res.message || 'تم حذف الصورة.');
+
+      if (Array.isArray(currentDetailsItem.images)) {
+        currentDetailsItem.images = currentDetailsItem.images.filter(old => {
+          if (img.image_id && old.image_id === img.image_id) return false;
+          if (img.image_file_id && old.image_file_id === img.image_file_id) return false;
+          return true;
+        });
+      }
+
+      if (img.image_file_id && currentDetailsItem.image_file_id === img.image_file_id) {
+        const next = currentDetailsItem.images && currentDetailsItem.images[0] ? currentDetailsItem.images[0] : null;
+        currentDetailsItem.image_file_id = next ? next.image_file_id : '';
+        currentDetailsItem.image_url = next ? next.image_url : '';
+      }
+
+      currentGalleryIndex = 0;
+
+      const holder = document.querySelector('#detailsContainer .col-lg-5');
+      if (holder) holder.innerHTML = renderImageGallery(currentDetailsItem);
+
+      loadInitialData();
+      if (isAdminLoggedIn) refreshDashboardData(false);
+    })
+    .catch(err => {
+      showToast(err.message || 'تعذر حذف الصورة.');
+    })
+    .finally(() => {
+      hideGlobalSpinner();
+    });
+}
+
+function refreshCurrentSection() {
+  const active = document.querySelector('.page-section.active')?.id || 'homePage';
+
+  if (active === 'dashboardPage') {
+    refreshDashboardData(true);
+    return;
+  }
+
+  if (active === 'detailsPage' && currentDetailsItem) {
+    showToast('جاري تحديث صفحة الشهيد...');
+    const martyrId = currentDetailsItem.martyr_id;
+    Promise.resolve(loadInitialData()).then(() => {
+      setTimeout(() => openMartyrDetails(martyrId, lastPageBeforeDetails || 'homePage', true), 500);
+    });
+    return;
+  }
+
+  loadInitialData();
+  showToast('تم تحديث البيانات.');
+}
+
+function addRefreshButtonsToSections() {
+  const sections = [
+    ['#familiesPage > .d-flex', 'تحديث'],
+    ['#familyMartyrsPage > .d-flex', 'تحديث'],
+    ['#detailsPage > .d-flex', 'تحديث'],
+    ['#dashboardPage > .d-flex', 'تحديث']
+  ];
+
+  sections.forEach(([selector, label]) => {
+    const row = document.querySelector(selector);
+    if (!row || row.querySelector('.section-refresh-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-outline-secondary section-refresh-btn';
+    btn.type = 'button';
+    btn.innerHTML = `<i class="fa-solid fa-rotate ms-1"></i>${label}`;
+    btn.onclick = refreshCurrentSection;
+
+    row.appendChild(btn);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  addRefreshButtonsToSections();
+});
 
 </script>
 
