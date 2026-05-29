@@ -1951,9 +1951,9 @@
             setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage'), 250);
           }
 
-          if (isAdminLoggedIn) {
-            refreshDashboardData(false);
-          }
+          // if (isAdminLoggedIn) {
+          //   refreshDashboardData(false);
+          // }
 
           document.getElementById('loadingBox').style.display = 'none';
         })
@@ -1992,7 +1992,7 @@
           dashboardData = res.all || [];
           dataUpdateRequests = res.dataUpdates || [];
           joinRequests = res.joinRequests || [];
-          allMartyrs = dashboardData.filter(x => x.verification_status === 'موثق');
+          // allMartyrs = dashboardData.filter(x => x.verification_status === 'موثق');
 
           updateStatsCards();
           updateDashboardStats();
