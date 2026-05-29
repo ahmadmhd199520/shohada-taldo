@@ -1780,7 +1780,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       initModals();
       restoreAdminSession();
-      maybeShowIntroModal();
+      // لا نعرض رسالة البداية هنا حتى لا تظهر قبل تحميل رسائل لوحة التحكم.
+      // سيتم عرض الرسائل بعد loadInitialData عند توفر الرسائل الديناميكية.
+      hideGlobalSpinner();
       loadInitialData();
     });
 
@@ -3353,21 +3355,25 @@ function selectFamily(family) {
 
 <style>
   .top-login-bar.header-admin-actions {
-    position: absolute;
-    left: 14px;
-    top: 14px;
+    position: static;
     z-index: 5;
     margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    width: auto;
   }
 
   .top-login-bar.header-admin-actions .btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 13px;
     padding: 0;
     display: inline-grid;
     place-items: center;
     font-size: 0;
+    line-height: 1;
   }
 
   .top-login-bar.header-admin-actions .btn i {
@@ -3425,12 +3431,12 @@ function selectFamily(family) {
     background: rgba(255,255,255,.55);
     backdrop-filter: blur(2px);
     z-index: 20000;
-    display: none;
+    display: none !important;
     place-items: center;
   }
 
   .global-loading-overlay.show {
-    display: grid;
+    display: grid !important;
   }
 
   .settings-card {
@@ -3450,13 +3456,14 @@ function selectFamily(family) {
 
   @media (max-width: 576px) {
     .top-login-bar.header-admin-actions {
-      left: 8px;
-      top: 8px;
+      gap: 4px;
+      margin-inline-start: 2px;
     }
 
     .top-login-bar.header-admin-actions .btn {
-      width: 34px;
-      height: 34px;
+      width: 30px;
+      height: 30px;
+      border-radius: 11px;
     }
   }
 </style>
@@ -3550,7 +3557,7 @@ function selectFamily(family) {
   </div>
 </div>
 
-<div class="global-loading-overlay" id="globalLoadingOverlay">
+<div class="global-loading-overlay" id="globalLoadingOverlay" style="display:none;">
   <div class="text-center">
     <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;"></div>
     <div class="fw-bold text-primary">جاري المعالجة...</div>
@@ -3567,28 +3574,60 @@ let currentDetailsItem = null;
 let currentGalleryIndex = 0;
 
 async function apiRequest(action, data = {}) {
-  showGlobalSpinner(true);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
+
   try {
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action, data })
+      body: JSON.stringify({ action, data }),
+      signal: controller.signal
     });
+
     const result = await response.json();
-    if (!result) throw new Error('لم يرجع الخادم استجابة واضحة.');
+
+    if (!result) {
+      throw new Error('لم يرجع الخادم استجابة واضحة.');
+    }
+
     return result;
+  } catch (error) {
+    if (error && error.name === 'AbortError') {
+      throw new Error('استغرق الاتصال وقتًا طويلًا. يرجى تحديث الصفحة والمحاولة مجددًا.');
+    }
+
+    throw error;
   } finally {
-    showGlobalSpinner(false);
+    clearTimeout(timeoutId);
+    hideGlobalSpinner();
   }
 }
 
 function showGlobalSpinner(show) {
   const overlay = document.getElementById('globalLoadingOverlay');
   if (!overlay) return;
-  overlay.classList.toggle('show', !!show);
+
+  if (show) {
+    overlay.classList.add('show');
+    clearTimeout(window.__globalSpinnerTimer);
+    window.__globalSpinnerTimer = setTimeout(() => hideGlobalSpinner(), 15000);
+  } else {
+    hideGlobalSpinner();
+  }
+}
+
+function hideGlobalSpinner() {
+  const overlay = document.getElementById('globalLoadingOverlay');
+  if (!overlay) return;
+
+  overlay.classList.remove('show');
+  overlay.style.display = 'none';
+  clearTimeout(window.__globalSpinnerTimer);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  hideGlobalSpinner();
   ['dynamicMessageModal','pendingInfoModal','editMartyrModal','aboutUsModal'].forEach(id => {
     const el = document.getElementById(id);
     if (el) modals[id] = new bootstrap.Modal(el);
@@ -3607,17 +3646,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function moveAdminButtonsToHeader() {
   const bar = document.querySelector('.top-login-bar');
+  const titleRow = document.querySelector('.hero .d-flex.align-items-center.gap-2');
   const hero = document.querySelector('.hero');
-  if (bar && hero) {
+
+  if (bar && titleRow) {
     bar.classList.add('header-admin-actions');
-    hero.appendChild(bar);
+
+    // دمج أيقونات الدخول ولوحة التحكم داخل سطر العنوان نفسه حتى لا تغطي زر الرئيسية.
+    if (bar.parentElement !== titleRow) {
+      titleRow.appendChild(bar);
+    }
+
     ['loginBtn','dashboardBtn','logoutBtn'].forEach(id => {
       const btn = document.getElementById(id);
       if (btn) {
         btn.title = btn.textContent.trim();
-        btn.innerHTML = btn.querySelector('i') ? btn.querySelector('i').outerHTML : btn.innerHTML;
+        btn.setAttribute('aria-label', btn.title || id);
+        const icon = btn.querySelector('i');
+        btn.innerHTML = icon ? icon.outerHTML : btn.innerHTML;
       }
     });
+
+    return;
+  }
+
+  if (bar && hero) {
+    bar.classList.add('header-admin-actions');
+    hero.appendChild(bar);
   }
 }
 
