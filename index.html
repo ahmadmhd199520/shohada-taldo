@@ -841,6 +841,71 @@
     }
 
   </style>
+<style>
+
+/* ===== Public hotfix: header admin icons placement and non-blocking loader ===== */
+.hero {
+  padding-left: 74px !important;
+}
+
+.top-login-bar.header-admin-actions {
+  position: absolute !important;
+  left: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 20 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+.top-login-bar.header-admin-actions .btn {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  border-radius: 14px !important;
+  padding: 0 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+}
+
+.top-login-bar.header-admin-actions .btn i {
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+.global-loading-overlay {
+  display: none !important;
+}
+
+.global-loading-overlay.show {
+  display: grid !important;
+}
+
+@media (max-width: 576px) {
+  .hero {
+    padding-left: 50px !important;
+  }
+
+  .top-login-bar.header-admin-actions {
+    left: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    gap: 4px !important;
+  }
+
+  .top-login-bar.header-admin-actions .btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 11px !important;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -1778,11 +1843,10 @@
     const modals = {};
 
     document.addEventListener('DOMContentLoaded', () => {
+      hideGlobalSpinner();
       initModals();
       restoreAdminSession();
-      // لا نعرض رسالة البداية هنا حتى لا تظهر قبل تحميل رسائل لوحة التحكم.
-      // سيتم عرض الرسائل بعد loadInitialData عند توفر الرسائل الديناميكية.
-      hideGlobalSpinner();
+      maybeShowIntroModal();
       loadInitialData();
     });
 
@@ -1951,9 +2015,7 @@
             setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage'), 250);
           }
 
-          // if (isAdminLoggedIn) {
-          //   refreshDashboardData(false);
-          // }
+          // لا نحمل لوحة التحكم تلقائيًا عند فتح الصفحة العامة.
 
           document.getElementById('loadingBox').style.display = 'none';
         })
@@ -1992,6 +2054,7 @@
           dashboardData = res.all || [];
           dataUpdateRequests = res.dataUpdates || [];
           joinRequests = res.joinRequests || [];
+          // لا نعيد كتابة بيانات الصفحة الرئيسية عند تحميل لوحة التحكم.
           // allMartyrs = dashboardData.filter(x => x.verification_status === 'موثق');
 
           updateStatsCards();
@@ -3355,25 +3418,21 @@ function selectFamily(family) {
 
 <style>
   .top-login-bar.header-admin-actions {
-    position: static;
+    position: absolute;
+    left: 14px;
+    top: 14px;
     z-index: 5;
     margin: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: nowrap;
-    width: auto;
   }
 
   .top-login-bar.header-admin-actions .btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 13px;
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
     padding: 0;
     display: inline-grid;
     place-items: center;
     font-size: 0;
-    line-height: 1;
   }
 
   .top-login-bar.header-admin-actions .btn i {
@@ -3431,12 +3490,12 @@ function selectFamily(family) {
     background: rgba(255,255,255,.55);
     backdrop-filter: blur(2px);
     z-index: 20000;
-    display: none !important;
+    display: none;
     place-items: center;
   }
 
   .global-loading-overlay.show {
-    display: grid !important;
+    display: grid;
   }
 
   .settings-card {
@@ -3456,14 +3515,13 @@ function selectFamily(family) {
 
   @media (max-width: 576px) {
     .top-login-bar.header-admin-actions {
-      gap: 4px;
-      margin-inline-start: 2px;
+      left: 8px;
+      top: 8px;
     }
 
     .top-login-bar.header-admin-actions .btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 11px;
+      width: 34px;
+      height: 34px;
     }
   }
 </style>
@@ -3557,7 +3615,7 @@ function selectFamily(family) {
   </div>
 </div>
 
-<div class="global-loading-overlay" id="globalLoadingOverlay" style="display:none;">
+<div class="global-loading-overlay" id="globalLoadingOverlay">
   <div class="text-center">
     <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;"></div>
     <div class="fw-bold text-primary">جاري المعالجة...</div>
@@ -3574,56 +3632,25 @@ let currentDetailsItem = null;
 let currentGalleryIndex = 0;
 
 async function apiRequest(action, data = {}) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 45000);
-
+  showGlobalSpinner(true);
   try {
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action, data }),
-      signal: controller.signal
+      body: JSON.stringify({ action, data })
     });
-
     const result = await response.json();
-
-    if (!result) {
-      throw new Error('لم يرجع الخادم استجابة واضحة.');
-    }
-
+    if (!result) throw new Error('لم يرجع الخادم استجابة واضحة.');
     return result;
-  } catch (error) {
-    if (error && error.name === 'AbortError') {
-      throw new Error('استغرق الاتصال وقتًا طويلًا. يرجى تحديث الصفحة والمحاولة مجددًا.');
-    }
-
-    throw error;
   } finally {
-    clearTimeout(timeoutId);
-    hideGlobalSpinner();
+    showGlobalSpinner(false);
   }
 }
 
 function showGlobalSpinner(show) {
   const overlay = document.getElementById('globalLoadingOverlay');
   if (!overlay) return;
-
-  if (show) {
-    overlay.classList.add('show');
-    clearTimeout(window.__globalSpinnerTimer);
-    window.__globalSpinnerTimer = setTimeout(() => hideGlobalSpinner(), 15000);
-  } else {
-    hideGlobalSpinner();
-  }
-}
-
-function hideGlobalSpinner() {
-  const overlay = document.getElementById('globalLoadingOverlay');
-  if (!overlay) return;
-
-  overlay.classList.remove('show');
-  overlay.style.display = 'none';
-  clearTimeout(window.__globalSpinnerTimer);
+  overlay.classList.toggle('show', !!show);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -3646,33 +3673,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function moveAdminButtonsToHeader() {
   const bar = document.querySelector('.top-login-bar');
-  const titleRow = document.querySelector('.hero .d-flex.align-items-center.gap-2');
   const hero = document.querySelector('.hero');
-
-  if (bar && titleRow) {
+  if (bar && hero) {
     bar.classList.add('header-admin-actions');
-
-    // دمج أيقونات الدخول ولوحة التحكم داخل سطر العنوان نفسه حتى لا تغطي زر الرئيسية.
-    if (bar.parentElement !== titleRow) {
-      titleRow.appendChild(bar);
-    }
+    hero.insertBefore(bar, hero.firstChild);
 
     ['loginBtn','dashboardBtn','logoutBtn'].forEach(id => {
       const btn = document.getElementById(id);
       if (btn) {
-        btn.title = btn.textContent.trim();
-        btn.setAttribute('aria-label', btn.title || id);
         const icon = btn.querySelector('i');
+        const label = btn.textContent.trim();
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
         btn.innerHTML = icon ? icon.outerHTML : btn.innerHTML;
       }
     });
-
-    return;
-  }
-
-  if (bar && hero) {
-    bar.classList.add('header-admin-actions');
-    hero.appendChild(bar);
   }
 }
 
@@ -3780,9 +3795,8 @@ loadInitialData = function() {
 
       maybeShowIntroModal();
 
-      if (isAdminLoggedIn) {
-        refreshDashboardData(false);
-      }
+      // لا نحمل لوحة التحكم تلقائيًا عند فتح الصفحة العامة؛ هذا كان سببًا رئيسيًا في بطء التحميل.
+      // سيتم تحميل لوحة التحكم فقط عند الضغط على أيقونتها.
 
       document.getElementById('loadingBox').style.display = 'none';
     })
@@ -4615,7 +4629,8 @@ refreshDashboardData = function(showMsg = true) {
       joinRequests = res.joinRequests || [];
       window.__adminMessages = res.messages || [];
       publicSettings = res.settings || publicSettings || {};
-      allMartyrs = dashboardData.filter(x => x.verification_status !== 'مرفوض');
+      // لا نعيد كتابة بيانات الصفحة الرئيسية عند تحميل لوحة التحكم؛ هذا يحافظ على سرعة العرض العام.
+      // allMartyrs = dashboardData.filter(x => x.verification_status !== 'مرفوض');
 
       updateStatsCards();
       updateDashboardStats();
