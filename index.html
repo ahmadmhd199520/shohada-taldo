@@ -1406,10 +1406,10 @@
           <i class="fa-solid fa-id-card text-primary ms-2"></i>
           صفحة الشهيد
         </h3>
-        <button class="btn btn-outline-primary" onclick="showPage(lastPageBeforeDetails || 'homePage')">
-          <i class="fa-solid fa-arrow-right ms-1"></i>
-          رجوع
-        </button>
+        <button class="btn btn-outline-primary" onclick="goBackFromDetails()">
+  <i class="fa-solid fa-arrow-right ms-1"></i>
+  رجوع
+</button>
       </div>
 
       <div id="detailsContainer"></div>
@@ -3005,6 +3005,59 @@ ${item.rejected ? `<span class="badge text-bg-danger me-1">مرفوض: ${item.re
       showPage('detailsPage');
     }
 
+    function goBackFromDetails() {
+  if (lastPageBeforeDetails === 'dashboardDataUpdatesTab') {
+    showPage('dashboardPage');
+    showDashboardTab('dataUpdates');
+    renderDataUpdateRequestsTable();
+
+    if (window.history && window.location) {
+      updateRoute('?page=dashboard&tab=dataUpdates', {
+        page: 'dashboard',
+        tab: 'dataUpdates'
+      });
+    }
+
+    return;
+  }
+
+  if (lastPageBeforeDetails === 'dashboardJoinRequestsTab') {
+    showPage('dashboardPage');
+    showDashboardTab('joinRequests');
+    renderJoinRequestsTable();
+
+    if (window.history && window.location) {
+      updateRoute('?page=dashboard&tab=joinRequests', {
+        page: 'dashboard',
+        tab: 'joinRequests'
+      });
+    }
+
+    return;
+  }
+
+  if (lastPageBeforeDetails === 'dashboardPage') {
+    showPage('dashboardPage');
+    showDashboardTab('martyrs');
+
+    if (window.history && window.location) {
+      updateRoute('?page=dashboard&tab=martyrs', {
+        page: 'dashboard',
+        tab: 'martyrs'
+      });
+    }
+
+    return;
+  }
+
+  if (lastPageBeforeDetails === 'familyMartyrsPage') {
+    showPage('familyMartyrsPage');
+    return;
+  }
+
+  showPage('homePage');
+}
+
     function detailItem(label, value) {
       if (!value) return '';
 
@@ -4350,8 +4403,24 @@ openMartyrDetails = function(martyrId, fromPage, noRoute) {
   lastPageBeforeDetails = fromPage || 'homePage';
 
   if (!noRoute) {
-    const pageParam = fromPage === 'dashboardDataUpdatesTab' ? 'dataUpdates' : (fromPage === 'dashboardPage' ? 'dashboard' : 'home');
-    updateRoute(`?page=${pageParam}&m=${encodeURIComponent(martyrId)}`, { page: 'details', martyrId, fromPage });
+    let pageParam = 'home';
+let tabParam = '';
+
+if (fromPage === 'dashboardDataUpdatesTab') {
+  pageParam = 'dashboard';
+  tabParam = '&tab=dataUpdates';
+} else if (fromPage === 'dashboardJoinRequestsTab') {
+  pageParam = 'dashboard';
+  tabParam = '&tab=joinRequests';
+} else if (fromPage === 'dashboardPage') {
+  pageParam = 'dashboard';
+  tabParam = '&tab=martyrs';
+}
+
+updateRoute(
+  `?page=${pageParam}${tabParam}&m=${encodeURIComponent(martyrId)}`,
+  { page: 'details', martyrId, fromPage }
+);
   }
 
   const canUpdate = isAllowUpdatesEnabled(item.allow_updates);
