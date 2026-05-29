@@ -950,6 +950,199 @@
   }
 }
 </style>
+
+<style id="header-layout-fix-v3">
+/* ===== Header layout fix: admin buttons are part of the header, not absolute ===== */
+.hero {
+  padding: 18px 20px !important;
+}
+
+.hero-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+}
+
+.hero-top-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.hero-title-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.hero-title {
+  min-width: 0;
+}
+
+.top-login-bar,
+.top-login-bar.header-admin-actions,
+.top-login-bar.header-inline-actions,
+.hero-admin-actions {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  transform: none !important;
+  z-index: auto !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+}
+
+.admin-icon-btn,
+.top-login-bar.header-admin-actions .btn,
+.top-login-bar.header-inline-actions .btn {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.75) !important;
+  background: rgba(255,255,255,.10) !important;
+  font-size: 0 !important;
+}
+
+.admin-icon-btn:hover,
+.top-login-bar.header-admin-actions .btn:hover,
+.top-login-bar.header-inline-actions .btn:hover {
+  background: rgba(255,255,255,.22) !important;
+}
+
+.admin-icon-btn i,
+.top-login-bar.header-admin-actions .btn i,
+.top-login-bar.header-inline-actions .btn i {
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+.admin-btn-text {
+  display: none !important;
+}
+
+.top-actions {
+  flex: 0 0 auto;
+}
+
+@media (min-width: 577px) {
+  .top-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero {
+    padding: 12px !important;
+  }
+
+  .hero-layout {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .hero-top-row {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  .hero-title-actions {
+    gap: 7px !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .hero-title {
+    font-size: clamp(.88rem, 4.1vw, 1.08rem) !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .hero-title-actions .btn-warning {
+    flex: 0 0 auto !important;
+    padding: 5px 7px !important;
+    font-size: .72rem !important;
+    white-space: nowrap !important;
+  }
+
+  .top-login-bar.header-inline-actions {
+    flex: 0 0 auto !important;
+    gap: 5px !important;
+  }
+
+  .admin-icon-btn,
+  .top-login-bar.header-admin-actions .btn,
+  .top-login-bar.header-inline-actions .btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 12px !important;
+  }
+
+  .top-actions {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .top-actions .btn {
+    width: 100% !important;
+    padding: 8px 10px !important;
+    font-size: .86rem !important;
+  }
+}
+</style>
+
+<style id="admin-buttons-final-fix">
+/* إظهار زر الدخول أو الخروج فقط حسب الحالة، وعدم كسر d-none بسبب display!important */
+#loginBtn.d-none,
+#dashboardBtn.d-none,
+#logoutBtn.d-none {
+  display: none !important;
+}
+
+#loginBtn.admin-icon-btn,
+#dashboardBtn.admin-icon-btn,
+#logoutBtn.admin-icon-btn {
+  color: #fff !important;
+  border-color: rgba(255,255,255,.85) !important;
+  background: rgba(255,255,255,.12) !important;
+}
+
+#loginBtn.admin-icon-btn:hover,
+#dashboardBtn.admin-icon-btn:hover,
+#logoutBtn.admin-icon-btn:hover {
+  color: #fff !important;
+  background: rgba(255,255,255,.25) !important;
+}
+</style>
+
 </head>
 
 <body>
@@ -982,27 +1175,10 @@
 </script>
   <div class="app-shell">
 
-    <div class="top-login-bar">
-      <button id="loginBtn" class="btn btn-outline-primary btn-sm" onclick="openLoginModal()">
-        <i class="fa-solid fa-right-to-bracket ms-1"></i>
-        تسجيل الدخول
-      </button>
-
-      <button id="dashboardBtn" class="btn btn-primary btn-sm d-none" onclick="openDashboardPage()">
-        <i class="fa-solid fa-gauge-high ms-1"></i>
-        لوحة التحكم
-      </button>
-
-      <button id="logoutBtn" class="btn btn-outline-danger btn-sm d-none" onclick="logoutAdmin()">
-        <i class="fa-solid fa-right-from-bracket ms-1"></i>
-        تسجيل الخروج
-      </button>
-    </div>
-
     <section class="hero mb-4">
-      <div class="row align-items-center g-3">
-        <div class="col-lg-8">
-          <div class="d-flex align-items-center gap-2 flex-wrap">
+      <div class="hero-layout">
+        <div class="hero-top-row">
+          <div class="hero-title-actions">
             <h1 class="hero-title mb-0">
               توثيق شهداء مدينة تلدو
             </h1>
@@ -1013,23 +1189,38 @@
             </button>
           </div>
 
-          <p class="hero-subtitle mb-0">
-            <!-- منصة مجتمعية لحفظ أسماء الشهداء وبياناتهم من الضياع، مع مراجعة البيانات قبل اعتمادها ونشرها. -->
-          </p>
-        </div>
-
-        <div class="col-lg-4">
-          <div class="top-actions">
-            <button class="btn btn-light text-primary highlight-submit-btn" onclick="showDuplicateWarning()">
-              <i class="fa-solid fa-plus ms-1"></i>
-              توثيق شهيد
+          <div class="top-login-bar header-inline-actions">
+            <button id="loginBtn" class="btn btn-outline-light btn-sm admin-icon-btn" onclick="openLoginModal()" title="تسجيل الدخول" aria-label="تسجيل الدخول">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span class="admin-btn-text">تسجيل الدخول</span>
             </button>
 
-            <button class="btn btn-outline-light" onclick="goHome()">
-              <i class="fa-solid fa-house ms-1"></i>
-              <span class="home-btn-text">الرئيسية</span>
+            <button id="dashboardBtn" class="btn btn-outline-light btn-sm admin-icon-btn d-none" onclick="openDashboardPage()" title="لوحة التحكم" aria-label="لوحة التحكم">
+              <i class="fa-solid fa-gauge-high"></i>
+              <span class="admin-btn-text">لوحة التحكم</span>
+            </button>
+
+            <button id="logoutBtn" class="btn btn-outline-light btn-sm admin-icon-btn d-none" onclick="logoutAdmin()" title="تسجيل الخروج" aria-label="تسجيل الخروج">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span class="admin-btn-text">تسجيل الخروج</span>
             </button>
           </div>
+        </div>
+
+        <p class="hero-subtitle mb-0">
+          <!-- منصة مجتمعية لحفظ أسماء الشهداء وبياناتهم من الضياع، مع مراجعة البيانات قبل اعتمادها ونشرها. -->
+        </p>
+
+        <div class="top-actions">
+          <button class="btn btn-light text-primary highlight-submit-btn" onclick="showDuplicateWarning()">
+            <i class="fa-solid fa-plus ms-1"></i>
+            توثيق شهيد
+          </button>
+
+          <button class="btn btn-outline-light" onclick="goHome()">
+            <i class="fa-solid fa-house ms-1"></i>
+            <span class="home-btn-text">الرئيسية</span>
+          </button>
         </div>
       </div>
     </section>
@@ -1641,9 +1832,12 @@
             <i class="fa-solid fa-check"></i>
           </div>
           <h4 class="fw-bold mb-2">تم إرسال البيانات</h4>
-          <p class="text-muted mb-0">
+          <p class="text-muted mb-3">
             شكرًا لمساهمتكم. ستظهر البيانات بعد مراجعتها وتوثيقها.
           </p>
+          <button class="btn btn-primary w-100" data-bs-dismiss="modal">
+            موافق
+          </button>
         </div>
       </div>
     </div>
@@ -3706,23 +3900,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function moveAdminButtonsToHeader() {
-  const bar = document.querySelector('.top-login-bar');
-  const hero = document.querySelector('.hero');
-  if (bar && hero) {
-    bar.classList.add('header-admin-actions');
-    hero.insertBefore(bar, hero.firstChild);
+  // الأزرار أصبحت جزءًا طبيعيًا من الهيدر، لذلك لا نستخدم position absolute ولا ننقلها من مكانها.
+  ['loginBtn', 'dashboardBtn', 'logoutBtn'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
 
-    ['loginBtn','dashboardBtn','logoutBtn'].forEach(id => {
-      const btn = document.getElementById(id);
-      if (btn) {
-        const icon = btn.querySelector('i');
-        const label = btn.textContent.trim();
-        btn.title = label;
-        btn.setAttribute('aria-label', label);
-        btn.innerHTML = icon ? icon.outerHTML : btn.innerHTML;
-      }
-    });
-  }
+    const label = (btn.getAttribute('title') || btn.textContent || '').trim();
+    if (label) {
+      btn.title = label;
+      btn.setAttribute('aria-label', label);
+    }
+  });
 }
 
 function maybeShowIntroModal() {
@@ -4773,6 +4961,154 @@ submitDataUpdateForm = async function() {
     showToast(error.message || 'تعذر قراءة الصور.');
   }
 };
+
+
+/* ===== Final fixes: admin buttons visibility + safe spinner + persistent success modal ===== */
+function setButtonLoading(btn, isLoading, loadingText, normalHtml) {
+  if (!btn) return;
+  btn.disabled = !!isLoading;
+  btn.innerHTML = isLoading
+    ? `<span class="spinner-border spinner-border-sm ms-1"></span> ${loadingText || 'جار المعالجة...'}`
+    : normalHtml;
+}
+
+(function ensureFinalAdminButtonBehavior() {
+  const originalUpdateAdminButtons = window.updateAdminButtons;
+  window.updateAdminButtons = function() {
+    if (typeof originalUpdateAdminButtons === 'function') {
+      originalUpdateAdminButtons();
+    }
+
+    const loginBtn = document.getElementById('loginBtn');
+    const dashboardBtn = document.getElementById('dashboardBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (loginBtn) loginBtn.classList.toggle('d-none', !!isAdminLoggedIn);
+    if (dashboardBtn) dashboardBtn.classList.toggle('d-none', !isAdminLoggedIn);
+    if (logoutBtn) logoutBtn.classList.toggle('d-none', !isAdminLoggedIn);
+
+    [loginBtn, dashboardBtn, logoutBtn].forEach(btn => {
+      if (!btn) return;
+      btn.classList.remove('btn-danger', 'btn-outline-danger', 'btn-primary');
+      btn.classList.add('btn-outline-light', 'admin-icon-btn');
+    });
+  };
+})();
+
+// السبنر العام يبقى متاحًا للعمليات الطويلة فقط، ولا يرتبط بكل طلبات الجلب العادية.
+function showGlobalSpinner(show = true) {
+  const overlay = document.getElementById('globalLoadingOverlay');
+  if (!overlay) return;
+
+  overlay.classList.toggle('show', !!show);
+
+  if (show) {
+    clearTimeout(window.__globalSpinnerSafetyTimer);
+    window.__globalSpinnerSafetyTimer = setTimeout(() => {
+      hideGlobalSpinner();
+    }, 25000);
+  }
+}
+
+function hideGlobalSpinner() {
+  const overlay = document.getElementById('globalLoadingOverlay');
+  if (overlay) overlay.classList.remove('show');
+  clearTimeout(window.__globalSpinnerSafetyTimer);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  hideGlobalSpinner();
+  if (typeof updateAdminButtons === 'function') updateAdminButtons();
+});
+
+submitMartyrForm = async function() {
+  const form = document.getElementById('martyrForm');
+  if (!form || !form.checkValidity()) {
+    if (form) form.reportValidity();
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  const normalBtn = `<i class="fa-solid fa-paper-plane ms-1"></i> إرسال البيانات`;
+
+  setButtonLoading(btn, true, 'جاري الإرسال...', normalBtn);
+  showGlobalSpinner(true);
+
+  try {
+    const formData = Object.fromEntries(new FormData(form).entries());
+    const imageInput = document.getElementById('imageInput');
+
+    if (typeof filesToPayload === 'function') {
+      formData.imageFiles = await filesToPayload(imageInput?.files || []);
+    } else {
+      const file = imageInput?.files && imageInput.files[0];
+      if (file) {
+        formData.imageBase64 = await fileToBase64(file);
+        formData.imageName = file.name;
+      }
+    }
+
+    const res = await apiRequest('submitMartyr', formData);
+
+    if (!res || !res.success) {
+      showToast(res?.message || 'تعذر الإرسال.');
+      return;
+    }
+
+    modals.submitModal.hide();
+    modals.submitSuccessModal.show();
+    loadInitialData();
+  } catch (err) {
+    showToast(err.message || 'حدث خطأ أثناء إرسال البيانات.');
+  } finally {
+    setButtonLoading(btn, false, '', normalBtn);
+    hideGlobalSpinner();
+  }
+};
+
+submitDataUpdateForm = async function() {
+  const martyrId = document.getElementById('dataUpdateMartyrId')?.value || '';
+  const martyrName = document.getElementById('dataUpdateMartyrName')?.value || '';
+  const requestText = document.getElementById('dataUpdateText')?.value.trim() || '';
+  const imageInput = document.getElementById('dataUpdateImageInput');
+
+  if (!requestText && (!imageInput || !imageInput.files.length)) {
+    showToast('يرجى كتابة البيانات أو رفع صورة.');
+    return;
+  }
+
+  const btn = document.getElementById('dataUpdateSubmitBtn');
+  const normalBtn = 'إرسال للمراجعة';
+
+  setButtonLoading(btn, true, 'جاري الإرسال...', normalBtn);
+  showGlobalSpinner(true);
+
+  try {
+    const payload = {
+      martyr_id: martyrId,
+      martyr_name: martyrName,
+      request_text: requestText,
+      submitted_text: requestText,
+      imageFiles: typeof filesToPayload === 'function' ? await filesToPayload(imageInput?.files || []) : []
+    };
+
+    const res = await apiRequest('submitDataUpdate', payload);
+
+    if (!res || !res.success) {
+      showToast(res?.message || 'تعذر إرسال الطلب.');
+      return;
+    }
+
+    modals.dataUpdateModal.hide();
+    showToast(res.message || 'تم إرسال الطلب.');
+  } catch (err) {
+    showToast(err.message || 'تعذر إرسال الطلب.');
+  } finally {
+    setButtonLoading(btn, false, '', normalBtn);
+    hideGlobalSpinner();
+  }
+};
+
 </script>
 
 </body>
