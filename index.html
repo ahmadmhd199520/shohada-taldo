@@ -840,6 +840,50 @@
       }
     }
 
+  
+
+/* إصلاح تموضع أيقونات الإدارة داخل الهيدر */
+.hero-admin-actions {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 5;
+}
+.hero-admin-actions .btn {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-admin-actions .btn span,
+.hero-admin-actions .btn .admin-btn-text {
+  display: none !important;
+}
+@media (max-width: 576px) {
+  .hero-admin-actions {
+    left: 10px;
+    top: 12px;
+    transform: none;
+    gap: 6px;
+  }
+  .hero-admin-actions .btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+  }
+  .hero {
+    padding-left: 92px !important;
+  }
+}
+
   </style>
 <style>
 
@@ -3631,26 +3675,16 @@ let currentRouteSilent = false;
 let currentDetailsItem = null;
 let currentGalleryIndex = 0;
 
-async function apiRequest(action, data = {}) {
-  showGlobalSpinner(true);
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action, data })
-    });
-    const result = await response.json();
-    if (!result) throw new Error('لم يرجع الخادم استجابة واضحة.');
-    return result;
-  } finally {
-    showGlobalSpinner(false);
-  }
-}
-
+// لا نعيد تعريف apiRequest هنا حتى لا تصبح كل عمليات الجلب مرتبطة بالسبنر العام.
+// التعريف الأساسي موجود في أعلى الصفحة ويعمل بدون حجب الشاشة.
 function showGlobalSpinner(show) {
   const overlay = document.getElementById('globalLoadingOverlay');
   if (!overlay) return;
   overlay.classList.toggle('show', !!show);
+}
+
+function hideGlobalSpinner() {
+  showGlobalSpinner(false);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
