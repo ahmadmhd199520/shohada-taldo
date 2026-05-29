@@ -1,0 +1,4676 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>توثيق شهداء مدينة تلدو</title>
+
+  <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w64">
+  <link rel="shortcut icon" type="image/png" href="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w64">
+  <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w180">
+  <meta property="og:title" content="توثيق شهداء مدينة تلدو">
+  <meta property="og:description" content="منصة توثيقية إنسانية لحفظ أسماء شهداء مدينة تلدو وبياناتهم.">
+  <meta property="og:image" content="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w1200">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="توثيق شهداء مدينة تلدو">
+  <meta name="twitter:description" content="منصة توثيقية إنسانية لحفظ أسماء شهداء مدينة تلدو وبياناتهم.">
+  <meta name="twitter:image" content="https://drive.google.com/thumbnail?id=1aIrorrnp_EiMzRhGKR2Jy_oTrI2NdZhb&sz=w1200">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --main-bg: #f5f7fb;
+      --card-radius: 22px;
+      --soft-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+      --blue: #0d6efd;
+      --dark: #172033;
+      --muted: #6c757d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(13, 110, 253, 0.12), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(25, 135, 84, 0.10), transparent 30%),
+        var(--main-bg);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    .app-shell {
+      max-width: 1200px;
+      margin: auto;
+      padding: 18px;
+    }
+
+    .top-login-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0d6efd, #084298);
+      color: white;
+      border-radius: 28px;
+      padding: 28px 20px;
+      box-shadow: var(--soft-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.09);
+      top: -80px;
+      left: -60px;
+      pointer-events: none;
+
+    }
+
+    .hero>* {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-weight: 800;
+      font-size: clamp(1.55rem, 4vw, 2.4rem);
+      margin: 0;
+    }
+
+    .hero-subtitle {
+      opacity: 0.92;
+      margin-top: 8px;
+      max-width: 760px;
+      line-height: 1.8;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .stat-card {
+      border: 0;
+      border-radius: var(--card-radius);
+      box-shadow: var(--soft-shadow);
+      transition: 0.25s;
+      height: 100%;
+      overflow: hidden;
+      background: white;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.35rem;
+    }
+
+    .filter-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--card-radius);
+      box-shadow: var(--soft-shadow);
+      padding: 16px;
+    }
+
+    .form-control,
+    .form-select {
+      border-radius: 14px;
+      padding: 11px 13px;
+    }
+
+    .btn {
+      border-radius: 14px;
+      padding: 10px 16px;
+      font-weight: 700;
+    }
+
+    .view-toggle .btn {
+      padding: 9px 12px;
+    }
+
+    .martyrs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 16px;
+    }
+
+    .martyr-card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: var(--soft-shadow);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: 0.25s;
+      border: 1px solid rgba(13, 110, 253, 0.05);
+    }
+
+    .martyr-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .martyr-image-wrap {
+      height: 180px;
+      background: linear-gradient(135deg, #e9ecef, #f8f9fa);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .martyr-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .martyr-placeholder {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: #e9ecef;
+      display: grid;
+      place-items: center;
+      color: #adb5bd;
+      font-size: 2.3rem;
+    }
+
+    .martyr-body {
+      padding: 14px;
+      text-align: center;
+    }
+
+    .martyr-name {
+      font-weight: 800;
+      margin: 0;
+      font-size: 1.02rem;
+      line-height: 1.5;
+    }
+
+    .martyr-family {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 4px;
+    }
+
+    .verified-corner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-top: 58px solid var(--blue);
+      border-right: 58px solid transparent;
+      z-index: 2;
+    }
+
+    .verified-corner i {
+      position: absolute;
+      top: -50px;
+      left: 10px;
+      color: white;
+      font-size: 1rem;
+    }
+
+
+    .needs-completion-corner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #ffc107;
+      color: #212529;
+      padding: 6px 10px;
+      border-bottom-right-radius: 14px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      z-index: 3;
+      box-shadow: 0 6px 18px rgba(255, 193, 7, 0.35);
+      max-width: 92px;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .completed-info-box {
+      background: #fff8e1;
+      border: 1px solid rgba(255, 193, 7, 0.45);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .completed-info-box p {
+      white-space: pre-line;
+    }
+
+    .list-item {
+      background: white;
+      border: 0;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .list-item:hover {
+      transform: translateX(-3px);
+      background: #f8fbff;
+    }
+
+    .family-row {
+      background: white;
+      border-radius: 18px;
+      padding: 15px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .family-row:hover {
+      background: #f8fbff;
+      transform: translateY(-2px);
+    }
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    .modal-content {
+      border: 0;
+      border-radius: 26px;
+      overflow: visible;
+    }
+
+    .modal-header {
+      border-bottom: 0;
+    }
+
+    .modal-footer {
+      border-top: 0;
+    }
+
+    .intro-icon {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: rgba(13, 110, 253, 0.12);
+      color: var(--blue);
+      display: grid;
+      place-items: center;
+      margin: 0 auto 15px;
+      font-size: 2.2rem;
+    }
+
+    .success-check {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      border: 4px solid #198754;
+      color: #198754;
+      display: grid;
+      place-items: center;
+      font-size: 2.3rem;
+      margin: 0 auto 14px;
+      animation: popCheck 0.45s ease forwards;
+    }
+
+    @keyframes popCheck {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      80% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .empty-state {
+      background: white;
+      border-radius: 24px;
+      padding: 35px 20px;
+      text-align: center;
+      color: var(--muted);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .detail-image {
+      width: 100%;
+      max-height: 390px;
+      object-fit: cover;
+      border-radius: 22px;
+      background: #f1f3f5;
+    }
+
+    .detail-image-placeholder {
+      min-height: 320px;
+      border-radius: 22px;
+      background: #f1f3f5;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #6c757d;
+    }
+
+    .detail-box {
+      background: white;
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .badge-soft-blue {
+      background: rgba(13, 110, 253, 0.12);
+      color: #0d6efd;
+      border: 1px solid rgba(13, 110, 253, 0.15);
+    }
+
+    .admin-box {
+      background: #fff8e1;
+      border: 1px solid #ffe08a;
+      border-radius: 20px;
+      padding: 15px;
+    }
+
+    .dashboard-card {
+      background: white;
+      border-radius: 22px;
+      box-shadow: var(--soft-shadow);
+      padding: 18px;
+    }
+
+    .dashboard-table-card {
+      background: white;
+      border-radius: 22px;
+      box-shadow: var(--soft-shadow);
+      overflow: hidden;
+    }
+
+    .table {
+      margin-bottom: 0;
+      vertical-align: middle;
+    }
+
+    .table thead th {
+      background: #f8f9fa;
+      font-weight: 800;
+      color: #495057;
+      white-space: nowrap;
+    }
+
+    .family-dropdown {
+      position: absolute;
+      z-index: 99999;
+      top: 100%;
+      right: 12px;
+      left: 12px;
+      background: #ffffff;
+      border: 1px solid #dee2e6;
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+      max-height: 240px;
+      overflow-y: auto;
+      margin-top: 6px;
+    }
+
+    .family-option {
+      padding: 11px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f3f5;
+      font-weight: 600;
+    }
+
+    .family-option:hover {
+      background: #f1f7ff;
+      color: #0d6efd;
+    }
+
+    .family-option:last-child {
+      border-bottom: 0;
+    }
+
+    .family-suggestion-title {
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      color: #6c757d;
+      background: #f8f9fa;
+      font-weight: 700;
+    }
+
+    .family-new-hint {
+      padding: 11px 14px;
+      color: #198754;
+      background: #f6fff9;
+      font-weight: 600;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 576px) {
+      .app-shell {
+        padding: 12px;
+      }
+
+      .hero {
+        padding: 22px 16px;
+        border-radius: 22px;
+      }
+
+      .top-actions {
+        justify-content: stretch;
+      }
+
+      .top-actions .btn {
+        width: 100%;
+      }
+
+      .top-login-bar {
+        justify-content: stretch;
+      }
+
+      .top-login-bar .btn {
+        flex: 1;
+      }
+
+      .martyrs-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .martyr-image-wrap {
+        height: 145px;
+      }
+
+      .martyr-body {
+        padding: 11px;
+      }
+
+      .martyr-name {
+        font-size: 0.94rem;
+      }
+
+      .table-responsive {
+        font-size: 0.88rem;
+      }
+    }
+  
+    .mobile-search-filter {
+      display: none;
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      padding: 10px;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .site-footer {
+      margin-top: 28px;
+      background: linear-gradient(135deg, #0d6efd, #084298);
+      color: #ffffff;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: var(--soft-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .site-footer a {
+      color: #ffffff;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .details-action-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .dashboard-section-card {
+      background: white;
+      border-radius: 22px;
+      box-shadow: var(--soft-shadow);
+      overflow: hidden;
+      margin-top: 18px;
+    }
+
+    .dashboard-section-header {
+      padding: 16px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #edf0f3;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .request-text-cell {
+      max-width: 320px;
+      white-space: normal;
+      line-height: 1.7;
+    }
+
+    .modal textarea {
+      resize: vertical;
+    }
+
+  
+    @media (max-width: 576px) {
+      .app-shell {
+        padding: 8px;
+      }
+
+      .top-login-bar {
+        margin-bottom: 8px;
+        gap: 6px;
+      }
+
+      .top-login-bar .btn {
+        padding: 7px 9px;
+        font-size: 0.78rem;
+      }
+
+      .hero {
+        padding: 12px 12px;
+        border-radius: 18px;
+        margin-bottom: 12px !important;
+      }
+
+      .hero .row {
+        gap: 8px !important;
+      }
+
+      .hero-title {
+        font-size: 1.18rem;
+        line-height: 1.45;
+      }
+
+      .hero .btn-sm {
+        padding: 6px 9px;
+        font-size: 0.78rem;
+      }
+
+      .hero-subtitle {
+        display: none;
+      }
+
+      .top-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .top-actions .btn {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 0.86rem;
+      }
+
+      .home-btn-text {
+        display: inline;
+      }
+
+      .home-stats-row {
+        --bs-gutter-x: .4rem;
+        --bs-gutter-y: .4rem;
+        margin-bottom: 10px !important;
+      }
+
+      .home-stats-row > [class*="col-"] {
+        width: 33.333333%;
+        flex: 0 0 auto;
+      }
+
+      .home-stats-row .card-body {
+        padding: 9px 6px;
+        justify-content: center;
+        gap: 5px !important;
+        text-align: center;
+      }
+
+      .home-stats-row .stat-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 12px;
+        font-size: 1rem;
+      }
+
+      .home-stats-row .text-muted {
+        display: none;
+      }
+
+      .home-stats-row h3 {
+        font-size: 1.05rem;
+      }
+
+      .home-stats-row h5 {
+        font-size: .85rem;
+      }
+
+      .home-stats-row .family-details-text {
+        display: inline;
+      }
+
+      .desktop-filter-card {
+        display: none;
+      }
+
+      .mobile-search-filter {
+        display: flex;
+      }
+
+      .mobile-search-filter .form-control {
+        padding: 9px 11px;
+      }
+
+      .mobile-search-filter .btn {
+        width: 46px;
+        min-width: 46px;
+        padding: 8px 0;
+      }
+
+      .martyrs-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .martyr-image-wrap {
+        height: 132px;
+      }
+
+      .martyr-body {
+        padding: 9px;
+      }
+
+      .martyr-name {
+        font-size: 0.9rem;
+      }
+
+      .martyr-family {
+        font-size: 0.8rem;
+      }
+
+      .site-footer {
+        border-radius: 18px;
+        padding: 12px;
+        justify-content: center;
+        text-align: center;
+        font-size: .85rem;
+      }
+
+      .site-footer .btn {
+        width: 100%;
+      }
+
+      .details-action-bar .btn {
+        flex: 1 1 auto;
+      }
+    }
+
+
+    .highlight-submit-btn {
+      position: relative;
+      animation: yellowPulseGlow 1.8s ease-in-out infinite;
+      border-color: rgba(255, 193, 7, 0.9) !important;
+    }
+
+    @keyframes yellowPulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 0 rgba(255, 193, 7, 0), 0 8px 22px rgba(15, 23, 42, 0.10);
+        transform: translateY(0);
+      }
+      50% {
+        box-shadow: 0 0 0 5px rgba(255, 193, 7, 0.24), 0 0 22px rgba(255, 193, 7, 0.72);
+        transform: translateY(-1px);
+      }
+    }
+
+    .martyrs-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 18px;
+    }
+
+    .martyrs-pagination .page-btn {
+      min-width: 38px;
+      padding: 8px 11px;
+      border-radius: 12px;
+    }
+
+    .dashboard-tabs {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 8px;
+      box-shadow: var(--soft-shadow);
+      gap: 8px;
+    }
+
+    .dashboard-tabs .nav-link {
+      border-radius: 14px;
+      font-weight: 800;
+      color: #495057;
+    }
+
+    .dashboard-tabs .nav-link.active {
+      background: #0d6efd;
+      color: #fff;
+    }
+
+    .dashboard-tab-pane.d-none {
+      display: none !important;
+    }
+
+    @media (max-width: 576px) {
+      .hero-title {
+        font-size: 1.02rem;
+        white-space: nowrap;
+      }
+
+      .hero .d-flex.align-items-center.gap-2.flex-wrap {
+        flex-wrap: nowrap !important;
+      }
+
+      .hero .btn-sm {
+        white-space: nowrap;
+        padding: 5px 7px;
+        font-size: 0.72rem;
+      }
+
+      .home-btn-text {
+        display: inline;
+      }
+
+      .martyrs-pagination .page-btn {
+        min-width: 34px;
+        padding: 7px 9px;
+        font-size: .86rem;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+<script>
+  const IS_ADMIN_FROM_URL = false;
+
+  const API_URL = 'https://nameless-night-1208.al-shwikh-1995-sultan.workers.dev/';
+  const SHARE_PREVIEW_URL = 'https://nameless-night-1208.al-shwikh-1995-sultan.workers.dev/';
+
+  async function apiRequest(action, data = {}) {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        action,
+        data
+      })
+    });
+
+    const result = await response.json();
+
+    if (!result) {
+      throw new Error('لم يرجع الخادم استجابة واضحة.');
+    }
+
+    return result;
+  }
+</script>
+  <div class="app-shell">
+
+    <div class="top-login-bar">
+      <button id="loginBtn" class="btn btn-outline-primary btn-sm" onclick="openLoginModal()">
+        <i class="fa-solid fa-right-to-bracket ms-1"></i>
+        تسجيل الدخول
+      </button>
+
+      <button id="dashboardBtn" class="btn btn-primary btn-sm d-none" onclick="openDashboardPage()">
+        <i class="fa-solid fa-gauge-high ms-1"></i>
+        لوحة التحكم
+      </button>
+
+      <button id="logoutBtn" class="btn btn-outline-danger btn-sm d-none" onclick="logoutAdmin()">
+        <i class="fa-solid fa-right-from-bracket ms-1"></i>
+        تسجيل الخروج
+      </button>
+    </div>
+
+    <section class="hero mb-4">
+      <div class="row align-items-center g-3">
+        <div class="col-lg-8">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <h1 class="hero-title mb-0">
+              توثيق شهداء مدينة تلدو
+            </h1>
+
+            <button class="btn btn-warning btn-sm" onclick="openAboutProjectModal()">
+              <i class="fa-solid fa-triangle-exclamation ms-1"></i>
+              عن المشروع
+            </button>
+          </div>
+
+          <p class="hero-subtitle mb-0">
+            <!-- منصة مجتمعية لحفظ أسماء الشهداء وبياناتهم من الضياع، مع مراجعة البيانات قبل اعتمادها ونشرها. -->
+          </p>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="top-actions">
+            <button class="btn btn-light text-primary highlight-submit-btn" onclick="showDuplicateWarning()">
+              <i class="fa-solid fa-plus ms-1"></i>
+              توثيق شهيد
+            </button>
+
+            <button class="btn btn-outline-light" onclick="goHome()">
+              <i class="fa-solid fa-house ms-1"></i>
+              <span class="home-btn-text">الرئيسية</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="homePage" class="page-section active">
+
+      <div class="row g-3 mb-4 home-stats-row">
+        <div class="col-md-4 col-4">
+          <div class="card stat-card">
+            <div class="card-body d-flex align-items-center gap-3">
+              <div class="stat-icon bg-primary-subtle text-primary">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div>
+                <div class="text-muted">الشهداء الموثَّقون</div>
+                <h3 class="fw-bold mb-0" id="verifiedCount">0</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-4">
+          <div class="card stat-card">
+            <div class="card-body d-flex align-items-center gap-3">
+              <div class="stat-icon bg-warning-subtle text-warning">
+                <i class="fa-solid fa-clock"></i>
+              </div>
+              <div>
+                <div class="text-muted">شهداء بانتظار التوثق</div>
+                <h3 class="fw-bold mb-0" id="pendingCount">0</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-4">
+          <button class="card stat-card w-100 text-start" onclick="openFamiliesStatsPage()">
+            <div class="card-body d-flex align-items-center gap-3">
+              <div class="stat-icon bg-success-subtle text-success">
+                <i class="fa-solid fa-chart-simple"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="text-muted">إحصائيات بحسب العائلة</div>
+                <h5 class="fw-bold mb-0"><span class="family-details-text">تفاصيل</span></h5>
+              </div>
+              <i class="fa-solid fa-chevron-left text-muted"></i>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-search-filter">
+        <input type="search" id="mobileSearchInput" class="form-control" placeholder="ابحث بالاسم أو العائلة..." oninput="syncMobileSearch()">
+        <button class="btn btn-primary" onclick="openMobileFilterModal()" aria-label="فلترة">
+          <i class="fa-solid fa-filter"></i>
+        </button>
+      </div>
+
+      <div class="filter-card desktop-filter-card mb-4">
+        <div class="row g-3 align-items-end">
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label fw-bold">البحث</label>
+            <input type="search" id="searchInput" class="form-control" placeholder="ابحث بالاسم، الأب، العائلة..." oninput="resetMartyrsPageAndRender()">
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label fw-bold">فلترة حسب العائلة</label>
+            <select id="familyFilter" class="form-select" onchange="resetMartyrsPageAndRender()">
+              <option value="">كل العوائل</option>
+            </select>
+          </div>
+
+          <div class="col-lg-2 col-md-6">
+            <label class="form-label fw-bold">الحالة</label>
+            <select id="statusFilter" class="form-select" onchange="changeStatusFilter()">
+              <option value="موثق" selected>الأسماء الموثقة</option>
+              <option value="بانتظار التوثيق">أسماء بانتظار التوثق</option>
+              <option value="">الكل</option>
+            </select>
+          </div>
+
+          <div class="col-lg-2 col-md-6">
+            <label class="form-label fw-bold">الاستكمال</label>
+            <select id="completionFilter" class="form-select" onchange="resetMartyrsPageAndRender()">
+              <option value="">الكل</option>
+              <option value="needs">يحتاج استكمال</option>
+              <option value="complete">لا يحتاج استكمال</option>
+            </select>
+          </div>
+
+          <div class="col-lg-2 col-md-6">
+            <label class="form-label fw-bold">الفرز</label>
+            <select id="sortSelect" class="form-select" onchange="saveSortPreference(); resetMartyrsPageAndRender()">
+              <option value="name">أبجديًا حسب الاسم</option>
+              <option value="family">أبجديًا حسب العائلة</option>
+              <option value="newest">الأحدث رفعًا</option>
+              <option value="oldest">الأقدم رفعًا</option>
+            </select>
+          </div>
+
+          <div class="col-lg-2">
+            <label class="form-label fw-bold">طريقة العرض</label>
+            <div class="btn-group w-100 view-toggle">
+              <button class="btn btn-primary" id="cardsViewBtn" onclick="setViewMode('cards')">
+                <i class="fa-solid fa-grip"></i>
+              </button>
+              <button class="btn btn-outline-primary" id="listViewBtn" onclick="setViewMode('list')">
+                <i class="fa-solid fa-list"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="loadingBox" class="empty-state">
+        <div class="spinner-border text-primary mb-3"></div>
+        <div>جاري تحميل البيانات...</div>
+      </div>
+
+      <div id="martyrsContainer"></div>
+    </section>
+
+    <section id="familiesPage" class="page-section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0">
+          <i class="fa-solid fa-chart-simple text-primary ms-2"></i>
+          إحصائيات بحسب العائلة
+        </h3>
+        <button class="btn btn-outline-primary" onclick="goHome()">
+          <i class="fa-solid fa-arrow-right ms-1"></i>
+          رجوع
+        </button>
+      </div>
+
+      <div id="familiesStatsContainer"></div>
+    </section>
+
+    <section id="familyMartyrsPage" class="page-section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0" id="familyPageTitle">شهداء العائلة</h3>
+        <button class="btn btn-outline-primary" onclick="showPage('familiesPage')">
+          <i class="fa-solid fa-arrow-right ms-1"></i>
+          رجوع
+        </button>
+      </div>
+
+      <div id="familyMartyrsContainer"></div>
+    </section>
+
+    <section id="detailsPage" class="page-section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0">
+          <i class="fa-solid fa-id-card text-primary ms-2"></i>
+          صفحة الشهيد
+        </h3>
+        <button class="btn btn-outline-primary" onclick="showPage(lastPageBeforeDetails || 'homePage')">
+          <i class="fa-solid fa-arrow-right ms-1"></i>
+          رجوع
+        </button>
+      </div>
+
+      <div id="detailsContainer"></div>
+    </section>
+
+    <section id="dashboardPage" class="page-section">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+          <h3 class="fw-bold mb-1">
+            <i class="fa-solid fa-gauge-high text-primary ms-2"></i>
+            لوحة التحكم
+          </h3>
+          <div class="text-muted" id="adminWelcomeText"></div>
+        </div>
+
+        <button class="btn btn-outline-primary" onclick="goHome()">
+          <i class="fa-solid fa-house ms-1"></i>
+          الرئيسية
+        </button>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="dashboard-card d-flex align-items-center gap-3">
+            <div class="stat-icon bg-primary-subtle text-primary">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+              <div class="text-muted">الموثقون</div>
+              <h3 id="dashVerifiedCount" class="fw-bold mb-0">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="dashboard-card d-flex align-items-center gap-3">
+            <div class="stat-icon bg-warning-subtle text-warning">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div>
+              <div class="text-muted">بانتظار التوثق</div>
+              <h3 id="dashPendingCount" class="fw-bold mb-0">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="dashboard-card d-flex align-items-center gap-3">
+            <div class="stat-icon bg-success-subtle text-success">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+              <div class="text-muted">الإجمالي</div>
+              <h3 id="dashTotalCount" class="fw-bold mb-0">0</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-pills dashboard-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="dashMartyrsTabBtn" type="button" onclick="showDashboardTab('martyrs')">
+            <i class="fa-solid fa-list-check ms-1"></i>
+            التوثيقات
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="dashDataUpdatesTabBtn" type="button" onclick="showDashboardTab('dataUpdates')">
+            <i class="fa-solid fa-pen-to-square ms-1"></i>
+            استكمال البيانات
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="dashJoinTabBtn" type="button" onclick="showDashboardTab('joinRequests')">
+            <i class="fa-solid fa-user-plus ms-1"></i>
+            طلبات الانضمام
+          </button>
+        </li>
+      </ul>
+
+      <div id="dashboardMartyrsTab" class="dashboard-tab-pane">
+      <div class="filter-card mb-4">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-5">
+            <label class="form-label fw-bold">بحث في لوحة التحكم</label>
+            <input type="search" class="form-control" id="dashboardSearchInput" placeholder="ابحث بالاسم أو العائلة..." oninput="renderDashboardTable()">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-bold">فلترة الحالة</label>
+            <select class="form-select" id="dashboardStatusFilter" onchange="renderDashboardTable()">
+              <option value="بانتظار التوثيق" selected>بانتظار التوثيق</option>
+              <option value="موثق">موثق</option>
+              <option value="مرفوض">مرفوض</option>
+              <option value="">الكل</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <button class="btn btn-primary w-100" onclick="refreshDashboardData()">
+              <i class="fa-solid fa-rotate ms-1"></i>
+              تحديث
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-table-card">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>الصورة</th>
+                <th>الاسم</th>
+                <th>العائلة</th>
+                <th>الأب</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardTableBody">
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                  جاري تحميل البيانات...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+      <div id="dashboardDataUpdatesTab" class="dashboard-section-card dashboard-tab-pane d-none">
+        <div class="dashboard-section-header">
+          <h5 class="fw-bold mb-0">
+            <i class="fa-solid fa-pen-to-square text-primary ms-1"></i>
+            طلبات استكمال بيانات الشهداء
+          </h5>
+          <span class="badge text-bg-light" id="dataUpdatesCount">0</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>اسم الشهيد</th>
+                <th>العائلة</th>
+                <th>الطلب</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="dataUpdatesTableBody">
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">لا توجد بيانات بعد.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="dashboardJoinRequestsTab" class="dashboard-section-card dashboard-tab-pane d-none">
+        <div class="dashboard-section-header">
+          <h5 class="fw-bold mb-0">
+            <i class="fa-solid fa-user-plus text-success ms-1"></i>
+            طلبات الانضمام لفريق التوثيق
+          </h5>
+          <span class="badge text-bg-light" id="joinRequestsCount">0</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الاسم</th>
+                <th>العائلة</th>
+                <th>المواليد</th>
+                <th>الهاتف</th>
+                <th>ملاحظات</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="joinRequestsTableBody">
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">لا توجد طلبات بعد.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div>
+        © تم إنشاء هذا الموقع بواسطة
+        <a href="https://www.facebook.com/ahmadshwikh1995" target="_blank" rel="noopener">
+          أحمد الشويخ أبو أسامة
+        </a>
+        <!-- <i class="fa-solid fa-heart me-1"></i> -->
+      </div>
+
+      <button class="btn btn-outline-light" onclick="openAboutUsModal()">
+        <i class="fa-solid fa-circle-info ms-1"></i>
+        من نحن
+      </button>
+
+      <!-- <button class="btn btn-light text-primary" onclick="openJoinTeamModal()">
+        <i class="fa-solid fa-user-plus ms-1"></i>
+        انضم إلى فريق التوثيق
+      </button> -->
+    </footer>
+  </div>
+
+  <!-- Intro Modal -->
+  <div class="modal fade" id="introModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-4 text-center">
+          <div class="intro-icon bg-warning-subtle text-warning">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+
+          <h4 class="fw-bold mb-3">تنبيه مهم</h4>
+
+          <p class="lh-lg text-start" style="color: red;">
+            هذا المشروع توثيقي إنساني يهدف إلى حفظ أسماء شهداء مدينة تلدو وبياناتهم من الضياع،
+            وإتاحة المجال لأهل المدينة وذوي الشهداء للمساهمة في تصحيح المعلومات واستكمالها.
+            <br>
+            نؤكد أن هذا المشروع ليس مشروعًا ربحيًا، ولا يهدف إلى جمع التبرعات أو استجلاب الدعم
+            أو استخدام أسماء الشهداء لأي غرض مادي أو سياسي.
+            <br>
+            جميع البيانات المرسلة ستخضع للمراجعة قبل اعتمادها ونشرها، وذلك حفاظًا على الدقة ومنع التكرار أو الخطأ.
+          </p>
+
+          <div class="form-check text-start mb-3">
+            <input class="form-check-input" type="checkbox" id="dontShowIntroAgain">
+            <label class="form-check-label" for="dontShowIntroAgain">
+              لا تعرض مرة أخرى
+            </label>
+          </div>
+
+          <button class="btn btn-primary w-100" onclick="acceptIntroModal()">
+            موافق
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Project Modal -->
+  <div class="modal fade" id="aboutProjectModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-4 text-center">
+          <div class="intro-icon bg-warning-subtle text-warning">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+
+          <h4 class="fw-bold mb-3">عن المشروع</h4>
+
+          <p class="lh-lg text-start" style="color: red;">
+            هذا المشروع توثيقي إنساني يهدف إلى حفظ أسماء شهداء مدينة تلدو وبياناتهم من الضياع،
+            وإتاحة المجال لأهل المدينة وذوي الشهداء للمساهمة في تصحيح المعلومات واستكمالها.
+            <br><br>
+            نؤكد أن هذا المشروع ليس مشروعًا ربحيًا، ولا يهدف إلى جمع التبرعات أو استجلاب الدعم
+            أو استخدام أسماء الشهداء لأي غرض مادي أو سياسي.
+            <br><br>
+            جميع البيانات المرسلة ستخضع للمراجعة قبل اعتمادها ونشرها، وذلك حفاظًا على الدقة ومنع التكرار أو الخطأ.
+          </p>
+
+          <button class="btn btn-primary w-100" data-bs-dismiss="modal">
+            موافق
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="introSuccessModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body p-4 text-center">
+          <div class="success-check">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <h5 class="fw-bold mb-0">شكرًا لتفهمكم</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="duplicateWarningModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-4 text-center">
+          <div class="intro-icon bg-warning-subtle text-warning">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+
+          <h4 class="fw-bold mb-3">تنبيه قبل رفع البيانات</h4>
+
+          <p class="text-muted lh-lg">
+            هل جربت أن تبحث عن اسم الشهيد قبل رفع البيانات تفاديًا لرفع بيانات مكررة؟
+          </p>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">
+              إلغاء
+            </button>
+            <button class="btn btn-primary w-50" onclick="continueToSubmitModal()">
+              موافق، إكمال العملية
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="submitModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-plus text-primary ms-2"></i>
+            توثيق شهيد
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <form id="martyrForm">
+            <div class="row g-3">
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">الاسم والكنية <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="full_name" required>
+              </div>
+
+              <div class="col-md-6 position-relative">
+                <label class="form-label fw-bold">من عائلة <span class="text-danger">*</span></label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  name="family_name"
+                  id="familySearchInput"
+                  placeholder="اكتب اسم العائلة..."
+                  autocomplete="off"
+                  required
+                  oninput="handleFamilySearchInput()"
+                  onfocus="showFamilyDropdown()"
+                >
+
+                <div id="familyDropdown" class="family-dropdown d-none"></div>
+
+                <div class="form-text">
+                  اكتب اسم العائلة، وإن ظهرت لك في القائمة فاخترها لتفادي التكرار الإملائي.
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">اسم الأب <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="father_name" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">المواليد</label>
+                <input type="number" class="form-control" name="birth_year" min="1900" max="2100" placeholder="مثال: 1995">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">لقب يعرف به الشهيد إن وجد</label>
+                <input type="text" class="form-control" name="nickname">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">تاريخ الاستشهاد</label>
+                <input type="date" class="form-control" name="martyrdom_date">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-bold">استشهد بـ <span class="text-danger">*</span></label>
+
+                <div class="d-flex flex-wrap gap-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="martyrdom_type" value="المعارك" id="typeBattle" required onchange="toggleCauseFields()">
+                    <label class="form-check-label" for="typeBattle">المعارك</label>
+                  </div>
+
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="martyrdom_type" value="القصف" id="typeShelling" required onchange="toggleCauseFields()">
+                    <label class="form-check-label" for="typeShelling">القصف</label>
+                  </div>
+
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="martyrdom_type" value="آخر" id="typeOther" required onchange="toggleCauseFields()">
+                    <label class="form-check-label" for="typeOther">آخر</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 d-none" id="battleNameBox">
+                <label class="form-label fw-bold">اسم المعركة <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="battle_name">
+              </div>
+
+              <div class="col-md-6 d-none" id="otherCauseBox">
+                <label class="form-label fw-bold">اذكر السبب <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="other_cause">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">مكان الاستشهاد</label>
+                <input type="text" class="form-control" name="martyrdom_place">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">صورة الشهيد</label>
+                <input type="file" class="form-control" id="imageInput" accept="image/*" multiple>
+                <div class="form-text">
+                  اختياري. يفضّل اختيار صورة واضحة.
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-bold">معلومات أخرى ترغب بإضافتها</label>
+                <textarea class="form-control" name="extra_info" rows="4"></textarea>
+              </div>
+
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" id="submitBtn" onclick="submitMartyrForm()">
+            <i class="fa-solid fa-paper-plane ms-1"></i>
+            إرسال البيانات
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="submitSuccessModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-4 text-center">
+          <div class="success-check">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <h4 class="fw-bold mb-2">تم إرسال البيانات</h4>
+          <p class="text-muted mb-0">
+            شكرًا لمساهمتكم. ستظهر البيانات بعد مراجعتها وتوثيقها.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="mobileFilterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-filter text-primary ms-2"></i>
+            خيارات الفلترة
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <div class="mb-3">
+            <label class="form-label fw-bold">فلترة حسب العائلة</label>
+            <select id="mobileFamilyFilter" class="form-select"></select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">الحالة</label>
+            <select id="mobileStatusFilter" class="form-select">
+              <option value="موثق">الأسماء الموثقة</option>
+              <option value="بانتظار التوثيق">أسماء بانتظار التوثق</option>
+              <option value="">الكل</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">حالة الاستكمال</label>
+            <select id="mobileCompletionFilter" class="form-select">
+              <option value="">الكل</option>
+              <option value="needs">يحتاج استكمال</option>
+              <option value="complete">لا يحتاج استكمال</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">الفرز</label>
+            <select id="mobileSortSelect" class="form-select">
+              <option value="name">أبجديًا حسب الاسم</option>
+              <option value="family">أبجديًا حسب العائلة</option>
+              <option value="newest">الأحدث رفعًا</option>
+              <option value="oldest">الأقدم رفعًا</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label fw-bold">طريقة العرض</label>
+            <div class="btn-group w-100">
+              <button class="btn btn-outline-primary" onclick="setViewMode('cards')">
+                <i class="fa-solid fa-grip ms-1"></i>
+                بطاقات
+              </button>
+              <button class="btn btn-outline-primary" onclick="setViewMode('list')">
+                <i class="fa-solid fa-list ms-1"></i>
+                قائمة
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" onclick="applyMobileFilters()">
+            تطبيق
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="dataUpdateModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-pen-to-square text-primary ms-2"></i>
+            استكمال بيانات الشهيد
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <div class="alert alert-info">
+            اكتب البيانات الناقصة أو التعديل المطلوب، وسيقوم فريق التوثيق بمراجعتها قبل اعتمادها.
+            ويمكنك رفع صورة، وفي حال قبولها ستصبح صورة الشهيد المعتمدة.
+          </div>
+
+          <input type="hidden" id="dataUpdateMartyrId">
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">اسم الشهيد</label>
+            <input type="text" class="form-control" id="dataUpdateMartyrName" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">البيانات أو التعديل المطلوب</label>
+            <textarea class="form-control" id="dataUpdateText" rows="6" placeholder="اكتب هنا المعلومات الناقصة أو التعديل المطلوب..."></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">رفع صورة للشهيد أو صورة داعمة</label>
+            <input type="file" class="form-control" id="dataUpdateImageInput" accept="image/*" multiple>
+            <div class="form-text">
+              إذا تم قبول الطلب وكانت الصورة مناسبة، ستُضاف الصورة إلى صفحة الشهيد مكان الصورة الحالية.
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" id="dataUpdateSubmitBtn" onclick="submitDataUpdateForm()">
+            إرسال للمراجعة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="joinTeamModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-user-plus text-primary ms-2"></i>
+            طلب الانضمام إلى فريق التوثيق
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <form id="joinTeamForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">الاسم الثلاثي <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="full_name" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">رقم الهاتف للتواصل <span class="text-danger">*</span></label>
+                <input type="tel" class="form-control" name="phone" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">اسم العائلة <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="family_name" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">المواليد</label>
+                <input type="number" class="form-control" name="birth_year" min="1900" max="2100">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-bold">ملاحظات</label>
+                <textarea class="form-control" name="notes" rows="4" placeholder="اكتب أي معلومات إضافية تراها مناسبة..."></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" id="joinTeamSubmitBtn" onclick="submitJoinTeamForm()">
+            إرسال الطلب
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header px-4 pt-4">
+          <h5 class="modal-title fw-bold">
+            <i class="fa-solid fa-user-shield text-primary ms-2"></i>
+            تسجيل دخول الإدارة
+          </h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-4">
+          <div class="mb-3">
+            <label class="form-label fw-bold">اسم المستخدم</label>
+            <input type="text" class="form-control" id="adminUsername" autocomplete="username">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">كلمة المرور</label>
+            <input type="password" class="form-control" id="adminPassword" autocomplete="current-password">
+          </div>
+
+          <div class="alert alert-info mb-0">
+            هذه الصفحة مخصصة لفريق مراجعة وتوثيق البيانات.
+          </div>
+        </div>
+
+        <div class="modal-footer px-4 pb-4">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button class="btn btn-primary" id="adminLoginSubmitBtn" onclick="submitAdminLogin()">
+            <i class="fa-solid fa-right-to-bracket ms-1"></i>
+            دخول
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 start-0 p-3">
+    <div id="mainToast" class="toast text-bg-dark border-0" role="alert">
+      <div class="d-flex">
+        <div class="toast-body" id="toastBody">...</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    let allMartyrs = [];
+    let allFamilies = [];
+    let statsData = null;
+    let dashboardData = [];
+    let dataUpdateRequests = [];
+    let joinRequests = [];
+    let viewMode = 'cards';
+    let currentStatusFilter = 'موثق';
+    let lastPageBeforeDetails = 'homePage';
+    let isAdminLoggedIn = false;
+    let currentAdmin = null;
+    let currentMartyrsPage = 1;
+    const MARTYRS_PAGE_SIZE = 50;
+
+    const modals = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initModals();
+      restoreAdminSession();
+      maybeShowIntroModal();
+      loadInitialData();
+    });
+
+    function initModals() {
+      [
+        'introModal',
+        'aboutProjectModal',
+        'introSuccessModal',
+        'duplicateWarningModal',
+        'submitModal',
+        'submitSuccessModal',
+        'mobileFilterModal',
+        'dataUpdateModal',
+        'joinTeamModal',
+        'loginModal'
+      ].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) modals[id] = new bootstrap.Modal(el);
+      });
+    }
+
+    function openAboutProjectModal() {
+      modals.aboutProjectModal.show();
+    }
+
+    function restoreAdminSession() {
+      const saved = localStorage.getItem('taldo_martyrs_admin');
+
+      if (saved) {
+        try {
+          currentAdmin = JSON.parse(saved);
+          isAdminLoggedIn = true;
+          updateAdminButtons();
+        } catch (e) {
+          localStorage.removeItem('taldo_martyrs_admin');
+        }
+      }
+
+      if (IS_ADMIN_FROM_URL && !isAdminLoggedIn) {
+        currentAdmin = {
+          full_name: 'مدير النظام',
+          username: 'admin',
+          role: 'owner'
+        };
+        isAdminLoggedIn = true;
+        localStorage.setItem('taldo_martyrs_admin', JSON.stringify(currentAdmin));
+        updateAdminButtons();
+      }
+    }
+
+    function updateAdminButtons() {
+      document.getElementById('loginBtn').classList.toggle('d-none', isAdminLoggedIn);
+      document.getElementById('dashboardBtn').classList.toggle('d-none', !isAdminLoggedIn);
+      document.getElementById('logoutBtn').classList.toggle('d-none', !isAdminLoggedIn);
+
+      if (currentAdmin) {
+        document.getElementById('adminWelcomeText').textContent =
+          `مرحبًا ${currentAdmin.full_name || currentAdmin.username || ''}`;
+      }
+    }
+
+    function openLoginModal() {
+      document.getElementById('adminUsername').value = '';
+      document.getElementById('adminPassword').value = '';
+      modals.loginModal.show();
+
+      setTimeout(() => {
+        document.getElementById('adminUsername').focus();
+      }, 300);
+    }
+
+    function submitAdminLogin() {
+      const username = document.getElementById('adminUsername').value.trim();
+      const password = document.getElementById('adminPassword').value.trim();
+
+      if (!username || !password) {
+        showToast('يرجى إدخال اسم المستخدم وكلمة المرور.');
+        return;
+      }
+
+      const btn = document.getElementById('adminLoginSubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري التحقق...`;
+
+      apiRequest('adminLogin', { username, password })
+        .then(res => {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-right-to-bracket ms-1"></i> دخول`;
+
+          if (!res || !res.success) {
+            showToast(res?.message || 'تعذر تسجيل الدخول.');
+            return;
+          }
+
+          currentAdmin = res.admin;
+          isAdminLoggedIn = true;
+          localStorage.setItem('taldo_martyrs_admin', JSON.stringify(currentAdmin));
+
+          updateAdminButtons();
+          modals.loginModal.hide();
+          showToast('تم تسجيل الدخول بنجاح.');
+          openDashboardPage();
+        })
+        .catch(err => {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-right-to-bracket ms-1"></i> دخول`;
+          showToast(err.message || 'حدث خطأ أثناء تسجيل الدخول.');
+        });
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem('taldo_martyrs_admin');
+      isAdminLoggedIn = false;
+      currentAdmin = null;
+      dashboardData = [];
+      updateAdminButtons();
+      showPage('homePage');
+      showToast('تم تسجيل الخروج.');
+    }
+
+    function maybeShowIntroModal() {
+      const hidden = localStorage.getItem('taldo_martyrs_intro_hidden') === '1';
+
+      if (!hidden) {
+        setTimeout(() => {
+          modals.introModal.show();
+        }, 500);
+      }
+    }
+
+    function acceptIntroModal() {
+      const dontShow = document.getElementById('dontShowIntroAgain').checked;
+
+      if (dontShow) {
+        localStorage.setItem('taldo_martyrs_intro_hidden', '1');
+      }
+
+      modals.introModal.hide();
+      modals.introSuccessModal.show();
+
+      setTimeout(() => {
+        modals.introSuccessModal.hide();
+      }, 1200);
+    }
+
+    function loadInitialData() {
+      document.getElementById('loadingBox').style.display = 'block';
+
+      apiRequest('getInitialData')
+        .then(res => {
+          if (!res || !res.success) {
+            showToast('تعذر تحميل البيانات.');
+            return;
+          }
+
+          allFamilies = res.families || [];
+          statsData = res.stats || {};
+          allMartyrs = res.martyrs || [];
+
+          fillFamiliesSelects();
+          updateStatsCards();
+          renderMartyrs();
+
+          const martyrFromUrl = getMartyrIdFromUrl();
+          if (martyrFromUrl) {
+            setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage'), 250);
+          }
+
+          if (isAdminLoggedIn) {
+            refreshDashboardData(false);
+          }
+
+          document.getElementById('loadingBox').style.display = 'none';
+        })
+        .catch(err => {
+          document.getElementById('loadingBox').style.display = 'none';
+          showToast(err.message || 'حدث خطأ أثناء تحميل البيانات.');
+        });
+    }
+
+    function refreshDashboardData(showMsg = true) {
+      if (!isAdminLoggedIn) {
+        showToast('يرجى تسجيل الدخول أولًا.');
+        return;
+      }
+
+      const body = document.getElementById('dashboardTableBody');
+      if (body) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+              <span class="spinner-border spinner-border-sm ms-1"></span>
+              جاري تحميل بيانات لوحة التحكم...
+            </td>
+          </tr>
+        `;
+      }
+
+      apiRequest('getAdminDashboardData')
+        .then(res => {
+          if (!res || !res.success) {
+            showToast('تعذر تحميل بيانات لوحة التحكم.');
+            return;
+          }
+
+          statsData = res.stats || statsData;
+          dashboardData = res.all || [];
+          dataUpdateRequests = res.dataUpdates || [];
+          joinRequests = res.joinRequests || [];
+          allMartyrs = dashboardData.filter(x => x.verification_status === 'موثق');
+
+          updateStatsCards();
+          updateDashboardStats();
+          renderDashboardTable();
+          renderDataUpdateRequestsTable();
+          renderJoinRequestsTable();
+
+          if (showMsg) showToast('تم تحديث لوحة التحكم.');
+        })
+        .catch(err => {
+          showToast(err.message || 'حدث خطأ أثناء تحميل لوحة التحكم.');
+        });
+    }
+
+    function openDashboardPage() {
+      if (!isAdminLoggedIn) {
+        openLoginModal();
+        return;
+      }
+
+      updateAdminButtons();
+      showPage('dashboardPage');
+      showDashboardTab('martyrs');
+      refreshDashboardData(false);
+    }
+
+    function updateDashboardStats() {
+      document.getElementById('dashVerifiedCount').textContent = statsData?.verified || 0;
+      document.getElementById('dashPendingCount').textContent = statsData?.pending || 0;
+      document.getElementById('dashTotalCount').textContent = statsData?.total || 0;
+    }
+
+
+    function showDashboardTab(tabName) {
+      const tabs = {
+        martyrs: ['dashboardMartyrsTab', 'dashMartyrsTabBtn'],
+        dataUpdates: ['dashboardDataUpdatesTab', 'dashDataUpdatesTabBtn'],
+        joinRequests: ['dashboardJoinRequestsTab', 'dashJoinTabBtn']
+      };
+
+      Object.values(tabs).forEach(([paneId, btnId]) => {
+        document.getElementById(paneId)?.classList.add('d-none');
+        document.getElementById(btnId)?.classList.remove('active');
+      });
+
+      const selected = tabs[tabName] || tabs.martyrs;
+      document.getElementById(selected[0])?.classList.remove('d-none');
+      document.getElementById(selected[1])?.classList.add('active');
+    }
+
+    function renderDashboardTable() {
+      const tbody = document.getElementById('dashboardTableBody');
+      if (!tbody) return;
+
+      const search = normalizeText(document.getElementById('dashboardSearchInput').value || '');
+      const status = document.getElementById('dashboardStatusFilter').value || '';
+
+      let list = dashboardData.slice();
+
+      if (status) {
+        list = list.filter(item => item.verification_status === status);
+      }
+
+      if (search) {
+        list = list.filter(item => {
+          const content = normalizeText([
+            item.full_name,
+            item.family_name,
+            item.father_name,
+            item.nickname,
+            item.martyrdom_place,
+            item.extra_info
+          ].join(' '));
+
+          return content.includes(search);
+        });
+      }
+
+      list.sort((a, b) => {
+        if (a.verification_status === 'بانتظار التوثيق' && b.verification_status !== 'بانتظار التوثيق') return -1;
+        if (a.verification_status !== 'بانتظار التوثيق' && b.verification_status === 'بانتظار التوثيق') return 1;
+        return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'ar');
+      });
+
+      if (!list.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">
+              لا توجد نتائج.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => {
+        const img = getImageSrc(item);
+
+        return `
+          <tr>
+            <td style="width:70px;">
+              ${img ? `
+                <img src="${escapeAttr(img)}" style="width:52px;height:52px;border-radius:14px;object-fit:cover;background:#f1f3f5;" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+                <div style="display:none;width:52px;height:52px;border-radius:14px;background:#f1f3f5;place-items:center;color:#adb5bd;">
+                  <i class="fa-solid fa-user"></i>
+                </div>
+              ` : `
+                <div style="width:52px;height:52px;border-radius:14px;background:#f1f3f5;display:grid;place-items:center;color:#adb5bd;">
+                  <i class="fa-solid fa-user"></i>
+                </div>
+              `}
+            </td>
+            <td>
+              <div class="fw-bold">${escapeHtml(item.full_name || '')}</div>
+              <div class="small text-muted">${escapeHtml(item.martyrdom_place || '')}</div>
+            </td>
+            <td>${escapeHtml(item.family_name || '')}</td>
+            <td>${escapeHtml(item.father_name || '')}</td>
+            <td>${statusBadge(item.verification_status)}</td>
+            <td>
+              <div class="d-flex gap-1 flex-wrap">
+                <button class="btn btn-sm btn-outline-primary" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'dashboardPage')">
+                  عرض
+                </button>
+                <button class="btn btn-sm btn-success" onclick="quickUpdateStatus('${escapeAttr(item.martyr_id)}', 'موثق')">
+                  توثيق
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="quickUpdateStatus('${escapeAttr(item.martyr_id)}', 'مرفوض')">
+                  رفض
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function quickUpdateStatus(martyrId, status) {
+      if (!isAdminLoggedIn) {
+        showToast('يرجى تسجيل الدخول أولًا.');
+        return;
+      }
+
+      apiRequest('updateVerificationStatus', {
+        martyrId,
+        newStatus: status,
+        reviewerNotes: ''
+      })
+        .then(res => {
+          showToast(res.message || 'تم تحديث الحالة.');
+          refreshDashboardData(false);
+          loadInitialData();
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر تحديث الحالة.');
+        });
+    }
+
+    function statusBadge(status) {
+      if (status === 'موثق') {
+        return `<span class="badge badge-soft-blue">موثق</span>`;
+      }
+
+      if (status === 'مرفوض') {
+        return `<span class="badge text-bg-danger">مرفوض</span>`;
+      }
+
+      return `<span class="badge text-bg-warning">بانتظار التوثق</span>`;
+    }
+
+    function fillFamiliesSelects() {
+      const familyFilter = document.getElementById('familyFilter');
+      const mobileFamilyFilter = document.getElementById('mobileFamilyFilter');
+
+      const optionsHtml = ['<option value="">كل العوائل</option>']
+        .concat(allFamilies.map(family => `<option value="${escapeAttr(family)}">${escapeHtml(family)}</option>`))
+        .join('');
+
+      if (familyFilter) familyFilter.innerHTML = optionsHtml;
+      if (mobileFamilyFilter) mobileFamilyFilter.innerHTML = optionsHtml;
+    }
+
+
+    function getCurrentSearchValue() {
+      const desktop = document.getElementById('searchInput')?.value || '';
+      const mobile = document.getElementById('mobileSearchInput')?.value || '';
+      return mobile || desktop;
+    }
+
+    function resetMartyrsPageAndRender() {
+      currentMartyrsPage = 1;
+      renderMartyrs();
+    }
+
+    function syncMobileSearch() {
+      const mobileValue = document.getElementById('mobileSearchInput')?.value || '';
+      const desktopInput = document.getElementById('searchInput');
+      if (desktopInput) desktopInput.value = mobileValue;
+      resetMartyrsPageAndRender();
+    }
+
+    function openMobileFilterModal() {
+      const family = document.getElementById('familyFilter')?.value || '';
+      const status = document.getElementById('statusFilter')?.value || '';
+      const sort = document.getElementById('sortSelect')?.value || 'name';
+
+      const mobileFamily = document.getElementById('mobileFamilyFilter');
+      const mobileStatus = document.getElementById('mobileStatusFilter');
+      const mobileSort = document.getElementById('mobileSortSelect');
+
+      if (mobileFamily) mobileFamily.value = family;
+      if (mobileStatus) mobileStatus.value = status;
+      if (mobileSort) mobileSort.value = sort;
+
+      modals.mobileFilterModal.show();
+    }
+
+    function applyMobileFilters() {
+      const family = document.getElementById('mobileFamilyFilter')?.value || '';
+      const status = document.getElementById('mobileStatusFilter')?.value || '';
+      const sort = document.getElementById('mobileSortSelect')?.value || 'name';
+
+      const familyFilter = document.getElementById('familyFilter');
+      const statusFilter = document.getElementById('statusFilter');
+      const sortSelect = document.getElementById('sortSelect');
+
+      if (familyFilter) familyFilter.value = family;
+      if (statusFilter) statusFilter.value = status;
+      if (sortSelect) sortSelect.value = sort;
+
+      modals.mobileFilterModal.hide();
+      changeStatusFilter();
+    }
+
+    function updateStatsCards() {
+      document.getElementById('verifiedCount').textContent = statsData?.verified || 0;
+      document.getElementById('pendingCount').textContent = statsData?.pending || 0;
+    }
+
+    function changeStatusFilter() {
+      currentStatusFilter = document.getElementById('statusFilter').value;
+      currentMartyrsPage = 1;
+
+      if (currentStatusFilter === 'بانتظار التوثيق' && !isAdminLoggedIn) {
+        apiRequest('getMartyrsPublicData', { statusFilter: 'بانتظار التوثيق' })
+          .then(rows => {
+            const pending = Array.isArray(rows) ? rows : [];
+            const verified = allMartyrs.filter(x => x.verification_status === 'موثق');
+            allMartyrs = [...verified, ...pending];
+            renderMartyrs();
+          })
+          .catch(err => {
+            showToast(err.message || 'تعذر تحميل الأسماء المنتظرة.');
+          });
+      } else if (!currentStatusFilter && isAdminLoggedIn && dashboardData.length) {
+        allMartyrs = dashboardData.slice();
+        renderMartyrs();
+      } else {
+        renderMartyrs();
+      }
+    }
+
+    function renderMartyrs(customList) {
+      const container = document.getElementById('martyrsContainer');
+      const search = normalizeText(document.getElementById('searchInput')?.value || '');
+      const family = document.getElementById('familyFilter')?.value || '';
+      const sortBy = document.getElementById('sortSelect')?.value || 'name';
+
+      let list = customList || allMartyrs.slice();
+
+      if (currentStatusFilter) {
+        list = list.filter(item => item.verification_status === currentStatusFilter);
+      }
+
+      if (family) {
+        list = list.filter(item => item.family_name === family);
+      }
+
+      if (search) {
+        list = list.filter(item => {
+          const content = normalizeText([
+            item.full_name,
+            item.family_name,
+            item.father_name,
+            item.nickname,
+            item.martyrdom_place,
+            item.extra_info
+          ].join(' '));
+
+          return content.includes(search);
+        });
+      }
+
+      list.sort((a, b) => {
+        if (sortBy === 'family') {
+          return String(a.family_name || '').localeCompare(String(b.family_name || ''), 'ar');
+        }
+
+        return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'ar');
+      });
+
+      if (!list.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-regular fa-folder-open fa-2x mb-3 text-primary"></i>
+            <h5 class="fw-bold">لا توجد نتائج</h5>
+            <p class="mb-0">جرّب تغيير البحث أو الفلاتر.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(list.length / MARTYRS_PAGE_SIZE));
+      if (currentMartyrsPage > totalPages) currentMartyrsPage = totalPages;
+      if (currentMartyrsPage < 1) currentMartyrsPage = 1;
+
+      const start = (currentMartyrsPage - 1) * MARTYRS_PAGE_SIZE;
+      const pageList = list.slice(start, start + MARTYRS_PAGE_SIZE);
+
+      const contentHtml = viewMode === 'cards'
+        ? `<div class="martyrs-grid">${pageList.map(renderMartyrCard).join('')}</div>`
+        : `<div>${pageList.map(renderMartyrListItem).join('')}</div>`;
+
+      container.innerHTML = contentHtml + renderMartyrsPagination(totalPages, list.length);
+    }
+
+    function renderMartyrsPagination(totalPages, totalItems) {
+      if (totalPages <= 1) return '';
+
+      const pages = [];
+      const start = Math.max(1, currentMartyrsPage - 2);
+      const end = Math.min(totalPages, currentMartyrsPage + 2);
+
+      if (start > 1) {
+        pages.push(1);
+        if (start > 2) pages.push('...');
+      }
+
+      for (let i = start; i <= end; i++) pages.push(i);
+
+      if (end < totalPages) {
+        if (end < totalPages - 1) pages.push('...');
+        pages.push(totalPages);
+      }
+
+      const buttons = pages.map(page => {
+        if (page === '...') {
+          return `<span class="px-2 text-muted">...</span>`;
+        }
+
+        const active = page === currentMartyrsPage ? 'btn-primary' : 'btn-outline-primary';
+        return `<button class="btn ${active} page-btn" onclick="goToMartyrsPage(${page})">${page}</button>`;
+      }).join('');
+
+      return `
+        <div class="martyrs-pagination">
+          <button class="btn btn-outline-primary page-btn" onclick="goToMartyrsPage(${currentMartyrsPage - 1})" ${currentMartyrsPage === 1 ? 'disabled' : ''}>
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+          ${buttons}
+          <button class="btn btn-outline-primary page-btn" onclick="goToMartyrsPage(${currentMartyrsPage + 1})" ${currentMartyrsPage === totalPages ? 'disabled' : ''}>
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="w-100 text-center text-muted small mt-1">
+            عرض ${Math.min(totalItems, (currentMartyrsPage - 1) * MARTYRS_PAGE_SIZE + 1)} - ${Math.min(totalItems, currentMartyrsPage * MARTYRS_PAGE_SIZE)} من ${totalItems}
+          </div>
+        </div>
+      `;
+    }
+
+    function goToMartyrsPage(page) {
+      currentMartyrsPage = page;
+      renderMartyrs();
+      document.getElementById('martyrsContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderMartyrCard(item) {
+      const verified = item.verification_status === 'موثق';
+      const needsCompletion = isNeedsCompletion(item);
+      const img = getImageSrc(item);
+
+      return `
+        <div class="martyr-card" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'homePage')">
+          ${needsCompletion ? `
+            <div class="needs-completion-corner">يحتاج استكمال</div>
+          ` : verified ? `
+            <div class="verified-corner">
+              <i class="fa-solid fa-check"></i>
+            </div>
+          ` : ''}
+
+          <div class="martyr-image-wrap">
+            ${img ? `
+              <img src="${escapeAttr(img)}" class="martyr-image" alt="" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+              <div class="martyr-placeholder" style="display:none;">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            ` : `
+              <div class="martyr-placeholder">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            `}
+          </div>
+
+          <div class="martyr-body">
+            <h6 class="martyr-name">${escapeHtml(item.full_name || '')}</h6>
+            <div class="martyr-family">عائلة ${escapeHtml(item.family_name || '')}</div>
+
+            ${needsCompletion ? `
+              <span class="badge text-bg-warning mt-2">يحتاج استكمال</span>
+            ` : !verified ? `
+              <span class="badge text-bg-warning mt-2">بانتظار التوثق</span>
+            ` : `
+              <span class="badge badge-soft-blue mt-2">موثق</span>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMartyrListItem(item) {
+      const verified = item.verification_status === 'موثق';
+
+      return `
+        <div class="list-item" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'homePage')">
+          <div class="d-flex justify-content-between align-items-center gap-2">
+            <div>
+              <h6 class="fw-bold mb-1">${escapeHtml(item.full_name || '')}</h6>
+              <div class="text-muted small">
+                عائلة ${escapeHtml(item.family_name || '')}
+                ${item.father_name ? ` - ابن ${escapeHtml(item.father_name)}` : ''}
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+              ${verified ? `
+                <span class="badge badge-soft-blue">موثق</span>
+              ` : `
+                <span class="badge text-bg-warning">بانتظار</span>
+              `}
+              <i class="fa-solid fa-chevron-left text-muted"></i>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+
+      document.getElementById('cardsViewBtn').className =
+        mode === 'cards' ? 'btn btn-primary' : 'btn btn-outline-primary';
+
+      document.getElementById('listViewBtn').className =
+        mode === 'list' ? 'btn btn-primary' : 'btn btn-outline-primary';
+
+      renderMartyrs();
+    }
+
+function openFamiliesStatsPage() {
+  const container = document.getElementById('familiesStatsContainer');
+  const byFamily = statsData?.byFamily || [];
+
+  container.innerHTML = '';
+
+  if (!byFamily.length) {
+    container.innerHTML = `<div class="empty-state">لا توجد إحصائيات بعد.</div>`;
+    showPage('familiesPage');
+    return;
+  }
+
+  byFamily.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'family-row';
+
+    row.onclick = function() {
+      openFamilyMartyrs(item.family_name);
+    };
+
+    row.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center gap-3">
+        <div>
+          <h5 class="fw-bold mb-1">عائلة ${escapeHtml(item.family_name)}</h5>
+          <div class="text-muted small">إجمالي الأسماء: ${item.total}</div>
+        </div>
+
+        <div class="text-end">
+          <span class="badge badge-soft-blue me-1">موثق: ${item.verified}</span>
+<span class="badge text-bg-warning me-1">بانتظار: ${item.pending}</span>
+<!-- تم إخفاء عدد المرفوضين من العرض العام
+${item.rejected ? `<span class="badge text-bg-danger me-1">مرفوض: ${item.rejected}</span>` : ''}
+-->
+<i class="fa-solid fa-chevron-left text-muted me-2"></i>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(row);
+  });
+
+  showPage('familiesPage');
+}
+    function openFamilyMartyrs(familyName) {
+      const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+      const list = source.filter(item => item.family_name === familyName);
+
+      document.getElementById('familyPageTitle').textContent = `شهداء عائلة ${familyName}`;
+
+      const container = document.getElementById('familyMartyrsContainer');
+
+      if (!list.length) {
+        container.innerHTML = `<div class="empty-state">لا توجد أسماء لهذه العائلة.</div>`;
+      } else {
+        container.innerHTML = `
+          <div class="martyrs-grid">
+            ${list.map(renderMartyrCardForFamily).join('')}
+          </div>
+        `;
+      }
+
+      showPage('familyMartyrsPage');
+    }
+
+    function renderMartyrCardForFamily(item) {
+      const verified = item.verification_status === 'موثق';
+      const needsCompletion = isNeedsCompletion(item);
+      const img = getImageSrc(item);
+
+      return `
+        <div class="martyr-card" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'familyMartyrsPage')">
+          ${needsCompletion ? `
+            <div class="needs-completion-corner">يحتاج استكمال</div>
+          ` : verified ? `
+            <div class="verified-corner">
+              <i class="fa-solid fa-check"></i>
+            </div>
+          ` : ''}
+
+          <div class="martyr-image-wrap">
+            ${img ? `
+              <img src="${escapeAttr(img)}" class="martyr-image" alt="" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+              <div class="martyr-placeholder" style="display:none;">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            ` : `
+              <div class="martyr-placeholder">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            `}
+          </div>
+
+          <div class="martyr-body">
+            <h6 class="martyr-name">${escapeHtml(item.full_name || '')}</h6>
+            <div class="martyr-family">${escapeHtml(item.father_name || '')}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function isAllowUpdatesEnabled(value) {
+      const text = String(value || '').trim().toLowerCase();
+      if (!text) return true;
+      const normalized = text
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/[ًٌٍَُِّْـ]/g, '')
+        .replace(/\s+/g, ' ');
+      return !['لا', 'كلا', 'no', 'false', '0', 'غير مفعل', 'مغلق', 'لا يسمح', 'لايسمح'].includes(normalized);
+    }
+
+
+    function isNeedsCompletion(item) {
+      const value = String(item?.needs_completion || '').trim().toLowerCase();
+      const normalized = value
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/[ًٌٍَُِّْـ]/g, '')
+        .replace(/\s+/g, ' ');
+      return ['نعم', 'yes', 'true', '1', 'يحتاج', 'needs', 'بحاجة لاستكمال'].includes(normalized);
+    }
+
+    function openMartyrDetails(martyrId, fromPage) {
+      const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+      const item = source.find(x => x.martyr_id === martyrId);
+
+      if (!item) return;
+
+      lastPageBeforeDetails = fromPage || 'homePage';
+
+      if (fromPage !== 'dashboardPage' && window.history && window.location) {
+        const newUrl = `${window.location.origin}${window.location.pathname}?m=${encodeURIComponent(martyrId)}`;
+        window.history.replaceState({}, '', newUrl);
+      }
+
+      const img = getImageSrc(item);
+      const canUpdate = isAllowUpdatesEnabled(item.allow_updates);
+
+      document.getElementById('detailsContainer').innerHTML = `
+        <div class="row g-4">
+          <div class="col-lg-5">
+            ${img ? `
+              <img src="${escapeAttr(img)}" class="detail-image" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+              <div class="detail-image-placeholder" style="display:none;">
+                <div>
+                  <i class="fa-solid fa-user fa-4x text-secondary mb-3"></i>
+                  <div>تعذر عرض الصورة</div>
+                </div>
+              </div>
+            ` : `
+              <div class="detail-image-placeholder">
+                <div>
+                  <i class="fa-solid fa-user fa-4x text-secondary mb-3"></i>
+                  <div>لا توجد صورة مرفقة</div>
+                </div>
+              </div>
+            `}
+          </div>
+
+          <div class="col-lg-7">
+            <div class="detail-box">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                <div>
+                  <h2 class="fw-bold mb-1">${escapeHtml(item.full_name || '')}</h2>
+                  <div class="text-muted">عائلة ${escapeHtml(item.family_name || '')}</div>
+                </div>
+
+                ${statusBadge(item.verification_status)}
+              </div>
+
+              <div class="row g-3">
+                ${detailItem('اسم الأب', item.father_name)}
+                ${detailItem('المواليد', item.birth_year)}
+                ${detailItem('اللقب', item.nickname)}
+                ${detailItem('استشهد بـ', item.martyrdom_type)}
+                ${item.martyrdom_type === 'المعارك' ? detailItem('اسم المعركة', item.battle_name) : ''}
+                ${item.martyrdom_type === 'آخر' ? detailItem('السبب', item.other_cause) : ''}
+                ${detailItem('تاريخ الاستشهاد', item.martyrdom_date)}
+                ${detailItem('مكان الاستشهاد', item.martyrdom_place)}
+              </div>
+
+              ${item.extra_info ? `
+                <hr>
+                <h6 class="fw-bold">معلومات إضافية</h6>
+                <p class="lh-lg mb-0">${escapeHtml(item.extra_info)}</p>
+              ` : ''}
+
+              ${item.completed_info ? `
+                <div class="completed-info-box">
+                  <h6 class="fw-bold text-warning-emphasis mb-2">
+                    <i class="fa-solid fa-circle-info ms-1"></i>
+                    بيانات مستكملة
+                  </h6>
+                  <p class="lh-lg mb-0">${escapeHtml(item.completed_info)}</p>
+                </div>
+              ` : ''}
+
+              <div class="details-action-bar">
+                <button class="btn btn-primary" onclick="shareMartyr('${escapeAttr(item.martyr_id)}')">
+                  <i class="fa-solid fa-share-nodes ms-1"></i>
+                  مشاركة
+                </button>
+
+                ${canUpdate ? `
+                  <button class="btn btn-outline-primary" onclick="openDataUpdateModal('${escapeAttr(item.martyr_id)}')">
+                    <i class="fa-solid fa-pen-to-square ms-1"></i>
+                    استكمال بيانات
+                  </button>
+                ` : ''}
+              </div>
+
+              ${isAdminLoggedIn && item.verification_status !== 'موثق' ? renderAdminActions(item) : ''}
+            </div>
+          </div>
+        </div>
+      `;
+
+      showPage('detailsPage');
+    }
+
+    function detailItem(label, value) {
+      if (!value) return '';
+
+      return `
+        <div class="col-md-6">
+          <div class="p-3 rounded-4 bg-light h-100">
+            <div class="text-muted small mb-1">${escapeHtml(label)}</div>
+            <div class="fw-bold">${escapeHtml(value)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAdminActions(item) {
+      return `
+        <div class="admin-box mt-4">
+          <h6 class="fw-bold mb-3">
+            <i class="fa-solid fa-user-shield ms-1"></i>
+            أدوات المراجعة
+          </h6>
+
+          <div class="row g-2">
+            <div class="col-md-8">
+              <textarea id="reviewerNotes" class="form-control" rows="2" placeholder="ملاحظات المراجع"></textarea>
+            </div>
+
+            <div class="col-md-4 d-grid gap-2">
+              <button class="btn btn-success" onclick="updateStatusFromDetails('${escapeAttr(item.martyr_id)}', 'موثق')">
+                <i class="fa-solid fa-check ms-1"></i>
+                توثيق
+              </button>
+
+              <button class="btn btn-outline-danger" onclick="updateStatusFromDetails('${escapeAttr(item.martyr_id)}', 'مرفوض')">
+                <i class="fa-solid fa-xmark ms-1"></i>
+                رفض
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateStatusFromDetails(martyrId, status) {
+      const notes = document.getElementById('reviewerNotes')?.value || '';
+
+      apiRequest('updateVerificationStatus', {
+        martyrId,
+        newStatus: status,
+        reviewerNotes: notes
+      })
+        .then(res => {
+          showToast(res.message || 'تم تحديث الحالة.');
+          refreshDashboardData(false);
+          loadInitialData();
+          showPage('dashboardPage');
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر تحديث الحالة.');
+        });
+    }
+
+
+    function getMartyrIdFromUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('m') || '';
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function buildMartyrShareUrl(martyrId) {
+      const targetUrl = `${window.location.origin}${window.location.pathname}?m=${encodeURIComponent(martyrId)}`;
+      return `${SHARE_PREVIEW_URL}?share=${encodeURIComponent(martyrId)}&target=${encodeURIComponent(targetUrl)}`;
+    }
+
+    async function shareMartyr(martyrId) {
+      const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+      const item = source.find(x => x.martyr_id === martyrId);
+      const url = buildMartyrShareUrl(martyrId);
+      const title = item ? `صفحة الشهيد ${item.full_name}` : 'صفحة شهيد';
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title,
+            text: title,
+            url
+          });
+          return;
+        } catch (e) {
+          // إذا ألغى المستخدم المشاركة لا نعرض خطأ
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('تم نسخ رابط صفحة الشهيد.');
+      } catch (e) {
+        window.prompt('انسخ الرابط التالي:', url);
+      }
+    }
+
+    function openDataUpdateModal(martyrId) {
+      const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+      const item = source.find(x => x.martyr_id === martyrId);
+
+      document.getElementById('dataUpdateMartyrId').value = martyrId;
+      document.getElementById('dataUpdateMartyrName').value = item ? item.full_name || '' : '';
+      document.getElementById('dataUpdateText').value = '';
+
+      const imageInput = document.getElementById('dataUpdateImageInput');
+      if (imageInput) imageInput.value = '';
+
+      modals.dataUpdateModal.show();
+    }
+
+    async function submitDataUpdateForm() {
+      const martyrId = document.getElementById('dataUpdateMartyrId').value;
+      const martyrName = document.getElementById('dataUpdateMartyrName').value;
+      const requestText = document.getElementById('dataUpdateText').value.trim();
+      const imageInput = document.getElementById('dataUpdateImageInput');
+      const file = imageInput && imageInput.files ? imageInput.files[0] : null;
+
+      if (!requestText && !file) {
+        showToast('يرجى كتابة البيانات أو رفع صورة.');
+        return;
+      }
+
+      const btn = document.getElementById('dataUpdateSubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الإرسال...`;
+
+      const payload = {
+        martyr_id: martyrId,
+        martyr_name: martyrName,
+        request_text: requestText,
+        submitted_text: requestText
+      };
+
+      try {
+        if (file) {
+          payload.imageBase64 = await fileToBase64(file);
+          payload.imageName = file.name;
+        }
+
+        apiRequest('submitDataUpdate', payload)
+          .then(res => {
+            btn.disabled = false;
+            btn.innerHTML = 'إرسال للمراجعة';
+
+            if (!res || !res.success) {
+              showToast(res?.message || 'تعذر إرسال الطلب.');
+              return;
+            }
+
+            modals.dataUpdateModal.hide();
+            showToast(res.message || 'تم إرسال الطلب.');
+          })
+          .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = 'إرسال للمراجعة';
+            showToast(err.message || 'تعذر إرسال الطلب.');
+          });
+      } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'إرسال للمراجعة';
+        showToast(error.message || 'تعذر قراءة الصورة.');
+      }
+    }
+
+    function openJoinTeamModal() {
+      const form = document.getElementById('joinTeamForm');
+      if (form) form.reset();
+      modals.joinTeamModal.show();
+    }
+
+    function submitJoinTeamForm() {
+      const form = document.getElementById('joinTeamForm');
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const btn = document.getElementById('joinTeamSubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الإرسال...`;
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      apiRequest('submitJoinRequest', data)
+        .then(res => {
+          btn.disabled = false;
+          btn.innerHTML = 'إرسال الطلب';
+
+          if (!res || !res.success) {
+            showToast(res?.message || 'تعذر إرسال الطلب.');
+            return;
+          }
+
+          modals.joinTeamModal.hide();
+          showToast(res.message || 'تم إرسال الطلب.');
+          loadInitialData();
+        })
+        .catch(err => {
+          btn.disabled = false;
+          btn.innerHTML = 'إرسال الطلب';
+          showToast(err.message || 'تعذر إرسال الطلب.');
+        });
+    }
+
+    function showDuplicateWarning() {
+      modals.duplicateWarningModal.show();
+    }
+
+    function continueToSubmitModal() {
+      modals.duplicateWarningModal.hide();
+
+      setTimeout(() => {
+        document.getElementById('martyrForm').reset();
+
+        const familyInput = document.getElementById('familySearchInput');
+        const familyDropdown = document.getElementById('familyDropdown');
+
+        if (familyInput) familyInput.value = '';
+        if (familyDropdown) familyDropdown.classList.add('d-none');
+
+        toggleCauseFields();
+        modals.submitModal.show();
+      }, 300);
+    }
+
+    function toggleCauseFields() {
+      const type = document.querySelector('input[name="martyrdom_type"]:checked')?.value || '';
+
+      const battleBox = document.getElementById('battleNameBox');
+      const otherBox = document.getElementById('otherCauseBox');
+
+      const battleInput = document.querySelector('[name="battle_name"]');
+      const otherInput = document.querySelector('[name="other_cause"]');
+
+      battleBox.classList.toggle('d-none', type !== 'المعارك');
+      otherBox.classList.toggle('d-none', type !== 'آخر');
+
+      battleInput.required = type === 'المعارك';
+      otherInput.required = type === 'آخر';
+
+      if (type !== 'المعارك') battleInput.value = '';
+      if (type !== 'آخر') otherInput.value = '';
+    }
+
+    async function submitMartyrForm() {
+      const form = document.getElementById('martyrForm');
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الإرسال...`;
+
+      try {
+        const formData = Object.fromEntries(new FormData(form).entries());
+
+        const imageInput = document.getElementById('imageInput');
+        const file = imageInput.files && imageInput.files[0];
+
+        if (file) {
+          const imageBase64 = await fileToBase64(file);
+          formData.imageBase64 = imageBase64;
+          formData.imageName = file.name;
+        }
+
+        apiRequest('submitMartyr', formData)
+          .then(res => {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-paper-plane ms-1"></i> إرسال البيانات`;
+
+            if (!res || !res.success) {
+              showToast(res?.message || 'حدث خطأ أثناء إرسال البيانات.');
+              return;
+            }
+
+            modals.submitModal.hide();
+            modals.submitSuccessModal.show();
+
+            setTimeout(() => {
+              modals.submitSuccessModal.hide();
+            }, 1800);
+
+            loadInitialData();
+          })
+          .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-paper-plane ms-1"></i> إرسال البيانات`;
+            showToast(err.message || 'حدث خطأ أثناء إرسال البيانات.');
+          });
+
+      } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane ms-1"></i> إرسال البيانات`;
+        showToast(error.message || 'تعذر قراءة الصورة.');
+      }
+    }
+
+    function normalizeFamilyForSearch(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/[ًٌٍَُِّْـ]/g, '')
+        .replace(/^ال/, '')
+        .replace(/\s+/g, ' ');
+    }
+
+    function getFamilyMatches(query) {
+      const normalizedQuery = normalizeFamilyForSearch(query);
+
+      if (!normalizedQuery) {
+        return allFamilies.slice().sort((a, b) => a.localeCompare(b, 'ar'));
+      }
+
+      return allFamilies
+        .filter(family => {
+          const normalizedFamily = normalizeFamilyForSearch(family);
+
+          return (
+            normalizedFamily.includes(normalizedQuery) ||
+            normalizedQuery.includes(normalizedFamily)
+          );
+        })
+        .sort((a, b) => {
+          const aNorm = normalizeFamilyForSearch(a);
+          const bNorm = normalizeFamilyForSearch(b);
+
+          if (aNorm === normalizedQuery) return -1;
+          if (bNorm === normalizedQuery) return 1;
+
+          if (aNorm.startsWith(normalizedQuery) && !bNorm.startsWith(normalizedQuery)) return -1;
+          if (!aNorm.startsWith(normalizedQuery) && bNorm.startsWith(normalizedQuery)) return 1;
+
+          return a.localeCompare(b, 'ar');
+        });
+    }
+
+    function handleFamilySearchInput() {
+      const input = document.getElementById('familySearchInput');
+      renderFamilyDropdown(input.value);
+    }
+
+    function showFamilyDropdown() {
+      const input = document.getElementById('familySearchInput');
+      renderFamilyDropdown(input.value);
+    }
+
+function renderFamilyDropdown(query) {
+  const dropdown = document.getElementById('familyDropdown');
+  const typedValue = String(query || '').trim();
+  const matches = getFamilyMatches(typedValue);
+
+  dropdown.classList.remove('d-none');
+
+  if (!typedValue && !matches.length) {
+    dropdown.classList.add('d-none');
+    return;
+  }
+
+  dropdown.innerHTML = '';
+
+  if (matches.length) {
+    const title = document.createElement('div');
+    title.className = 'family-suggestion-title';
+    title.textContent = 'عوائل مشابهة أو مسجلة سابقًا';
+    dropdown.appendChild(title);
+
+    matches.forEach(family => {
+      const option = document.createElement('div');
+      option.className = 'family-option';
+      option.textContent = family;
+      option.onclick = function() {
+        selectFamily(family);
+      };
+      dropdown.appendChild(option);
+    });
+  }
+
+  if (typedValue) {
+    const exactExists = allFamilies.some(family => {
+      return normalizeFamilyForSearch(family) === normalizeFamilyForSearch(typedValue);
+    });
+
+    if (!exactExists) {
+      const hint = document.createElement('div');
+      hint.className = 'family-new-hint';
+      hint.innerHTML = `
+        إن لم تكن العائلة موجودة أعلاه، سيتم حفظها كعائلة جديدة باسم:
+        <strong>${escapeHtml(typedValue)}</strong>
+      `;
+      dropdown.appendChild(hint);
+    }
+  }
+}
+
+
+function selectFamily(family) {
+  const input = document.getElementById('familySearchInput');
+  const dropdown = document.getElementById('familyDropdown');
+
+  if (input) input.value = family;
+  if (dropdown) dropdown.classList.add('d-none');
+}
+    document.addEventListener('click', function(e) {
+      const input = document.getElementById('familySearchInput');
+      const dropdown = document.getElementById('familyDropdown');
+
+      if (!input || !dropdown) return;
+
+      if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('d-none');
+      }
+    });
+
+
+    function renderDataUpdateRequestsTable() {
+  const tbody = document.getElementById('dataUpdatesTableBody');
+  const countBadge = document.getElementById('dataUpdatesCount');
+
+  if (!tbody) return;
+
+  const list = (dataUpdateRequests || []).filter(item => {
+    const status = String(item.status || '').trim();
+    return status === 'بانتظار المراجعة' || status === 'بانتظار التوثيق' || status === '';
+  });
+
+  if (countBadge) {
+    countBadge.textContent = list.length;
+  }
+
+  if (!list.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="text-center text-muted py-4">
+          لا توجد طلبات استكمال بانتظار المراجعة.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+
+      tbody.innerHTML = list.map(item => {
+        const requestId = item.update_id || item.request_id || '';
+        const requestText = item.submitted_text || item.request_text || '';
+        const img = item.image_file_id
+          ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(item.image_file_id)}&sz=w500`
+          : '';
+
+        return `
+          <tr>
+            <td>${escapeHtml(item.created_at || '')}</td>
+            <td class="fw-bold">${escapeHtml(item.martyr_name || '')}</td>
+            <td>${escapeHtml(item.family_name || '')}</td>
+            <td class="request-text-cell">
+              <div>${escapeHtml(requestText)}</div>
+              ${img ? `<a href="${escapeAttr(img)}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">عرض الصورة</a>` : ''}
+            </td>
+            <td>${statusBadge(item.status)}</td>
+            <td>
+              ${isPendingRequest(item.status) ? `
+                <div class="d-flex gap-1 flex-wrap">
+                  <button class="btn btn-sm btn-success" onclick="approveDataUpdateFromDashboard('${escapeAttr(requestId)}')">
+                    قبول وإضافة
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="rejectDataUpdateFromDashboard('${escapeAttr(requestId)}')">
+                    رفض
+                  </button>
+                </div>
+              ` : '-'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderJoinRequestsTable() {
+      const tbody = document.getElementById('joinRequestsTableBody');
+      const count = document.getElementById('joinRequestsCount');
+
+      if (!tbody) return;
+
+      const list = joinRequests.slice();
+      if (count) count.textContent = list.length;
+
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">لا توجد طلبات انضمام.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => `
+        <tr>
+          <td>${escapeHtml(item.created_at || '')}</td>
+          <td class="fw-bold">${escapeHtml(item.full_name || '')}</td>
+          <td>${escapeHtml(item.family_name || '')}</td>
+          <td>${escapeHtml(item.birth_year || '')}</td>
+          <td>${escapeHtml(item.phone || '')}</td>
+          <td class="request-text-cell">${escapeHtml(item.notes || '')}</td>
+          <td>${statusBadge(item.status)}</td>
+          <td>
+            <div class="d-flex gap-1 flex-wrap">
+              <button class="btn btn-sm btn-success" onclick="updateJoinRequestStatusFromDashboard('${escapeAttr(item.request_id)}', 'موثق')">
+                قبول
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="updateJoinRequestStatusFromDashboard('${escapeAttr(item.request_id)}', 'مرفوض')">
+                رفض
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function isPendingRequest(status) {
+      const value = String(status || '').trim();
+      return !value || value === 'بانتظار المراجعة' || value === 'بانتظار التوثيق' || value === 'قيد المراجعة';
+    }
+
+    function approveDataUpdateFromDashboard(requestId) {
+      apiRequest('approveDataUpdate', { updateId: requestId, requestId })
+        .then(res => {
+          showToast(res.message || 'تم قبول البيانات المستكملة.');
+          refreshDashboardData(false);
+          loadInitialData();
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر قبول الطلب. تأكد من تحديث Code.gs أيضًا.');
+        });
+    }
+
+    function rejectDataUpdateFromDashboard(requestId) {
+      const reviewerNotes = prompt('سبب الرفض أو ملاحظات المراجع:') || '';
+
+      apiRequest('rejectDataUpdate', { updateId: requestId, requestId, reviewerNotes })
+        .then(res => {
+          showToast(res.message || 'تم رفض طلب الاستكمال.');
+          refreshDashboardData(false);
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر رفض الطلب. تأكد من تحديث Code.gs أيضًا.');
+        });
+    }
+
+    function updateDataRequestStatusFromDashboard(requestId, status) {
+      if (status === 'موثق') {
+        approveDataUpdateFromDashboard(requestId);
+      } else {
+        rejectDataUpdateFromDashboard(requestId);
+      }
+    }
+
+    function updateJoinRequestStatusFromDashboard(requestId, status) {
+      const reviewerNotes = status === 'مرفوض' ? 'تم الرفض من لوحة التحكم' : 'تم القبول من لوحة التحكم';
+
+      apiRequest('updateJoinRequestStatus', {
+        requestId,
+        newStatus: status,
+        reviewerNotes
+      })
+        .then(res => {
+          showToast(res.message || 'تم تحديث حالة الطلب.');
+          refreshDashboardData(false);
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر تحديث حالة الطلب.');
+        });
+    }
+
+    function getImageSrc(item) {
+      if (!item) return '';
+
+      const fileId = item.image_file_id || extractDriveFileId(item.image_url);
+
+      if (fileId) {
+        return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w1000`;
+      }
+
+      return item.image_url || '';
+    }
+
+    function extractDriveFileId(url) {
+      if (!url) return '';
+
+      const text = String(url);
+
+      let match = text.match(/[?&]id=([^&]+)/);
+      if (match && match[1]) return match[1];
+
+      match = text.match(/\/d\/([^/]+)/);
+      if (match && match[1]) return match[1];
+
+      match = text.match(/file\/d\/([^/]+)/);
+      if (match && match[1]) return match[1];
+
+      return '';
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('تعذر قراءة الملف.'));
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+      });
+
+      document.getElementById(pageId).classList.add('active');
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    function goHome() {
+  const cleanUrl = window.location.origin + window.location.pathname;
+
+  window.history.pushState({}, '', cleanUrl);
+
+  currentStatusFilter = 'موثق';
+
+  const statusFilter = document.getElementById('statusFilter');
+  if (statusFilter) {
+    statusFilter.value = 'موثق';
+  }
+
+  showPage('homePage');
+}
+
+    function showToast(message) {
+      document.getElementById('toastBody').textContent = message;
+      const toast = new bootstrap.Toast(document.getElementById('mainToast'));
+      toast.show();
+    }
+
+    function normalizeText(text) {
+      return String(text || '')
+        .toLowerCase()
+        .replace(/[أإآ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replaceAll('`', '&#096;');
+    }
+  </script>
+
+<style>
+  .top-login-bar.header-admin-actions {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    z-index: 5;
+    margin: 0;
+  }
+
+  .top-login-bar.header-admin-actions .btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    font-size: 0;
+  }
+
+  .top-login-bar.header-admin-actions .btn i {
+    font-size: 1rem;
+    margin: 0 !important;
+  }
+
+  .martyr-card.pending-card {
+    opacity: .62;
+    filter: grayscale(.45);
+  }
+
+  .pending-corner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #6c757d;
+    color: white;
+    padding: 6px 10px;
+    border-bottom-right-radius: 14px;
+    font-size: .72rem;
+    font-weight: 800;
+    z-index: 4;
+  }
+
+  .edit-field-btn {
+    border: 0;
+    background: transparent;
+    color: #0d6efd;
+    padding: 0 4px;
+  }
+
+  .image-gallery {
+    position: relative;
+  }
+
+  .gallery-main-image {
+    width: 100%;
+    max-height: 390px;
+    object-fit: cover;
+    border-radius: 22px;
+    background: #f1f3f5;
+  }
+
+  .gallery-controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .global-loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,.55);
+    backdrop-filter: blur(2px);
+    z-index: 20000;
+    display: none;
+    place-items: center;
+  }
+
+  .global-loading-overlay.show {
+    display: grid;
+  }
+
+  .settings-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: var(--soft-shadow);
+    margin-top: 18px;
+  }
+
+  .dashboard-controls-row {
+    background: #f8f9fa;
+    border-radius: 18px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 576px) {
+    .top-login-bar.header-admin-actions {
+      left: 8px;
+      top: 8px;
+    }
+
+    .top-login-bar.header-admin-actions .btn {
+      width: 34px;
+      height: 34px;
+    }
+  }
+</style>
+
+<!-- Dynamic Message Modal -->
+<div class="modal fade" id="dynamicMessageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body p-4 text-center">
+        <div id="dynamicMessageImageWrap" class="mb-3 d-none">
+          <img id="dynamicMessageImage" alt="" style="max-width:100%;max-height:260px;border-radius:18px;object-fit:cover;">
+        </div>
+        <div class="intro-icon bg-warning-subtle text-warning">
+          <i class="fa-solid fa-bullhorn"></i>
+        </div>
+        <h4 class="fw-bold mb-3" id="dynamicMessageTitle">رسالة</h4>
+        <p class="lh-lg text-start" id="dynamicMessageBody" style="white-space:pre-line;"></p>
+        <div class="form-check text-start mb-3">
+          <input class="form-check-input" type="checkbox" id="dynamicDontShowAgain">
+          <label class="form-check-label" for="dynamicDontShowAgain">لا تعرض هذه الرسالة مرة أخرى</label>
+        </div>
+        <button class="btn btn-primary w-100" onclick="acceptDynamicMessage()">موافق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pendingInfoModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body p-4 text-center">
+        <div class="intro-icon bg-warning-subtle text-warning">
+          <i class="fa-solid fa-hourglass-half"></i>
+        </div>
+        <h4 class="fw-bold mb-3">قيد التدقيق</h4>
+        <p class="text-muted lh-lg">
+          هذه المعلومات ما زالت قيد التدقيق والمراجعة، وستتمكن من فتح صفحة الشهيد عند التوثق من البيانات المرفوعة.
+        </p>
+        <button class="btn btn-primary w-100" data-bs-dismiss="modal">موافق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editMartyrModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header px-4 pt-4">
+        <h5 class="modal-title fw-bold">
+          <i class="fa-solid fa-pen-to-square text-primary ms-2"></i>
+          تعديل بيانات الشهيد
+        </h5>
+        <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body px-4">
+        <input type="hidden" id="editMartyrId">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label fw-bold">الاسم والكنية</label><input class="form-control" id="edit_full_name"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">العائلة</label><input class="form-control" id="edit_family_name"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">اسم الأب</label><input class="form-control" id="edit_father_name"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">المواليد</label><input class="form-control" id="edit_birth_year"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">اللقب</label><input class="form-control" id="edit_nickname"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">استشهد بـ</label><input class="form-control" id="edit_martyrdom_type"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">اسم المعركة</label><input class="form-control" id="edit_battle_name"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">سبب آخر</label><input class="form-control" id="edit_other_cause"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">تاريخ الاستشهاد</label><input class="form-control" id="edit_martyrdom_date"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">مكان الاستشهاد</label><input class="form-control" id="edit_martyrdom_place"></div>
+          <div class="col-12"><label class="form-label fw-bold">معلومات إضافية</label><textarea class="form-control" id="edit_extra_info" rows="4"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer px-4 pb-4">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button class="btn btn-primary" id="editMartyrSaveBtn" onclick="saveMartyrEdits()">حفظ التعديلات</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="aboutUsModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body p-4 text-center">
+        <div class="intro-icon bg-primary-subtle text-primary">
+          <i class="fa-solid fa-circle-info"></i>
+        </div>
+        <h4 class="fw-bold mb-3">من نحن</h4>
+        <p class="lh-lg text-start" id="aboutUsText" style="white-space:pre-line;"></p>
+        <button class="btn btn-primary w-100" data-bs-dismiss="modal">موافق</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="global-loading-overlay" id="globalLoadingOverlay">
+  <div class="text-center">
+    <div class="spinner-border text-primary mb-3" style="width:3rem;height:3rem;"></div>
+    <div class="fw-bold text-primary">جاري المعالجة...</div>
+  </div>
+</div>
+
+<script>
+/* ====== Extended project behavior v3 ====== */
+let siteMessages = [];
+let currentDynamicMessageIndex = 0;
+let publicSettings = {};
+let currentRouteSilent = false;
+let currentDetailsItem = null;
+let currentGalleryIndex = 0;
+
+async function apiRequest(action, data = {}) {
+  showGlobalSpinner(true);
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action, data })
+    });
+    const result = await response.json();
+    if (!result) throw new Error('لم يرجع الخادم استجابة واضحة.');
+    return result;
+  } finally {
+    showGlobalSpinner(false);
+  }
+}
+
+function showGlobalSpinner(show) {
+  const overlay = document.getElementById('globalLoadingOverlay');
+  if (!overlay) return;
+  overlay.classList.toggle('show', !!show);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['dynamicMessageModal','pendingInfoModal','editMartyrModal','aboutUsModal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) modals[id] = new bootstrap.Modal(el);
+  });
+
+  moveAdminButtonsToHeader();
+  addDashboardSettingsTab();
+  addDashboardExtraControls();
+  restoreSortPreference();
+  bindRoutePopState();
+
+  setTimeout(() => {
+    applyRouteFromLocation();
+  }, 900);
+});
+
+function moveAdminButtonsToHeader() {
+  const bar = document.querySelector('.top-login-bar');
+  const hero = document.querySelector('.hero');
+  if (bar && hero) {
+    bar.classList.add('header-admin-actions');
+    hero.appendChild(bar);
+    ['loginBtn','dashboardBtn','logoutBtn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.title = btn.textContent.trim();
+        btn.innerHTML = btn.querySelector('i') ? btn.querySelector('i').outerHTML : btn.innerHTML;
+      }
+    });
+  }
+}
+
+function maybeShowIntroModal() {
+  if (siteMessages && siteMessages.length) {
+    showNextDynamicMessage();
+    return;
+  }
+
+  const hidden = localStorage.getItem('taldo_martyrs_intro_hidden') === '1';
+  if (!hidden) {
+    setTimeout(() => modals.introModal.show(), 500);
+  }
+}
+
+function showNextDynamicMessage() {
+  const messages = (siteMessages || []).filter(msg => {
+    return localStorage.getItem('taldo_msg_hidden_' + msg.message_id) !== '1';
+  });
+
+  if (!messages.length) {
+    const hidden = localStorage.getItem('taldo_martyrs_intro_hidden') === '1';
+    if (!hidden) setTimeout(() => modals.introModal.show(), 400);
+    return;
+  }
+
+  currentDynamicMessageIndex = 0;
+  showDynamicMessage(messages[currentDynamicMessageIndex], messages);
+}
+
+function showDynamicMessage(msg, list) {
+  window.__currentDynamicMessage = msg;
+  window.__dynamicMessageList = list || [];
+
+  document.getElementById('dynamicMessageTitle').textContent = msg.title || 'رسالة';
+  document.getElementById('dynamicMessageBody').textContent = msg.body || '';
+  document.getElementById('dynamicDontShowAgain').checked = false;
+
+  const imageWrap = document.getElementById('dynamicMessageImageWrap');
+  const img = document.getElementById('dynamicMessageImage');
+  const src = msg.image_file_id
+    ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(msg.image_file_id)}&sz=w900`
+    : (msg.image_url || '');
+
+  if (src) {
+    imageWrap.classList.remove('d-none');
+    img.src = src;
+  } else {
+    imageWrap.classList.add('d-none');
+    img.removeAttribute('src');
+  }
+
+  modals.dynamicMessageModal.show();
+}
+
+function acceptDynamicMessage() {
+  const msg = window.__currentDynamicMessage;
+  if (msg && document.getElementById('dynamicDontShowAgain').checked) {
+    localStorage.setItem('taldo_msg_hidden_' + msg.message_id, '1');
+  }
+
+  modals.dynamicMessageModal.hide();
+
+  const list = window.__dynamicMessageList || [];
+  currentDynamicMessageIndex++;
+  if (list[currentDynamicMessageIndex]) {
+    setTimeout(() => showDynamicMessage(list[currentDynamicMessageIndex], list), 350);
+  }
+}
+
+function openAboutUsModal() {
+  document.getElementById('aboutUsText').textContent =
+    (publicSettings && publicSettings.about_us_text) ||
+    'هذا المشروع توثيقي إنساني يهدف إلى حفظ أسماء شهداء مدينة تلدو وبياناتهم من الضياع.';
+  modals.aboutUsModal.show();
+}
+
+const originalLoadInitialData = loadInitialData;
+loadInitialData = function() {
+  document.getElementById('loadingBox').style.display = 'block';
+
+  apiRequest('getInitialData')
+    .then(res => {
+      if (!res || !res.success) {
+        showToast('تعذر تحميل البيانات.');
+        return;
+      }
+
+      allFamilies = res.families || [];
+      statsData = res.stats || {};
+      allMartyrs = res.martyrs || [];
+      siteMessages = res.messages || [];
+      publicSettings = res.settings || {};
+
+      fillFamiliesSelects();
+      updateStatsCards();
+      renderMartyrs();
+
+      const martyrFromUrl = getMartyrIdFromUrl();
+      if (martyrFromUrl) {
+        setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage', true), 250);
+      } else {
+        setTimeout(() => applyRouteFromLocation(), 250);
+      }
+
+      maybeShowIntroModal();
+
+      if (isAdminLoggedIn) {
+        refreshDashboardData(false);
+      }
+
+      document.getElementById('loadingBox').style.display = 'none';
+    })
+    .catch(err => {
+      document.getElementById('loadingBox').style.display = 'none';
+      showToast(err.message || 'حدث خطأ أثناء تحميل البيانات.');
+    });
+};
+
+function restoreSortPreference() {
+  const savedSort = localStorage.getItem('taldo_sort_mode');
+  const sortSelect = document.getElementById('sortSelect');
+  if (savedSort && sortSelect) sortSelect.value = savedSort;
+}
+
+function saveSortPreference() {
+  const sortSelect = document.getElementById('sortSelect');
+  if (sortSelect) localStorage.setItem('taldo_sort_mode', sortSelect.value || 'name');
+}
+
+function ensureCompletionFilterExists() {
+  return document.getElementById('completionFilter');
+}
+
+const oldRenderMartyrs = renderMartyrs;
+renderMartyrs = function(customList) {
+  const container = document.getElementById('martyrsContainer');
+  const search = normalizeText(document.getElementById('searchInput')?.value || '');
+  const family = document.getElementById('familyFilter')?.value || '';
+  const sortBy = document.getElementById('sortSelect')?.value || localStorage.getItem('taldo_sort_mode') || 'name';
+  const completionFilter = document.getElementById('completionFilter')?.value || '';
+
+  let list = customList || allMartyrs.slice();
+
+  if (currentStatusFilter) {
+    list = list.filter(item => item.verification_status === currentStatusFilter);
+  }
+
+  if (family) list = list.filter(item => item.family_name === family);
+
+  if (completionFilter === 'needs') list = list.filter(item => isNeedsCompletion(item));
+  if (completionFilter === 'complete') list = list.filter(item => !isNeedsCompletion(item));
+
+  if (search) {
+    list = list.filter(item => {
+      const content = normalizeText([
+        item.full_name,
+        item.family_name,
+        item.father_name,
+        item.nickname,
+        item.martyrdom_place,
+        item.extra_info
+      ].join(' '));
+      return content.includes(search);
+    });
+  }
+
+  sortMartyrList(list, sortBy);
+
+  if (!list.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fa-regular fa-folder-open fa-2x mb-3 text-primary"></i>
+        <h5 class="fw-bold">لا توجد نتائج</h5>
+        <p class="mb-0">جرّب تغيير البحث أو الفلاتر.</p>
+      </div>`;
+    return;
+  }
+
+  const totalPages = Math.max(1, Math.ceil(list.length / MARTYRS_PAGE_SIZE));
+  if (currentMartyrsPage > totalPages) currentMartyrsPage = totalPages;
+  if (currentMartyrsPage < 1) currentMartyrsPage = 1;
+
+  const start = (currentMartyrsPage - 1) * MARTYRS_PAGE_SIZE;
+  const pageList = list.slice(start, start + MARTYRS_PAGE_SIZE);
+
+  const contentHtml = viewMode === 'cards'
+    ? `<div class="martyrs-grid">${pageList.map(renderMartyrCard).join('')}</div>`
+    : `<div>${pageList.map(renderMartyrListItem).join('')}</div>`;
+
+  container.innerHTML = contentHtml + renderMartyrsPagination(totalPages, list.length);
+};
+
+function sortMartyrList(list, sortBy) {
+  list.sort((a, b) => {
+    if (sortBy === 'family') return String(a.family_name || '').localeCompare(String(b.family_name || ''), 'ar');
+    if (sortBy === 'newest') return String(b.created_at || b.updated_at || '').localeCompare(String(a.created_at || a.updated_at || ''));
+    if (sortBy === 'oldest') return String(a.created_at || a.updated_at || '').localeCompare(String(b.created_at || b.updated_at || ''));
+    return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'ar');
+  });
+}
+
+renderMartyrCard = function(item) {
+  const verified = item.verification_status === 'موثق';
+  const pending = item.verification_status === 'بانتظار التوثيق';
+  const needsCompletion = isNeedsCompletion(item);
+  const img = getImageSrc(item);
+  const clickAction = pending ? "showPendingInfo()" : `openMartyrDetails('${escapeAttr(item.martyr_id)}', 'homePage')`;
+
+  return `
+    <div class="martyr-card ${pending ? 'pending-card' : ''}" onclick="${clickAction}">
+      ${pending ? `<div class="pending-corner">قيد التدقيق</div>` : needsCompletion ? `
+        <div class="needs-completion-corner">يحتاج استكمال</div>
+      ` : verified ? `
+        <div class="verified-corner"><i class="fa-solid fa-check"></i></div>
+      ` : ''}
+      <div class="martyr-image-wrap">
+        ${img ? `
+          <img src="${escapeAttr(img)}" class="martyr-image" alt="" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+          <div class="martyr-placeholder" style="display:none;"><i class="fa-solid fa-user"></i></div>
+        ` : `<div class="martyr-placeholder"><i class="fa-solid fa-user"></i></div>`}
+      </div>
+      <div class="martyr-body">
+        <h6 class="martyr-name">${escapeHtml(item.full_name || '')}</h6>
+        <div class="martyr-family">عائلة ${escapeHtml(item.family_name || '')}</div>
+        ${pending ? `<span class="badge text-bg-secondary mt-2">قيد التدقيق</span>` : needsCompletion ? `
+          <span class="badge text-bg-warning mt-2">يحتاج استكمال</span>
+        ` : verified ? `<span class="badge badge-soft-blue mt-2">موثق</span>` : ''}
+      </div>
+    </div>`;
+};
+
+renderMartyrListItem = function(item) {
+  if (item.verification_status === 'بانتظار التوثيق') {
+    return renderMartyrCard(item);
+  }
+
+  const verified = item.verification_status === 'موثق';
+
+  return `
+    <div class="list-item" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'homePage')">
+      <div class="d-flex justify-content-between align-items-center gap-2">
+        <div>
+          <h6 class="fw-bold mb-1">${escapeHtml(item.full_name || '')}</h6>
+          <div class="text-muted small">
+            عائلة ${escapeHtml(item.family_name || '')}
+            ${item.father_name ? ` - ابن ${escapeHtml(item.father_name)}` : ''}
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          ${isNeedsCompletion(item) ? `<span class="badge text-bg-warning">يحتاج استكمال</span>` : verified ? `<span class="badge badge-soft-blue">موثق</span>` : ''}
+          <i class="fa-solid fa-chevron-left text-muted"></i>
+        </div>
+      </div>
+    </div>`;
+};
+
+function showPendingInfo() {
+  modals.pendingInfoModal.show();
+}
+
+function openMobileFilterModal() {
+  const family = document.getElementById('familyFilter')?.value || '';
+  const status = document.getElementById('statusFilter')?.value || '';
+  const sort = document.getElementById('sortSelect')?.value || 'name';
+  const completion = document.getElementById('completionFilter')?.value || '';
+
+  if (document.getElementById('mobileFamilyFilter')) document.getElementById('mobileFamilyFilter').value = family;
+  if (document.getElementById('mobileStatusFilter')) document.getElementById('mobileStatusFilter').value = status;
+  if (document.getElementById('mobileSortSelect')) document.getElementById('mobileSortSelect').value = sort;
+  if (document.getElementById('mobileCompletionFilter')) document.getElementById('mobileCompletionFilter').value = completion;
+
+  modals.mobileFilterModal.show();
+}
+
+function applyMobileFilters() {
+  const family = document.getElementById('mobileFamilyFilter')?.value || '';
+  const status = document.getElementById('mobileStatusFilter')?.value || '';
+  const sort = document.getElementById('mobileSortSelect')?.value || 'name';
+  const completion = document.getElementById('mobileCompletionFilter')?.value || '';
+
+  if (document.getElementById('familyFilter')) document.getElementById('familyFilter').value = family;
+  if (document.getElementById('statusFilter')) document.getElementById('statusFilter').value = status;
+  if (document.getElementById('sortSelect')) document.getElementById('sortSelect').value = sort;
+  if (document.getElementById('completionFilter')) document.getElementById('completionFilter').value = completion;
+
+  saveSortPreference();
+  modals.mobileFilterModal.hide();
+  changeStatusFilter();
+}
+
+function changeStatusFilter() {
+  currentStatusFilter = document.getElementById('statusFilter').value;
+
+  if (currentStatusFilter === 'بانتظار التوثيق' && !isAdminLoggedIn) {
+    resetMartyrsPageAndRender();
+    return;
+  }
+
+  if (!currentStatusFilter && isAdminLoggedIn && dashboardData.length) {
+    allMartyrs = dashboardData.slice();
+  }
+
+  resetMartyrsPageAndRender();
+}
+
+function updateRoute(url, state) {
+  if (currentRouteSilent) return;
+  try {
+    window.history.pushState(state || {}, '', url);
+  } catch (e) {}
+}
+
+function bindRoutePopState() {
+  window.addEventListener('popstate', () => {
+    currentRouteSilent = true;
+    applyRouteFromLocation();
+    setTimeout(() => currentRouteSilent = false, 100);
+  });
+}
+
+function applyRouteFromLocation() {
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get('page');
+  const martyrId = params.get('m');
+  const tab = params.get('tab');
+  const family = params.get('family');
+
+  if (martyrId) {
+    openMartyrDetails(martyrId, page === 'dashboard' ? 'dashboardPage' : (page === 'dataUpdates' ? 'dashboardDataUpdatesTab' : 'homePage'), true);
+    return;
+  }
+
+  if (page === 'dashboard' && isAdminLoggedIn) {
+    showPage('dashboardPage');
+    showDashboardTab(tab || 'martyrs');
+    return;
+  }
+
+  if (page === 'families') {
+    showPage('familiesPage');
+    return;
+  }
+
+  if (family) {
+    openFamilyMartyrs(family, true);
+    return;
+  }
+
+  showPage('homePage');
+}
+
+showPage = function(pageId) {
+  document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
+  const page = document.getElementById(pageId);
+  if (page) page.classList.add('active');
+
+  if (!currentRouteSilent) {
+    if (pageId === 'homePage') updateRoute(window.location.pathname, { page: 'home' });
+    else if (pageId === 'familiesPage') updateRoute(`?page=families`, { page: 'families' });
+    else if (pageId === 'dashboardPage') updateRoute(`?page=dashboard`, { page: 'dashboard' });
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+goHome = function() {
+  const cleanUrl = window.location.origin + window.location.pathname;
+  window.history.pushState({ page: 'home' }, '', cleanUrl);
+  currentStatusFilter = 'موثق';
+
+  const statusFilter = document.getElementById('statusFilter');
+  if (statusFilter) statusFilter.value = 'موثق';
+
+  const completionFilter = document.getElementById('completionFilter');
+  if (completionFilter) completionFilter.value = '';
+
+  showPage('homePage');
+  resetMartyrsPageAndRender();
+};
+
+openFamilyMartyrs = function(familyName, noRoute) {
+  const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+  const list = source.filter(item => item.family_name === familyName && item.verification_status !== 'مرفوض');
+
+  document.getElementById('familyPageTitle').textContent = `شهداء عائلة ${familyName}`;
+  const container = document.getElementById('familyMartyrsContainer');
+
+  container.innerHTML = list.length
+    ? `<div class="martyrs-grid">${list.map(renderMartyrCardForFamily).join('')}</div>`
+    : `<div class="empty-state">لا توجد أسماء لهذه العائلة.</div>`;
+
+  if (!noRoute) updateRoute(`?family=${encodeURIComponent(familyName)}`, { page: 'family', family: familyName });
+  showPage('familyMartyrsPage');
+};
+
+openMartyrDetails = function(martyrId, fromPage, noRoute) {
+  const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+  const item = source.find(x => x.martyr_id === martyrId);
+  if (!item) return;
+
+  if (item.verification_status === 'بانتظار التوثيق' && !isAdminLoggedIn) {
+    showPendingInfo();
+    return;
+  }
+
+  currentDetailsItem = item;
+  currentGalleryIndex = 0;
+  lastPageBeforeDetails = fromPage || 'homePage';
+
+  if (!noRoute) {
+    const pageParam = fromPage === 'dashboardDataUpdatesTab' ? 'dataUpdates' : (fromPage === 'dashboardPage' ? 'dashboard' : 'home');
+    updateRoute(`?page=${pageParam}&m=${encodeURIComponent(martyrId)}`, { page: 'details', martyrId, fromPage });
+  }
+
+  const canUpdate = isAllowUpdatesEnabled(item.allow_updates);
+
+  document.getElementById('detailsContainer').innerHTML = `
+    <div class="row g-4">
+      <div class="col-lg-5">
+        ${renderImageGallery(item)}
+      </div>
+      <div class="col-lg-7">
+        <div class="detail-box">
+          <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+            <div>
+              <h2 class="fw-bold mb-1">${escapeHtml(item.full_name || '')} ${adminEditBtn('full_name')}</h2>
+              <div class="text-muted">عائلة ${escapeHtml(item.family_name || '')} ${adminEditBtn('family_name')}</div>
+            </div>
+            ${statusBadge(item.verification_status)}
+          </div>
+
+          <div class="row g-3">
+            ${detailItemEditable('اسم الأب', item.father_name, 'father_name')}
+            ${detailItemEditable('المواليد', item.birth_year, 'birth_year')}
+            ${detailItemEditable('اللقب', item.nickname, 'nickname')}
+            ${detailItemEditable('استشهد بـ', item.martyrdom_type, 'martyrdom_type')}
+            ${item.martyrdom_type === 'المعارك' ? detailItemEditable('اسم المعركة', item.battle_name, 'battle_name') : ''}
+            ${item.martyrdom_type === 'آخر' ? detailItemEditable('السبب', item.other_cause, 'other_cause') : ''}
+            ${detailItemEditable('تاريخ الاستشهاد', item.martyrdom_date, 'martyrdom_date')}
+            ${detailItemEditable('مكان الاستشهاد', item.martyrdom_place, 'martyrdom_place')}
+          </div>
+
+          ${item.extra_info ? `
+            <hr>
+            <h6 class="fw-bold">معلومات إضافية ${adminEditBtn('extra_info')}</h6>
+            <p class="lh-lg mb-0">${escapeHtml(item.extra_info)}</p>
+          ` : ''}
+
+          ${item.completed_info ? `
+            <div class="completed-info-box">
+              <h6 class="fw-bold text-warning-emphasis mb-2">
+                <i class="fa-solid fa-circle-info ms-1"></i>
+                بيانات مستكملة
+              </h6>
+              <p class="lh-lg mb-0">${escapeHtml(item.completed_info)}</p>
+            </div>
+          ` : ''}
+
+          <div class="details-action-bar">
+            <button class="btn btn-primary" onclick="shareMartyr('${escapeAttr(item.martyr_id)}')">
+              <i class="fa-solid fa-share-nodes ms-1"></i>
+              مشاركة
+            </button>
+            ${canUpdate ? `
+              <button class="btn btn-warning" onclick="openDataUpdateModal('${escapeAttr(item.martyr_id)}', '${escapeAttr(item.full_name || '')}')">
+                <i class="fa-solid fa-pen-to-square ms-1"></i>
+                استكمال بيانات
+              </button>
+            ` : ''}
+          </div>
+
+          ${isAdminLoggedIn ? renderAdminActions(item) : ''}
+        </div>
+      </div>
+    </div>`;
+
+  showPage('detailsPage');
+};
+
+function renderImageGallery(item) {
+  const images = normalizeImages(item);
+  if (!images.length) {
+    return `<div class="detail-image-placeholder"><div><i class="fa-solid fa-user fa-4x text-secondary mb-3"></i><div>لا توجد صورة مرفقة</div></div></div>`;
+  }
+  const first = images[0];
+  return `
+    <div class="image-gallery">
+      <img id="galleryMainImage" src="${escapeAttr(first.src)}" class="gallery-main-image" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+      <div class="detail-image-placeholder" style="display:none;"><div>تعذر عرض الصورة</div></div>
+      ${images.length > 1 ? `
+        <div class="gallery-controls">
+          <button class="btn btn-outline-primary btn-sm" onclick="changeGalleryImage(-1)">السابق</button>
+          <span class="badge text-bg-light align-self-center" id="galleryCounter">1 / ${images.length}</span>
+          <button class="btn btn-outline-primary btn-sm" onclick="changeGalleryImage(1)">التالي</button>
+        </div>
+      ` : ''}
+    </div>`;
+}
+
+function normalizeImages(item) {
+  const images = [];
+  if (Array.isArray(item.images)) {
+    item.images.forEach(img => {
+      const src = img.image_file_id ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(img.image_file_id)}&sz=w1000` : (img.image_url || '');
+      if (src) images.push({ src });
+    });
+  }
+
+  const main = getImageSrc(item);
+  if (main && !images.some(img => img.src === main)) images.unshift({ src: main });
+  return images;
+}
+
+function changeGalleryImage(step) {
+  const images = normalizeImages(currentDetailsItem || {});
+  if (!images.length) return;
+  currentGalleryIndex = (currentGalleryIndex + step + images.length) % images.length;
+  const img = document.getElementById('galleryMainImage');
+  const counter = document.getElementById('galleryCounter');
+  if (img) img.src = images[currentGalleryIndex].src;
+  if (counter) counter.textContent = `${currentGalleryIndex + 1} / ${images.length}`;
+}
+
+function adminEditBtn(field) {
+  return isAdminLoggedIn ? `<button class="edit-field-btn" title="تعديل" onclick="event.stopPropagation(); openEditMartyrModal('${field}')"><i class="fa-solid fa-pen"></i></button>` : '';
+}
+
+function detailItemEditable(label, value, field) {
+  if (!value && !isAdminLoggedIn) return '';
+  return `
+    <div class="col-md-6">
+      <div class="p-3 rounded-4 bg-light h-100">
+        <div class="text-muted small mb-1">${escapeHtml(label)} ${adminEditBtn(field)}</div>
+        <div class="fw-bold">${escapeHtml(value || '-')}</div>
+      </div>
+    </div>`;
+}
+
+function openEditMartyrModal(focusField) {
+  if (!currentDetailsItem) return;
+  const fields = ['full_name','family_name','father_name','birth_year','nickname','martyrdom_type','battle_name','other_cause','martyrdom_date','martyrdom_place','extra_info'];
+  document.getElementById('editMartyrId').value = currentDetailsItem.martyr_id;
+  fields.forEach(field => {
+    const el = document.getElementById('edit_' + field);
+    if (el) el.value = currentDetailsItem[field] || '';
+  });
+  modals.editMartyrModal.show();
+  setTimeout(() => document.getElementById('edit_' + focusField)?.focus(), 250);
+}
+
+function saveMartyrEdits() {
+  const fields = ['full_name','family_name','father_name','birth_year','nickname','martyrdom_type','battle_name','other_cause','martyrdom_date','martyrdom_place','extra_info'];
+  const payload = { martyr_id: document.getElementById('editMartyrId').value };
+  fields.forEach(field => {
+    payload[field] = document.getElementById('edit_' + field)?.value || '';
+  });
+
+  const btn = document.getElementById('editMartyrSaveBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الحفظ...`;
+
+  apiRequest('updateMartyrFields', payload)
+    .then(res => {
+      btn.disabled = false;
+      btn.innerHTML = 'حفظ التعديلات';
+      if (!res.success) return showToast(res.message || 'تعذر الحفظ.');
+      modals.editMartyrModal.hide();
+      showToast(res.message || 'تم الحفظ.');
+      refreshDashboardData(false);
+      loadInitialData();
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.innerHTML = 'حفظ التعديلات';
+      showToast(err.message || 'تعذر الحفظ.');
+    });
+}
+
+renderAdminActions = function(item) {
+  const allowChecked = isAllowUpdatesEnabled(item.allow_updates) ? 'checked' : '';
+  const needsChecked = isNeedsCompletion(item) ? 'checked' : '';
+
+  return `
+    <div class="admin-box mt-4">
+      <h6 class="fw-bold mb-3"><i class="fa-solid fa-user-shield ms-1"></i> أدوات المراجعة</h6>
+      <div class="row g-3">
+        <div class="col-md-8">
+          <textarea id="reviewerNotes" class="form-control" rows="2" placeholder="ملاحظات المراجع"></textarea>
+        </div>
+        <div class="col-md-4 d-grid gap-2">
+          <button class="btn btn-success" onclick="updateStatusFromDetails('${escapeAttr(item.martyr_id)}', 'موثق')">
+            <i class="fa-solid fa-check ms-1"></i> توثيق
+          </button>
+          <button class="btn btn-warning" onclick="verifyWithCompletionFromDetails('${escapeAttr(item.martyr_id)}')">
+            <i class="fa-solid fa-circle-exclamation ms-1"></i> توثيق مع الاستكمال
+          </button>
+          <button class="btn btn-outline-danger" onclick="updateStatusFromDetails('${escapeAttr(item.martyr_id)}', 'مرفوض')">
+            <i class="fa-solid fa-xmark ms-1"></i> رفض
+          </button>
+        </div>
+        <div class="col-12">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="allowUpdatesSwitch" ${allowChecked} onchange="saveCompletionSwitches('${escapeAttr(item.martyr_id)}')">
+            <label class="form-check-label fw-bold" for="allowUpdatesSwitch">إظهار زر استكمال البيانات</label>
+          </div>
+          <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" id="needsCompletionSwitch" ${needsChecked} onchange="saveCompletionSwitches('${escapeAttr(item.martyr_id)}')">
+            <label class="form-check-label fw-bold" for="needsCompletionSwitch">إظهار علامة يحتاج استكمال</label>
+          </div>
+        </div>
+      </div>
+    </div>`;
+};
+
+function saveCompletionSwitches(martyrId) {
+  const allow = document.getElementById('allowUpdatesSwitch')?.checked ? 'نعم' : 'لا';
+  const needs = document.getElementById('needsCompletionSwitch')?.checked ? 'نعم' : 'لا';
+
+  apiRequest('setMartyrCompletionOptions', {
+    martyrId,
+    allowUpdates: allow,
+    needsCompletion: needs
+  }).then(res => {
+    showToast(res.message || 'تم حفظ الخيارات.');
+    refreshDashboardData(false);
+    loadInitialData();
+  }).catch(err => showToast(err.message || 'تعذر حفظ الخيارات.'));
+}
+
+function verifyWithCompletionFromDetails(martyrId) {
+  const notes = document.getElementById('reviewerNotes')?.value || '';
+  apiRequest('verifyMartyrWithCompletion', { martyrId, reviewerNotes: notes })
+    .then(res => {
+      showToast(res.message || 'تم التوثيق مع طلب الاستكمال.');
+      refreshDashboardData(false);
+      loadInitialData();
+      showPage('dashboardPage');
+    })
+    .catch(err => showToast(err.message || 'تعذر تحديث الحالة.'));
+}
+
+function addDashboardExtraControls() {
+  const dashboardFilters = document.querySelector('#dashboardMartyrsTab .filter-card .row');
+  if (dashboardFilters && !document.getElementById('dashboardSortSelect')) {
+    dashboardFilters.insertAdjacentHTML('beforeend', `
+      <div class="col-md-3">
+        <label class="form-label fw-bold">فرز</label>
+        <select class="form-select" id="dashboardSortSelect" onchange="renderDashboardTable()">
+          <option value="pending-first">بانتظار التوثيق أولًا</option>
+          <option value="name">أبجديًا</option>
+          <option value="newest">الأحدث رفعًا</option>
+          <option value="oldest">الأقدم رفعًا</option>
+        </select>
+      </div>`);
+  }
+
+  const updatesHeader = document.querySelector('#dashboardDataUpdatesTab .dashboard-section-header');
+  if (updatesHeader && !document.getElementById('dataUpdatesControls')) {
+    updatesHeader.insertAdjacentHTML('afterend', `
+      <div class="dashboard-controls-row" id="dataUpdatesControls">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label fw-bold">بحث</label>
+            <input class="form-control" id="dataUpdatesSearchInput" placeholder="بحث في الطلبات..." oninput="renderDataUpdateRequestsTable()">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">الحالة</label>
+            <select class="form-select" id="dataUpdatesStatusFilter" onchange="renderDataUpdateRequestsTable()">
+              <option value="بانتظار المراجعة">بانتظار المراجعة</option>
+              <option value="مقبول">مقبول</option>
+              <option value="مرفوض">مرفوض</option>
+              <option value="">الكل</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">فرز</label>
+            <select class="form-select" id="dataUpdatesSortSelect" onchange="renderDataUpdateRequestsTable()">
+              <option value="newest">الأحدث أولًا</option>
+              <option value="oldest">الأقدم أولًا</option>
+              <option value="name">أبجديًا حسب اسم الشهيد</option>
+            </select>
+          </div>
+        </div>
+      </div>`);
+  }
+}
+
+renderDashboardTable = function() {
+  const tbody = document.getElementById('dashboardTableBody');
+  if (!tbody) return;
+
+  const search = normalizeText(document.getElementById('dashboardSearchInput').value || '');
+  const status = document.getElementById('dashboardStatusFilter').value || '';
+  const sortBy = document.getElementById('dashboardSortSelect')?.value || 'pending-first';
+
+  let list = dashboardData.slice();
+
+  if (status) list = list.filter(item => item.verification_status === status);
+  if (search) {
+    list = list.filter(item => normalizeText([item.full_name,item.family_name,item.father_name,item.nickname,item.martyrdom_place,item.extra_info].join(' ')).includes(search));
+  }
+
+  if (sortBy === 'name') list.sort((a,b)=>String(a.full_name||'').localeCompare(String(b.full_name||''),'ar'));
+  else if (sortBy === 'newest') list.sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+  else if (sortBy === 'oldest') list.sort((a,b)=>String(a.created_at||'').localeCompare(String(b.created_at||'')));
+  else {
+    list.sort((a, b) => {
+      if (a.verification_status === 'بانتظار التوثيق' && b.verification_status !== 'بانتظار التوثيق') return -1;
+      if (a.verification_status !== 'بانتظار التوثيق' && b.verification_status === 'بانتظار التوثيق') return 1;
+      return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'ar');
+    });
+  }
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">لا توجد نتائج.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(item => {
+    const img = getImageSrc(item);
+    return `
+      <tr>
+        <td style="width:70px;">${img ? `<img src="${escapeAttr(img)}" style="width:52px;height:52px;border-radius:14px;object-fit:cover;background:#f1f3f5;">` : `<div style="width:52px;height:52px;border-radius:14px;background:#f1f3f5;display:grid;place-items:center;color:#adb5bd;"><i class="fa-solid fa-user"></i></div>`}</td>
+        <td><div class="fw-bold">${escapeHtml(item.full_name || '')}</div><div class="small text-muted">${escapeHtml(item.martyrdom_place || '')}</div></td>
+        <td>${escapeHtml(item.family_name || '')}</td>
+        <td>${escapeHtml(item.father_name || '')}</td>
+        <td>${statusBadge(item.verification_status)} ${isNeedsCompletion(item) ? '<span class="badge text-bg-warning">يحتاج استكمال</span>' : ''}</td>
+        <td>
+          <div class="d-flex gap-1 flex-wrap">
+            <button class="btn btn-sm btn-outline-primary" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'dashboardPage')">عرض</button>
+            <button class="btn btn-sm btn-success" onclick="quickUpdateStatus('${escapeAttr(item.martyr_id)}', 'موثق')">توثيق</button>
+            <button class="btn btn-sm btn-warning" onclick="apiRequest('verifyMartyrWithCompletion',{martyrId:'${escapeAttr(item.martyr_id)}'}).then(()=>{showToast('تم التوثيق مع الاستكمال'); refreshDashboardData(false); loadInitialData();})">توثيق مع الاستكمال</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="quickUpdateStatus('${escapeAttr(item.martyr_id)}', 'مرفوض')">رفض</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+};
+
+renderDataUpdateRequestsTable = function() {
+  const tbody = document.getElementById('dataUpdatesTableBody');
+  const countBadge = document.getElementById('dataUpdatesCount');
+  if (!tbody) return;
+
+  const search = normalizeText(document.getElementById('dataUpdatesSearchInput')?.value || '');
+  const statusFilter = document.getElementById('dataUpdatesStatusFilter')?.value ?? 'بانتظار المراجعة';
+  const sortBy = document.getElementById('dataUpdatesSortSelect')?.value || 'newest';
+
+  let list = dataUpdateRequests || [];
+
+  if (statusFilter) list = list.filter(item => String(item.status || '').trim() === statusFilter);
+  if (search) {
+    list = list.filter(item => normalizeText([item.martyr_name,item.family_name,item.submitted_text,item.request_text].join(' ')).includes(search));
+  }
+
+  if (sortBy === 'oldest') list.sort((a,b)=>String(a.created_at||'').localeCompare(String(b.created_at||'')));
+  else if (sortBy === 'name') list.sort((a,b)=>String(a.martyr_name||'').localeCompare(String(b.martyr_name||''),'ar'));
+  else list.sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+
+  if (countBadge) countBadge.textContent = list.length;
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">لا توجد طلبات مطابقة.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(item => {
+    const requestId = item.update_id || item.request_id || '';
+    const requestText = item.submitted_text || item.request_text || '';
+    const img = item.image_file_id ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(item.image_file_id)}&sz=w500` : '';
+    return `
+      <tr>
+        <td>${escapeHtml(item.created_at || '')}</td>
+        <td class="fw-bold" style="cursor:pointer" onclick="openMartyrDetails('${escapeAttr(item.martyr_id)}', 'dashboardDataUpdatesTab')">${escapeHtml(item.martyr_name || '')}</td>
+        <td>${escapeHtml(item.family_name || '')}</td>
+        <td class="request-text-cell"><div>${escapeHtml(requestText)}</div>${img ? `<a href="${escapeAttr(img)}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">عرض الصورة</a>` : ''}</td>
+        <td>${statusBadge(item.status)}</td>
+        <td>${isPendingRequest(item.status) ? `
+          <div class="d-flex gap-1 flex-wrap">
+            <button class="btn btn-sm btn-success" onclick="approveDataUpdateFromDashboard('${escapeAttr(requestId)}')">قبول وإضافة</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="rejectDataUpdateFromDashboard('${escapeAttr(requestId)}')">رفض</button>
+          </div>` : '-'}</td>
+      </tr>`;
+  }).join('');
+};
+
+function addDashboardSettingsTab() {
+  const tabs = document.querySelector('.dashboard-tabs');
+  if (tabs && !document.getElementById('dashSettingsTabBtn')) {
+    tabs.insertAdjacentHTML('beforeend', `
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="dashSettingsTabBtn" type="button" onclick="showDashboardTab('settings')">
+          <i class="fa-solid fa-gear ms-1"></i>
+          الإعدادات العامة
+        </button>
+      </li>`);
+  }
+
+  const dash = document.getElementById('dashboardPage');
+  if (dash && !document.getElementById('dashboardSettingsTab')) {
+    dash.insertAdjacentHTML('beforeend', `
+      <div id="dashboardSettingsTab" class="dashboard-tab-pane d-none">
+        <div class="settings-card">
+          <h5 class="fw-bold mb-3"><i class="fa-solid fa-bullhorn text-primary ms-1"></i> رسائل تظهر عند فتح الموقع</h5>
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label fw-bold">العنوان</label><input class="form-control" id="msgTitle"></div>
+            <div class="col-md-2"><label class="form-label fw-bold">الترتيب</label><input class="form-control" id="msgOrder" value="100"></div>
+            <div class="col-md-3"><label class="form-label fw-bold">الحالة</label><select class="form-select" id="msgStatus"><option value="active">مفعل</option><option value="inactive">غير مفعل</option></select></div>
+            <div class="col-md-3"><label class="form-label fw-bold">صورة</label><input type="file" class="form-control" id="msgImage" accept="image/*"></div>
+            <div class="col-12"><label class="form-label fw-bold">نص الرسالة</label><textarea class="form-control" id="msgBody" rows="4"></textarea></div>
+            <div class="col-12"><button class="btn btn-primary" onclick="saveDashboardMessage()">حفظ الرسالة</button></div>
+          </div>
+          <hr>
+          <div id="messagesAdminList"></div>
+        </div>
+        <div class="settings-card">
+          <h5 class="fw-bold mb-3"><i class="fa-solid fa-circle-info text-primary ms-1"></i> نص من نحن</h5>
+          <textarea class="form-control" id="aboutUsAdminText" rows="5"></textarea>
+          <button class="btn btn-primary mt-3" onclick="saveAboutUsText()">حفظ نص من نحن</button>
+        </div>
+      </div>`);
+  }
+}
+
+const oldShowDashboardTab = showDashboardTab;
+showDashboardTab = function(tabName) {
+  oldShowDashboardTab(tabName);
+
+  if (tabName === 'settings') {
+    ['dashboardMartyrsTab','dashboardDataUpdatesTab','dashboardJoinRequestsTab'].forEach(id => document.getElementById(id)?.classList.add('d-none'));
+    ['dashMartyrsTabBtn','dashDataUpdatesTabBtn','dashJoinTabBtn'].forEach(id => document.getElementById(id)?.classList.remove('active'));
+    document.getElementById('dashboardSettingsTab')?.classList.remove('d-none');
+    document.getElementById('dashSettingsTabBtn')?.classList.add('active');
+    renderSettingsTab();
+  } else {
+    document.getElementById('dashboardSettingsTab')?.classList.add('d-none');
+    document.getElementById('dashSettingsTabBtn')?.classList.remove('active');
+  }
+
+  if (!currentRouteSilent && document.getElementById('dashboardPage')?.classList.contains('active')) {
+    updateRoute(`?page=dashboard&tab=${encodeURIComponent(tabName)}`, { page: 'dashboard', tab: tabName });
+  }
+};
+
+function renderSettingsTab() {
+  const messages = (window.__adminMessages || siteMessages || []);
+  const list = document.getElementById('messagesAdminList');
+  const about = document.getElementById('aboutUsAdminText');
+  if (about) about.value = publicSettings.about_us_text || '';
+
+  if (!list) return;
+  if (!messages.length) {
+    list.innerHTML = '<div class="text-muted">لا توجد رسائل مخصصة بعد.</div>';
+    return;
+  }
+
+  list.innerHTML = messages.map(msg => `
+    <div class="border rounded-4 p-3 mb-2">
+      <div class="d-flex justify-content-between gap-2 flex-wrap">
+        <div>
+          <div class="fw-bold">${escapeHtml(msg.title || '')}</div>
+          <div class="small text-muted">${escapeHtml(msg.status || '')} - ترتيب: ${escapeHtml(msg.sort_order || '')}</div>
+        </div>
+        <div>
+          <button class="btn btn-sm btn-outline-primary" onclick="toggleDashboardMessage('${escapeAttr(msg.message_id)}','${msg.status === 'active' ? 'inactive' : 'active'}')">
+            ${msg.status === 'active' ? 'إلغاء التفعيل' : 'تفعيل'}
+          </button>
+        </div>
+      </div>
+      <div class="mt-2" style="white-space:pre-line">${escapeHtml(msg.body || '')}</div>
+    </div>`).join('');
+}
+
+function saveDashboardMessage() {
+  const file = document.getElementById('msgImage')?.files?.[0];
+  const payload = {
+    title: document.getElementById('msgTitle').value,
+    body: document.getElementById('msgBody').value,
+    status: document.getElementById('msgStatus').value,
+    sort_order: document.getElementById('msgOrder').value
+  };
+
+  const finish = () => apiRequest('saveSiteMessage', payload).then(res => {
+    showToast(res.message || 'تم حفظ الرسالة.');
+    document.getElementById('msgTitle').value = '';
+    document.getElementById('msgBody').value = '';
+    document.getElementById('msgImage').value = '';
+    refreshDashboardData(false);
+    loadInitialData();
+  }).catch(err => showToast(err.message || 'تعذر الحفظ.'));
+
+  if (file) {
+    fileToBase64(file).then(base64 => {
+      payload.imageBase64 = base64;
+      payload.imageName = file.name;
+      finish();
+    });
+  } else finish();
+}
+
+function toggleDashboardMessage(messageId, status) {
+  apiRequest('updateSiteMessageStatus', { messageId, status })
+    .then(res => {
+      showToast(res.message || 'تم تحديث الرسالة.');
+      refreshDashboardData(false);
+      loadInitialData();
+    })
+    .catch(err => showToast(err.message || 'تعذر تحديث الرسالة.'));
+}
+
+function saveAboutUsText() {
+  apiRequest('updateSettingValue', {
+    key: 'about_us_text',
+    value: document.getElementById('aboutUsAdminText').value,
+    description: 'نص يظهر عند الضغط على زر من نحن'
+  }).then(res => {
+    showToast(res.message || 'تم حفظ النص.');
+    publicSettings.about_us_text = document.getElementById('aboutUsAdminText').value;
+  }).catch(err => showToast(err.message || 'تعذر الحفظ.'));
+}
+
+const oldRefreshDashboardData = refreshDashboardData;
+refreshDashboardData = function(showMsg = true) {
+  if (!isAdminLoggedIn) {
+    showToast('يرجى تسجيل الدخول أولًا.');
+    return;
+  }
+
+  apiRequest('getAdminDashboardData')
+    .then(res => {
+      if (!res || !res.success) {
+        showToast('تعذر تحميل بيانات لوحة التحكم.');
+        return;
+      }
+
+      statsData = res.stats || statsData;
+      dashboardData = res.all || [];
+      dataUpdateRequests = res.dataUpdates || [];
+      joinRequests = res.joinRequests || [];
+      window.__adminMessages = res.messages || [];
+      publicSettings = res.settings || publicSettings || {};
+      allMartyrs = dashboardData.filter(x => x.verification_status !== 'مرفوض');
+
+      updateStatsCards();
+      updateDashboardStats();
+      renderDashboardTable();
+      renderDataUpdateRequestsTable();
+      renderJoinRequestsTable();
+      renderSettingsTab();
+
+      if (showMsg) showToast('تم تحديث لوحة التحكم.');
+    })
+    .catch(err => {
+      showToast(err.message || 'حدث خطأ أثناء تحميل لوحة التحكم.');
+    });
+};
+
+async function filesToPayload(fileList) {
+  const files = Array.from(fileList || []);
+  const payload = [];
+  for (const file of files) {
+    payload.push({
+      name: file.name,
+      base64: await fileToBase64(file)
+    });
+  }
+  return payload;
+}
+
+submitMartyrForm = async function() {
+  const form = document.getElementById('martyrForm');
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الإرسال...`;
+
+  try {
+    const formData = Object.fromEntries(new FormData(form).entries());
+    const imageInput = document.getElementById('imageInput');
+    formData.imageFiles = await filesToPayload(imageInput?.files || []);
+
+    apiRequest('submitMartyr', formData)
+      .then(res => {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane ms-1"></i> إرسال البيانات`;
+        if (!res.success) return showToast(res.message || 'تعذر الإرسال.');
+        modals.submitModal.hide();
+        modals.submitSuccessModal.show();
+        setTimeout(() => modals.submitSuccessModal.hide(), 1800);
+        loadInitialData();
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane ms-1"></i> إرسال البيانات`;
+        showToast(err.message || 'حدث خطأ أثناء إرسال البيانات.');
+      });
+  } catch (error) {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-paper-plane ms-1"></i> إرسال البيانات`;
+    showToast(error.message || 'تعذر قراءة الصور.');
+  }
+};
+
+submitDataUpdateForm = async function() {
+  const martyrId = document.getElementById('dataUpdateMartyrId').value;
+  const martyrName = document.getElementById('dataUpdateMartyrName').value;
+  const requestText = document.getElementById('dataUpdateText').value.trim();
+  const imageInput = document.getElementById('dataUpdateImageInput');
+
+  if (!requestText && (!imageInput || !imageInput.files.length)) {
+    showToast('يرجى كتابة البيانات أو رفع صورة.');
+    return;
+  }
+
+  const btn = document.getElementById('dataUpdateSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الإرسال...`;
+
+  try {
+    const payload = {
+      martyr_id: martyrId,
+      martyr_name: martyrName,
+      request_text: requestText,
+      submitted_text: requestText,
+      imageFiles: await filesToPayload(imageInput?.files || [])
+    };
+
+    apiRequest('submitDataUpdate', payload)
+      .then(res => {
+        btn.disabled = false;
+        btn.innerHTML = 'إرسال للمراجعة';
+        if (!res.success) return showToast(res.message || 'تعذر إرسال الطلب.');
+        modals.dataUpdateModal.hide();
+        showToast(res.message || 'تم إرسال الطلب.');
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = 'إرسال للمراجعة';
+        showToast(err.message || 'تعذر إرسال الطلب.');
+      });
+  } catch (error) {
+    btn.disabled = false;
+    btn.innerHTML = 'إرسال للمراجعة';
+    showToast(error.message || 'تعذر قراءة الصور.');
+  }
+};
+</script>
+
+</body>
+
+</html>
