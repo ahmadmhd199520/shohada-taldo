@@ -812,7 +812,37 @@
     .dashboard-tab-pane.d-none {
       display: none !important;
     }
+    @media (max-width: 576px) {
+  .dashboard-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    gap: 8px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
 
+  .dashboard-tabs .nav-item {
+    flex: 0 0 auto;
+  }
+
+  .dashboard-tabs .nav-link {
+    white-space: nowrap;
+    font-size: 0.86rem;
+    padding: 8px 12px;
+  }
+
+  .dashboard-tabs::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .dashboard-tabs::-webkit-scrollbar-thumb {
+    background: rgba(13, 110, 253, 0.35);
+    border-radius: 999px;
+  }
+}
     @media (max-width: 576px) {
       .hero-title {
         font-size: 1.02rem;
