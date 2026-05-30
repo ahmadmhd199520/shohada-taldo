@@ -2396,42 +2396,56 @@ loadInitialData = function() {
         });
     };
 
-    async function fetchMartyrsServerSide() {
-      const loadingBox = document.getElementById('loadingBox');
-      if (loadingBox) loadingBox.style.display = 'block';
+async function fetchMartyrsServerSide() {
+  const loadingBox = document.getElementById('loadingBox');
+  if (loadingBox) loadingBox.style.display = 'block';
 
-      const search = document.getElementById('searchInput')?.value || '';
-      const family = document.getElementById('familyFilter')?.value || '';
-      const sortBy = document.getElementById('sortSelect')?.value || localStorage.getItem('taldo_sort_mode') || 'name';
-      const completionFilter = document.getElementById('completionFilter')?.value || '';
+  const search = document.getElementById('searchInput')?.value || '';
+  const family = document.getElementById('familyFilter')?.value || '';
+  const sortBy = document.getElementById('sortSelect')?.value || localStorage.getItem('taldo_sort_mode') || 'name';
+  const completionFilter = document.getElementById('completionFilter')?.value || '';
 
-      try {
-        const res = await apiRequest('getMartyrsPaginated', {
-          page: currentMartyrsPage,
-          pageSize: MARTYRS_PAGE_SIZE,
-          search: search,
-          family: family,
-          statusFilter: currentStatusFilter,
-          completionFilter: completionFilter,
-          sortBy: sortBy
-        });
+  try {
+    const res = await apiRequest('getMartyrsPaginated', {
+      page: currentMartyrsPage,
+      pageSize: MARTYRS_PAGE_SIZE,
+      search,
+      family,
+      statusFilter: currentStatusFilter,
+      completionFilter,
+      sortBy
+    });
 
-        if (res && res.success) {
-          allMartyrs = res.martyrs || []; // تخزين الصفحة الحالية المستلمة في المصفوفة المؤقتة
-          serverTotalCount = Number(res.totalCount || 0); // تحديث العدد الإجمالي لبناء أرقام الصفحات
-          window.__martyrsLoadedFromServer = true;
-          renderMartyrs();
-        } else {
-          console.error('getMartyrsPaginated failed:', res);
-          showToast((res && res.message) ? res.message : 'حدث خطأ أثناء جلب أسماء الشهداء.');
-        }
-      } catch (err) {
-        console.error('fetchMartyrsServerSide error:', err);
-        showToast((err && err.message) ? err.message : 'فشل الاتصال بالخادم لجلب البيانات.');
-      } finally {
-        if (loadingBox) loadingBox.style.display = 'none';
-      }
+    if (res && res.success) {
+      allMartyrs = res.martyrs || [];
+      serverTotalCount = res.totalCount || 0;
+      renderMartyrs();
+      return;
     }
+
+    console.warn('getMartyrsPaginated failed:', res);
+
+    // رجوع مؤقت للطريقة القديمة إذا كان السيرفر لا يعرف getMartyrsPaginated
+    if (res && String(res.message || '').includes('إجراء غير معروف')) {
+      const oldRows = await apiRequest('getMartyrsPublicData', {
+        statusFilter: currentStatusFilter || 'موثق'
+      });
+
+      allMartyrs = Array.isArray(oldRows) ? oldRows : [];
+      serverTotalCount = allMartyrs.length;
+      renderMartyrs();
+      showToast('تم عرض الأسماء بالطريقة القديمة مؤقتًا. يجب تحديث نشر Apps Script.');
+      return;
+    }
+
+    showToast(res?.message || 'حدث خطأ أثناء جلب أسماء الشهداء.');
+  } catch (err) {
+    console.error('fetchMartyrsServerSide error:', err);
+    showToast(err.message || 'فشل الاتصال بالخادم لجلب البيانات.');
+  } finally {
+    if (loadingBox) loadingBox.style.display = 'none';
+  }
+}
 
     function refreshDashboardData(showMsg = true) {
       if (!isAdminLoggedIn) {
