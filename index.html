@@ -2418,13 +2418,16 @@ loadInitialData = function() {
 
         if (res && res.success) {
           allMartyrs = res.martyrs || []; // تخزين الصفحة الحالية المستلمة في المصفوفة المؤقتة
-          serverTotalCount = res.totalCount || 0; // تحديث العدد الإجمالي لبناء أرقام الصفحات
+          serverTotalCount = Number(res.totalCount || 0); // تحديث العدد الإجمالي لبناء أرقام الصفحات
+          window.__martyrsLoadedFromServer = true;
           renderMartyrs();
         } else {
-          showToast('حدث خطأ أثناء جلب أسماء الشهداء.');
+          console.error('getMartyrsPaginated failed:', res);
+          showToast((res && res.message) ? res.message : 'حدث خطأ أثناء جلب أسماء الشهداء.');
         }
       } catch (err) {
-        showToast('فشل الاتصال بالخادم لجلب البيانات.');
+        console.error('fetchMartyrsServerSide error:', err);
+        showToast((err && err.message) ? err.message : 'فشل الاتصال بالخادم لجلب البيانات.');
       } finally {
         if (loadingBox) loadingBox.style.display = 'none';
       }
@@ -2665,14 +2668,17 @@ loadInitialData = function() {
     function openMobileFilterModal() {
       const family = document.getElementById('familyFilter')?.value || '';
       const status = document.getElementById('statusFilter')?.value || '';
+      const completion = document.getElementById('completionFilter')?.value || '';
       const sort = document.getElementById('sortSelect')?.value || 'name';
 
       const mobileFamily = document.getElementById('mobileFamilyFilter');
       const mobileStatus = document.getElementById('mobileStatusFilter');
+      const mobileCompletion = document.getElementById('mobileCompletionFilter');
       const mobileSort = document.getElementById('mobileSortSelect');
 
       if (mobileFamily) mobileFamily.value = family;
       if (mobileStatus) mobileStatus.value = status;
+      if (mobileCompletion) mobileCompletion.value = completion;
       if (mobileSort) mobileSort.value = sort;
 
       modals.mobileFilterModal.show();
@@ -2681,14 +2687,17 @@ loadInitialData = function() {
     function applyMobileFilters() {
       const family = document.getElementById('mobileFamilyFilter')?.value || '';
       const status = document.getElementById('mobileStatusFilter')?.value || '';
+      const completion = document.getElementById('mobileCompletionFilter')?.value || '';
       const sort = document.getElementById('mobileSortSelect')?.value || 'name';
 
       const familyFilter = document.getElementById('familyFilter');
       const statusFilter = document.getElementById('statusFilter');
+      const completionFilter = document.getElementById('completionFilter');
       const sortSelect = document.getElementById('sortSelect');
 
       if (familyFilter) familyFilter.value = family;
       if (statusFilter) statusFilter.value = status;
+      if (completionFilter) completionFilter.value = completion;
       if (sortSelect) sortSelect.value = sort;
 
       modals.mobileFilterModal.hide();
@@ -2940,7 +2949,7 @@ ${item.rejected ? `<span class="badge text-bg-danger me-1">مرفوض: ${item.re
 
   showPage('familiesPage');
 }
-    fopenFamilyMartyrs = async function(familyName, noRoute) {
+    openFamilyMartyrs = async function(familyName, noRoute) {
       const container = document.getElementById('familyMartyrsContainer');
       if (container) {
         container.innerHTML = `
@@ -3857,6 +3866,8 @@ function selectFamily(family) {
     statusFilter.value = 'موثق';
   }
 
+  currentMartyrsPage = 1;
+  fetchMartyrsServerSide();
   showPage('homePage');
 }
 
@@ -4236,20 +4247,22 @@ loadInitialData = function() {
 
       allFamilies = res.families || [];
       statsData = res.stats || {};
-      allMartyrs = res.martyrs || [];
       siteMessages = res.messages || [];
       publicSettings = res.settings || {};
 
       fillFamiliesSelects();
       updateStatsCards();
-      renderMartyrs();
 
-      const martyrFromUrl = getMartyrIdFromUrl();
-      if (martyrFromUrl) {
-        setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage', true), 250);
-      } else {
-        setTimeout(() => applyRouteFromLocation(), 250);
-      }
+      // تحميل أسماء الشهداء من الخادم صفحة بصفحة حتى يعمل البحث والفلاتر بدون تحميل كل السجلات دفعة واحدة.
+      currentMartyrsPage = 1;
+      fetchMartyrsServerSide().then(() => {
+        const martyrFromUrl = getMartyrIdFromUrl();
+        if (martyrFromUrl) {
+          setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage', true), 250);
+        } else {
+          setTimeout(() => applyRouteFromLocation(), 250);
+        }
+      });
 
       maybeShowIntroModal();
 
@@ -4288,6 +4301,28 @@ renderMartyrs = function(customList) {
   const completionFilter = document.getElementById('completionFilter')?.value || '';
 
   let list = customList || allMartyrs.slice();
+
+  // إذا كانت البيانات قادمة من getMartyrsPaginated فهي صفحة جاهزة من السيرفر،
+  // لا نعيد فلترتها أو تقطيعها مرة ثانية داخل المتصفح حتى لا تظهر صفحات فارغة.
+  if (!customList && window.__martyrsLoadedFromServer) {
+    if (!list.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fa-regular fa-folder-open fa-2x mb-3 text-primary"></i>
+          <h5 class="fw-bold">لا توجد نتائج</h5>
+          <p class="mb-0">جرّب تغيير البحث أو الفلاتر.</p>
+        </div>`;
+      return;
+    }
+
+    const totalPages = Math.max(1, Math.ceil((Number(serverTotalCount) || list.length) / MARTYRS_PAGE_SIZE));
+    const contentHtml = viewMode === 'cards'
+      ? `<div class="martyrs-grid">${list.map(renderMartyrCard).join('')}</div>`
+      : `<div>${list.map(renderMartyrListItem).join('')}</div>`;
+
+    container.innerHTML = contentHtml + renderMartyrsPagination(totalPages, Number(serverTotalCount) || list.length);
+    return;
+  }
 
   if (currentStatusFilter) {
     list = list.filter(item => item.verification_status === currentStatusFilter);
