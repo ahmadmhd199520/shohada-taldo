@@ -2193,7 +2193,6 @@
 
   <script>
     let allMartyrs = [];
-    let serverTotalCount = 0; // إجمالي عدد الشهداء الراجعين من عملية التصفية على السيرفر
     let allFamilies = [];
     let statsData = null;
     let dashboardData = [];
@@ -2360,7 +2359,7 @@
       }, 1200);
     }
 
-loadInitialData = function() {
+    function loadInitialData() {
       document.getElementById('loadingBox').style.display = 'block';
 
       apiRequest('getInitialData')
@@ -2372,80 +2371,26 @@ loadInitialData = function() {
 
           allFamilies = res.families || [];
           statsData = res.stats || {};
-          siteMessages = res.messages || [];
-          publicSettings = res.settings || {};
+          allMartyrs = res.martyrs || [];
 
           fillFamiliesSelects();
           updateStatsCards();
+          renderMartyrs();
 
-          // استدعاء جلب أسماء الشهداء تدريجياً للصفحة الأولى من السيرفر
-          fetchMartyrsServerSide().then(() => {
-            const martyrFromUrl = getMartyrIdFromUrl();
-            if (martyrFromUrl) {
-              setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage', true), 250);
-            } else {
-              setTimeout(() => applyRouteFromLocation(), 250);
-            }
-          });
+          const martyrFromUrl = getMartyrIdFromUrl();
+          if (martyrFromUrl) {
+            setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage'), 250);
+          }
 
-          maybeShowIntroModal();
+          // لا نحمل لوحة التحكم تلقائيًا عند فتح الصفحة العامة.
+
+          document.getElementById('loadingBox').style.display = 'none';
         })
         .catch(err => {
           document.getElementById('loadingBox').style.display = 'none';
           showToast(err.message || 'حدث خطأ أثناء تحميل البيانات.');
         });
-    };
-
-async function fetchMartyrsServerSide() {
-  const loadingBox = document.getElementById('loadingBox');
-  if (loadingBox) loadingBox.style.display = 'block';
-
-  const search = document.getElementById('searchInput')?.value || '';
-  const family = document.getElementById('familyFilter')?.value || '';
-  const sortBy = document.getElementById('sortSelect')?.value || localStorage.getItem('taldo_sort_mode') || 'name';
-  const completionFilter = document.getElementById('completionFilter')?.value || '';
-
-  try {
-    const res = await apiRequest('getMartyrsPaginated', {
-      page: currentMartyrsPage,
-      pageSize: MARTYRS_PAGE_SIZE,
-      search,
-      family,
-      statusFilter: currentStatusFilter,
-      completionFilter,
-      sortBy
-    });
-
-    if (res && res.success) {
-      allMartyrs = res.martyrs || [];
-      serverTotalCount = res.totalCount || 0;
-      renderMartyrs();
-      return;
     }
-
-    console.warn('getMartyrsPaginated failed:', res);
-
-    // رجوع مؤقت للطريقة القديمة إذا كان السيرفر لا يعرف getMartyrsPaginated
-    if (res && String(res.message || '').includes('إجراء غير معروف')) {
-      const oldRows = await apiRequest('getMartyrsPublicData', {
-        statusFilter: currentStatusFilter || 'موثق'
-      });
-
-      allMartyrs = Array.isArray(oldRows) ? oldRows : [];
-      serverTotalCount = allMartyrs.length;
-      renderMartyrs();
-      showToast('تم عرض الأسماء بالطريقة القديمة مؤقتًا. يجب تحديث نشر Apps Script.');
-      return;
-    }
-
-    showToast(res?.message || 'حدث خطأ أثناء جلب أسماء الشهداء.');
-  } catch (err) {
-    console.error('fetchMartyrsServerSide error:', err);
-    showToast(err.message || 'فشل الاتصال بالخادم لجلب البيانات.');
-  } finally {
-    if (loadingBox) loadingBox.style.display = 'none';
-  }
-}
 
     function refreshDashboardData(showMsg = true) {
       if (!isAdminLoggedIn) {
@@ -2682,17 +2627,14 @@ async function fetchMartyrsServerSide() {
     function openMobileFilterModal() {
       const family = document.getElementById('familyFilter')?.value || '';
       const status = document.getElementById('statusFilter')?.value || '';
-      const completion = document.getElementById('completionFilter')?.value || '';
       const sort = document.getElementById('sortSelect')?.value || 'name';
 
       const mobileFamily = document.getElementById('mobileFamilyFilter');
       const mobileStatus = document.getElementById('mobileStatusFilter');
-      const mobileCompletion = document.getElementById('mobileCompletionFilter');
       const mobileSort = document.getElementById('mobileSortSelect');
 
       if (mobileFamily) mobileFamily.value = family;
       if (mobileStatus) mobileStatus.value = status;
-      if (mobileCompletion) mobileCompletion.value = completion;
       if (mobileSort) mobileSort.value = sort;
 
       modals.mobileFilterModal.show();
@@ -2701,17 +2643,14 @@ async function fetchMartyrsServerSide() {
     function applyMobileFilters() {
       const family = document.getElementById('mobileFamilyFilter')?.value || '';
       const status = document.getElementById('mobileStatusFilter')?.value || '';
-      const completion = document.getElementById('mobileCompletionFilter')?.value || '';
       const sort = document.getElementById('mobileSortSelect')?.value || 'name';
 
       const familyFilter = document.getElementById('familyFilter');
       const statusFilter = document.getElementById('statusFilter');
-      const completionFilter = document.getElementById('completionFilter');
       const sortSelect = document.getElementById('sortSelect');
 
       if (familyFilter) familyFilter.value = family;
       if (statusFilter) statusFilter.value = status;
-      if (completionFilter) completionFilter.value = completion;
       if (sortSelect) sortSelect.value = sort;
 
       modals.mobileFilterModal.hide();
@@ -2746,12 +2685,44 @@ async function fetchMartyrsServerSide() {
       }
     }
 
-renderMartyrs = function(customList) {
+    function renderMartyrs(customList) {
       const container = document.getElementById('martyrsContainer');
-      if (!container) return;
+      const search = normalizeText(document.getElementById('searchInput')?.value || '');
+      const family = document.getElementById('familyFilter')?.value || '';
+      const sortBy = document.getElementById('sortSelect')?.value || 'name';
 
-      // عند إرسال قائمة مخصصة (تستخدم داخلياً لبعض الحالات) نعرضها، وإلا نعرض ما تم جلبه من السيرفر صفحة بصفحة
-      const list = customList || allMartyrs; 
+      let list = customList || allMartyrs.slice();
+
+      if (currentStatusFilter) {
+        list = list.filter(item => item.verification_status === currentStatusFilter);
+      }
+
+      if (family) {
+        list = list.filter(item => item.family_name === family);
+      }
+
+      if (search) {
+        list = list.filter(item => {
+          const content = normalizeText([
+            item.full_name,
+            item.family_name,
+            item.father_name,
+            item.nickname,
+            item.martyrdom_place,
+            item.extra_info
+          ].join(' '));
+
+          return content.includes(search);
+        });
+      }
+
+      list.sort((a, b) => {
+        if (sortBy === 'family') {
+          return String(a.family_name || '').localeCompare(String(b.family_name || ''), 'ar');
+        }
+
+        return String(a.full_name || '').localeCompare(String(b.full_name || ''), 'ar');
+      });
 
       if (!list.length) {
         container.innerHTML = `
@@ -2759,20 +2730,25 @@ renderMartyrs = function(customList) {
             <i class="fa-regular fa-folder-open fa-2x mb-3 text-primary"></i>
             <h5 class="fw-bold">لا توجد نتائج</h5>
             <p class="mb-0">جرّب تغيير البحث أو الفلاتر.</p>
-          </div>`;
+          </div>
+        `;
         return;
       }
 
-      // حساب عدد الصفحات بناءً على العدد الإجمالي الراجع من السيرفر
-      const totalPages = Math.max(1, Math.ceil(serverTotalCount / MARTYRS_PAGE_SIZE));
+      const totalPages = Math.max(1, Math.ceil(list.length / MARTYRS_PAGE_SIZE));
+      if (currentMartyrsPage > totalPages) currentMartyrsPage = totalPages;
+      if (currentMartyrsPage < 1) currentMartyrsPage = 1;
+
+      const start = (currentMartyrsPage - 1) * MARTYRS_PAGE_SIZE;
+      const pageList = list.slice(start, start + MARTYRS_PAGE_SIZE);
 
       const contentHtml = viewMode === 'cards'
-        ? `<div class="martyrs-grid">${list.map(renderMartyrCard).join('')}</div>`
-        : `<div>${list.map(renderMartyrListItem).join('')}</div>`;
+        ? `<div class="martyrs-grid">${pageList.map(renderMartyrCard).join('')}</div>`
+        : `<div>${pageList.map(renderMartyrListItem).join('')}</div>`;
 
-      container.innerHTML = contentHtml + renderMartyrsPagination(totalPages, serverTotalCount);
-    };
-    
+      container.innerHTML = contentHtml + renderMartyrsPagination(totalPages, list.length);
+    }
+
     function renderMartyrsPagination(totalPages, totalItems) {
       if (totalPages <= 1) return '';
 
@@ -2817,25 +2793,11 @@ renderMartyrs = function(customList) {
       `;
     }
 
-    // الانتقال لصفحة أخرى
-    goToMartyrsPage = function(page) {
+    function goToMartyrsPage(page) {
       currentMartyrsPage = page;
-      fetchMartyrsServerSide();
+      renderMartyrs();
       document.getElementById('martyrsContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-
-    // إعادة تصفير الصفحة واستدعاء البيانات عند الفلترة أو البحث
-    resetMartyrsPageAndRender = function() {
-      currentMartyrsPage = 1;
-      fetchMartyrsServerSide();
-    };
-
-    // تغيير تصفية الحالة
-    changeStatusFilter = function() {
-      currentStatusFilter = document.getElementById('statusFilter').value;
-      currentMartyrsPage = 1;
-      fetchMartyrsServerSide();
-    };
+    }
 
     function renderMartyrCard(item) {
       const verified = item.verification_status === 'موثق';
@@ -2963,43 +2925,26 @@ ${item.rejected ? `<span class="badge text-bg-danger me-1">مرفوض: ${item.re
 
   showPage('familiesPage');
 }
-    openFamilyMartyrs = async function(familyName, noRoute) {
+    function openFamilyMartyrs(familyName) {
+      const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
+      const list = source.filter(item => item.family_name === familyName);
+
+      document.getElementById('familyPageTitle').textContent = `شهداء عائلة ${familyName}`;
+
       const container = document.getElementById('familyMartyrsContainer');
-      if (container) {
+
+      if (!list.length) {
+        container.innerHTML = `<div class="empty-state">لا توجد أسماء لهذه العائلة.</div>`;
+      } else {
         container.innerHTML = `
-          <div class="text-center py-4">
-            <div class="spinner-border text-primary mb-2" role="status"></div>
-            <div>جاري جلب أسماء عائلة ${escapeHtml(familyName)}...</div>
-          </div>`;
+          <div class="martyrs-grid">
+            ${list.map(renderMartyrCardForFamily).join('')}
+          </div>
+        `;
       }
 
-      try {
-        // جلب أسماء الشهداء التابعين للعائلة من السيرفر مباشرة (بحد أقصى 1000 اسم للعائلة الواحدة)
-        const res = await apiRequest('getMartyrsPaginated', {
-          page: 1,
-          pageSize: 1000,
-          family: familyName,
-          statusFilter: isAdminLoggedIn ? '' : 'موثق',
-          sortBy: 'name'
-        });
-
-        if (res && res.success) {
-          const list = res.martyrs || [];
-          document.getElementById('familyPageTitle').textContent = `شهداء عائلة ${familyName}`;
-          
-          container.innerHTML = list.length
-            ? `<div class="martyrs-grid">${list.map(renderMartyrCardForFamily).join('')}</div>`
-            : `<div class="empty-state">لا توجد أسماء لهذه العائلة.</div>`;
-        } else {
-          showToast('فشل تحميل أسماء عائلة الشهيد.');
-        }
-      } catch (err) {
-        showToast('حدث خطأ أثناء الاتصال بالخادم.');
-      }
-
-      if (!noRoute) updateRoute(`?family=${encodeURIComponent(familyName)}`, { page: 'family', family: familyName });
       showPage('familyMartyrsPage');
-    };
+    }
 
     function renderMartyrCardForFamily(item) {
       const verified = item.verification_status === 'موثق';
@@ -3061,92 +3006,68 @@ ${item.rejected ? `<span class="badge text-bg-danger me-1">مرفوض: ${item.re
       return ['نعم', 'yes', 'true', '1', 'يحتاج', 'needs', 'بحاجة لاستكمال'].includes(normalized);
     }
 
-openMartyrDetails = async function(martyrId, fromPage, noRoute) {
+    function openMartyrDetails(martyrId, fromPage) {
       const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
-      let item = source.find(x => x.martyr_id === martyrId);
+      const item = source.find(x => x.martyr_id === martyrId);
 
-      // إذا لم يتوفر السجل محلياً في الصفحة الحالية، نقوم بجلبه مفرداً من الخادم
-      if (!item) {
-        showGlobalSpinner(true);
-        try {
-          const res = await apiRequest('getMartyrById', { martyrId: martyrId });
-          if (res && res.success && res.martyr) {
-            item = res.martyr;
-          } else {
-            showToast('تعذر جلب تفاصيل الشهيد.');
-            showPage('homePage');
-            return;
-          }
-        } catch (err) {
-          showToast('حدث خطأ أثناء تحميل بيانات الشهيد.');
-          showPage('homePage');
-          return;
-        } finally {
-          hideGlobalSpinner();
-        }
-      }
+      if (!item) return;
 
-      if (item.verification_status === 'بانتظار التوثيق' && !isAdminLoggedIn) {
-        showPendingInfo();
-        return;
-      }
-
-      currentDetailsItem = item;
-      currentGalleryIndex = 0;
       lastPageBeforeDetails = fromPage || 'homePage';
 
-      if (!noRoute) {
-        let pageParam = 'home';
-        let tabParam = '';
-
-        if (fromPage === 'dashboardDataUpdatesTab') {
-          pageParam = 'dashboard';
-          tabParam = '&tab=dataUpdates';
-        } else if (fromPage === 'dashboardJoinRequestsTab') {
-          pageParam = 'dashboard';
-          tabParam = '&tab=joinRequests';
-        } else if (fromPage === 'dashboardPage') {
-          pageParam = 'dashboard';
-          tabParam = '&tab=martyrs';
-        }
-
-        updateRoute(
-          `?page=${pageParam}${tabParam}&m=${encodeURIComponent(martyrId)}`,
-          { page: 'details', martyrId, fromPage }
-        );
+      if (fromPage !== 'dashboardPage' && window.history && window.location) {
+        const newUrl = `${window.location.origin}${window.location.pathname}?m=${encodeURIComponent(martyrId)}`;
+        window.history.replaceState({}, '', newUrl);
       }
 
+      const img = getImageSrc(item);
       const canUpdate = isAllowUpdatesEnabled(item.allow_updates);
 
       document.getElementById('detailsContainer').innerHTML = `
         <div class="row g-4">
           <div class="col-lg-5">
-            ${renderImageGallery(item)}
+            ${img ? `
+              <img src="${escapeAttr(img)}" class="detail-image" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+              <div class="detail-image-placeholder" style="display:none;">
+                <div>
+                  <i class="fa-solid fa-user fa-4x text-secondary mb-3"></i>
+                  <div>تعذر عرض الصورة</div>
+                </div>
+              </div>
+            ` : `
+              <div class="detail-image-placeholder">
+                <div>
+                  <i class="fa-solid fa-user fa-4x text-secondary mb-3"></i>
+                  <div>لا توجد صورة مرفقة</div>
+                </div>
+              </div>
+            `}
           </div>
+
           <div class="col-lg-7">
             <div class="detail-box">
               <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
                 <div>
-                  <h2 class="fw-bold mb-1">${escapeHtml(item.full_name || '')} ${adminEditBtn('full_name')}</h2>
-                  <div class="text-muted">عائلة ${escapeHtml(item.family_name || '')} ${adminEditBtn('family_name')}</div>
+                  <h2 class="fw-bold mb-1">${escapeHtml(item.full_name || '')}</h2>
+                  <div class="text-muted">عائلة ${escapeHtml(item.family_name || '')}</div>
                 </div>
+
                 ${statusBadge(item.verification_status)}
               </div>
 
               <div class="row g-3">
-                ${detailItemEditable('اسم الأب', item.father_name, 'father_name')}
-                ${detailItemEditable('المواليد', item.birth_year, 'birth_year')}
-                ${detailItemEditable('اللقب', item.nickname, 'nickname')}
-                ${detailItemEditable('استشهد بـ', item.martyrdom_type, 'martyrdom_type')}
-                ${item.martyrdom_type === 'المعارك' ? detailItemEditable('اسم المعركة', item.battle_name, 'battle_name') : ''}
-                ${item.martyrdom_type === 'آخر' ? detailItemEditable('السبب', item.other_cause, 'other_cause') : ''}
-                ${detailItemEditable('تاريخ الاستشهاد', item.martyrdom_date, 'martyrdom_date')}
-                ${detailItemEditable('مكان الاستشهاد', item.martyrdom_place, 'martyrdom_place')}
+                ${detailItem('اسم الأب', item.father_name)}
+                ${detailItem('المواليد', item.birth_year)}
+                ${detailItem('اللقب', item.nickname)}
+                ${detailItem('استشهد بـ', item.martyrdom_type)}
+                ${item.martyrdom_type === 'المعارك' ? detailItem('اسم المعركة', item.battle_name) : ''}
+                ${item.martyrdom_type === 'آخر' ? detailItem('السبب', item.other_cause) : ''}
+                ${detailItem('تاريخ الاستشهاد', item.martyrdom_date)}
+                ${detailItem('مكان الاستشهاد', item.martyrdom_place)}
               </div>
 
               ${item.extra_info ? `
                 <hr>
-                <h6 class="fw-bold">معلومات إضافية ${adminEditBtn('extra_info')}</h6>
+                <h6 class="fw-bold">معلومات إضافية</h6>
                 <p class="lh-lg mb-0">${escapeHtml(item.extra_info)}</p>
               ` : ''}
 
@@ -3165,22 +3086,24 @@ openMartyrDetails = async function(martyrId, fromPage, noRoute) {
                   <i class="fa-solid fa-share-nodes ms-1"></i>
                   مشاركة
                 </button>
+
                 ${canUpdate ? `
-                  <button class="btn btn-warning" onclick="openDataUpdateModal('${escapeAttr(item.martyr_id)}', '${escapeAttr(item.full_name || '')}')">
+                  <button class="btn btn-outline-primary" onclick="openDataUpdateModal('${escapeAttr(item.martyr_id)}')">
                     <i class="fa-solid fa-pen-to-square ms-1"></i>
                     استكمال بيانات
                   </button>
                 ` : ''}
               </div>
 
-              ${isAdminLoggedIn ? renderAdminActions(item) : ''}
+              ${isAdminLoggedIn && item.verification_status !== 'موثق' ? renderAdminActions(item) : ''}
             </div>
           </div>
-        </div>`;
+        </div>
+      `;
 
       showPage('detailsPage');
-    };
-    
+    }
+
     function goBackFromDetails() {
   if (lastPageBeforeDetails === 'dashboardDataUpdatesTab') {
     showPage('dashboardPage');
@@ -3880,8 +3803,6 @@ function selectFamily(family) {
     statusFilter.value = 'موثق';
   }
 
-  currentMartyrsPage = 1;
-  fetchMartyrsServerSide();
   showPage('homePage');
 }
 
@@ -4261,22 +4182,20 @@ loadInitialData = function() {
 
       allFamilies = res.families || [];
       statsData = res.stats || {};
+      allMartyrs = res.martyrs || [];
       siteMessages = res.messages || [];
       publicSettings = res.settings || {};
 
       fillFamiliesSelects();
       updateStatsCards();
+      renderMartyrs();
 
-      // تحميل أسماء الشهداء من الخادم صفحة بصفحة حتى يعمل البحث والفلاتر بدون تحميل كل السجلات دفعة واحدة.
-      currentMartyrsPage = 1;
-      fetchMartyrsServerSide().then(() => {
-        const martyrFromUrl = getMartyrIdFromUrl();
-        if (martyrFromUrl) {
-          setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage', true), 250);
-        } else {
-          setTimeout(() => applyRouteFromLocation(), 250);
-        }
-      });
+      const martyrFromUrl = getMartyrIdFromUrl();
+      if (martyrFromUrl) {
+        setTimeout(() => openMartyrDetails(martyrFromUrl, 'homePage', true), 250);
+      } else {
+        setTimeout(() => applyRouteFromLocation(), 250);
+      }
 
       maybeShowIntroModal();
 
@@ -4315,28 +4234,6 @@ renderMartyrs = function(customList) {
   const completionFilter = document.getElementById('completionFilter')?.value || '';
 
   let list = customList || allMartyrs.slice();
-
-  // إذا كانت البيانات قادمة من getMartyrsPaginated فهي صفحة جاهزة من السيرفر،
-  // لا نعيد فلترتها أو تقطيعها مرة ثانية داخل المتصفح حتى لا تظهر صفحات فارغة.
-  if (!customList && window.__martyrsLoadedFromServer) {
-    if (!list.length) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <i class="fa-regular fa-folder-open fa-2x mb-3 text-primary"></i>
-          <h5 class="fw-bold">لا توجد نتائج</h5>
-          <p class="mb-0">جرّب تغيير البحث أو الفلاتر.</p>
-        </div>`;
-      return;
-    }
-
-    const totalPages = Math.max(1, Math.ceil((Number(serverTotalCount) || list.length) / MARTYRS_PAGE_SIZE));
-    const contentHtml = viewMode === 'cards'
-      ? `<div class="martyrs-grid">${list.map(renderMartyrCard).join('')}</div>`
-      : `<div>${list.map(renderMartyrListItem).join('')}</div>`;
-
-    container.innerHTML = contentHtml + renderMartyrsPagination(totalPages, Number(serverTotalCount) || list.length);
-    return;
-  }
 
   if (currentStatusFilter) {
     list = list.filter(item => item.verification_status === currentStatusFilter);
