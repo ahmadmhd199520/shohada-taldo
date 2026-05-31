@@ -11821,13 +11821,59 @@ window.renderMartyrCard = function(item) {
 (function () {
   'use strict';
 
-  function getImagesForGallery(item) {
+  function getCurrentDetailsItemSafe() {
     try {
-      if (typeof window.normalizeImages === 'function') return window.normalizeImages(item || {});
+      if (typeof currentDetailsItem !== 'undefined' && currentDetailsItem) {
+        return currentDetailsItem;
+      }
     } catch (e) {}
 
     try {
-      if (typeof normalizeImages === 'function') return normalizeImages(item || {});
+      if (window.currentDetailsItem) return window.currentDetailsItem;
+    } catch (e) {}
+
+    return {};
+  }
+
+  function getCurrentGalleryIndexSafe() {
+    try {
+      if (typeof currentGalleryIndex !== 'undefined') {
+        const index = Number(currentGalleryIndex);
+        return Number.isFinite(index) ? index : 0;
+      }
+    } catch (e) {}
+
+    try {
+      const index = Number(window.currentGalleryIndex);
+      return Number.isFinite(index) ? index : 0;
+    } catch (e) {}
+
+    return 0;
+  }
+
+  function setCurrentGalleryIndexSafe(index) {
+    const safeIndex = Math.max(0, Number(index) || 0);
+
+    try { window.currentGalleryIndex = safeIndex; } catch (e) {}
+
+    try {
+      if (typeof currentGalleryIndex !== 'undefined') {
+        currentGalleryIndex = safeIndex;
+      }
+    } catch (e) {}
+
+    return safeIndex;
+  }
+
+  function getImagesForGallery(item) {
+    const source = item || getCurrentDetailsItemSafe();
+
+    try {
+      if (typeof window.normalizeImages === 'function') return window.normalizeImages(source || {});
+    } catch (e) {}
+
+    try {
+      if (typeof normalizeImages === 'function') return normalizeImages(source || {});
     } catch (e) {}
 
     return [];
@@ -11846,6 +11892,12 @@ window.renderMartyrCard = function(item) {
       }
     } catch (e) {}
 
+    try {
+      if (typeof getImageStyleFixed === 'function') {
+        return getImageStyleFixed(img || {}, mode || 'detail') || '';
+      }
+    } catch (e) {}
+
     return '';
   }
 
@@ -11853,17 +11905,30 @@ window.renderMartyrCard = function(item) {
     return `<div class="detail-image-placeholder"><div><i class="fa-solid fa-user fa-4x text-secondary mb-3"></i><div>لا توجد صورة مرفقة</div></div></div>`;
   }
 
+  function getGalleryHolder() {
+    return document.querySelector('#detailsContainer .col-lg-5');
+  }
+
+  function rerenderGalleryOnly() {
+    const holder = getGalleryHolder();
+    if (!holder) return;
+    holder.innerHTML = window.renderImageGallery(getCurrentDetailsItemSafe());
+  }
+
   window.renderImageGallery = function(item) {
-    const images = getImagesForGallery(item);
+    const source = item || getCurrentDetailsItemSafe();
+    const images = getImagesForGallery(source);
 
     if (!images.length) {
+      setCurrentGalleryIndexSafe(0);
       return renderGalleryPlaceholder();
     }
 
-    if (typeof window.currentGalleryIndex === 'undefined') window.currentGalleryIndex = 0;
-    if (currentGalleryIndex >= images.length) currentGalleryIndex = 0;
+    let activeIndex = getCurrentGalleryIndexSafe();
+    if (activeIndex >= images.length) activeIndex = 0;
+    activeIndex = setCurrentGalleryIndexSafe(activeIndex);
 
-    const first = images[currentGalleryIndex] || images[0];
+    const first = images[activeIndex] || images[0];
     const mainStyle = getFixedImageStyle(first, 'detail');
 
     return `
@@ -11879,7 +11944,7 @@ window.renderMartyrCard = function(item) {
         <div class="detail-image-placeholder" style="display:none;"><div>تعذر عرض الصورة</div></div>
 
         ${isAdminLoggedIn ? `
-          <button type="button" class="btn btn-light image-position-btn" title="ضبط موضع وحجم ظهور الصورة" onclick="openImagePositionModal(${currentGalleryIndex})">
+          <button type="button" class="btn btn-light image-position-btn" title="ضبط موضع وحجم ظهور الصورة" onclick="openImagePositionModal(${activeIndex})">
             <i class="fa-solid fa-crop-simple text-primary"></i>
           </button>
         ` : ''}
@@ -11887,7 +11952,7 @@ window.renderMartyrCard = function(item) {
         ${images.length > 1 ? `
           <div class="gallery-controls mt-2 d-flex justify-content-center align-items-center gap-2">
             <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeGalleryImage(-1)">السابق</button>
-            <span class="badge text-bg-light align-self-center" id="galleryCounter">${currentGalleryIndex + 1} / ${images.length}</span>
+            <span class="badge text-bg-light align-self-center" id="galleryCounter">${activeIndex + 1} / ${images.length}</span>
             <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeGalleryImage(1)">التالي</button>
           </div>
         ` : ''}
@@ -11898,10 +11963,10 @@ window.renderMartyrCard = function(item) {
             <div class="gallery-thumb-row">
               ${images.map((img, index) => `
                 <div class="gallery-thumb-item">
-                  <div class="gallery-thumb-crop ${index === currentGalleryIndex ? 'is-active' : ''}" onclick="setGalleryImageIndex(${index})">
+                  <button type="button" class="gallery-thumb-crop ${index === activeIndex ? 'is-active' : ''}" onclick="setGalleryImageIndex(${index})" aria-label="عرض الصورة ${index + 1}">
                     <img src="${escapeAttr(img.src)}" alt="" style="${getFixedImageStyle(img, 'detail')}">
-                  </div>
-                  <button type="button" class="btn btn-danger gallery-delete-btn" title="حذف الصورة" onclick="deleteMartyrImageFromDetails(${index})"><i class="fa-solid fa-xmark"></i></button>
+                  </button>
+                  <button type="button" class="btn btn-danger gallery-delete-btn" title="حذف الصورة" onclick="event.stopPropagation(); deleteMartyrImageFromDetails(${index})"><i class="fa-solid fa-xmark"></i></button>
                 </div>
               `).join('')}
             </div>
@@ -11913,25 +11978,24 @@ window.renderMartyrCard = function(item) {
   try { renderImageGallery = window.renderImageGallery; } catch (e) {}
 
   window.changeGalleryImage = function(step) {
-    const images = getImagesForGallery(window.currentDetailsItem || {});
+    const images = getImagesForGallery(getCurrentDetailsItemSafe());
     if (!images.length) return;
 
-    window.currentGalleryIndex = (currentGalleryIndex + step + images.length) % images.length;
-
-    const holder = document.querySelector('#detailsContainer .col-lg-5');
-    if (holder) holder.innerHTML = window.renderImageGallery(window.currentDetailsItem || {});
+    const currentIndex = getCurrentGalleryIndexSafe();
+    const nextIndex = (currentIndex + Number(step || 0) + images.length) % images.length;
+    setCurrentGalleryIndexSafe(nextIndex);
+    rerenderGalleryOnly();
   };
 
   try { changeGalleryImage = window.changeGalleryImage; } catch (e) {}
 
   window.setGalleryImageIndex = function(index) {
-    const images = getImagesForGallery(window.currentDetailsItem || {});
+    const images = getImagesForGallery(getCurrentDetailsItemSafe());
     if (!images.length) return;
 
-    window.currentGalleryIndex = Math.max(0, Math.min(index, images.length - 1));
-
-    const holder = document.querySelector('#detailsContainer .col-lg-5');
-    if (holder) holder.innerHTML = window.renderImageGallery(window.currentDetailsItem || {});
+    const nextIndex = Math.max(0, Math.min(Number(index) || 0, images.length - 1));
+    setCurrentGalleryIndexSafe(nextIndex);
+    rerenderGalleryOnly();
   };
 
   try { setGalleryImageIndex = window.setGalleryImageIndex; } catch (e) {}
