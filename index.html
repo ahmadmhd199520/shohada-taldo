@@ -1158,6 +1158,30 @@
     font-size: .86rem !important;
   }
 }
+
+  /* إصلاح تعارض CSS الذي يمنع تحريك الصورة في الصفحة الرئيسية */
+.martyr-image-wrap {
+  display: block !important;
+  position: relative !important;
+}
+
+.martyr-image {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.martyr-placeholder {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
 </style>
 
 <style id="admin-buttons-final-fix">
