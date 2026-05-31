@@ -5273,16 +5273,36 @@ function toggleDashboardMessage(messageId, status) {
 }
 
 function saveAboutUsText() {
+  const textarea = document.getElementById('aboutUsAdminText');
+
+  if (!textarea) {
+    showToast('لم يتم العثور على حقل نص من نحن.');
+    return;
+  }
+
+  const value = textarea.value || '';
+
   apiRequest('updateSettingValue', {
     key: 'about_us_text',
-    value: document.getElementById('aboutUsAdminText').value,
+    value: value,
     description: 'نص يظهر عند الضغط على زر من نحن'
-  }).then(res => {
-    showToast(res.message || 'تم حفظ النص.');
-    publicSettings.about_us_text = document.getElementById('aboutUsAdminText').value;
-  }).catch(err => showToast(err.message || 'تعذر الحفظ.'));
-}
+  })
+    .then(res => {
+      if (!res || !res.success) {
+        showToast(res?.message || 'تعذر حفظ نص من نحن.');
+        return;
+      }
 
+      publicSettings.about_us_text = value;
+      showToast(res.message || 'تم حفظ نص من نحن.');
+
+      // اختياري لتحديث البيانات العامة فورًا بعد الحفظ
+      loadInitialData();
+    })
+    .catch(err => {
+      showToast(err.message || 'تعذر حفظ نص من نحن.');
+    });
+}
 const oldRefreshDashboardData = refreshDashboardData;
 refreshDashboardData = function(showMsg = true) {
   if (!isAdminLoggedIn) {
