@@ -6278,10 +6278,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return String(Math.max(0, Math.min(100, Math.round(n))));
   }
 
-  function getPositionValue(target, mode, axis) {
+function getPositionValue(target, mode, axis) {
     const key = axis === 'x' ? 'x' : 'y';
     const source = target || {};
-    const current = window.currentDetailsItem || {};
+    
+    // الحل: استخدام currentDetailsItem فقط في صفحة التفاصيل وليس في الصفحة الرئيسية
+    const current = (mode === 'detail') ? (window.currentDetailsItem || {}) : {};
 
     const cardKey = key === 'x' ? 'card_position_x' : 'card_position_y';
     const detailKey = key === 'x' ? 'detail_position_x' : 'detail_position_y';
@@ -6291,9 +6293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mode === 'card') {
       return normalizePosition(
         source[cardKey] ||
-        current[cardKey] ||
         source[oldMainKey] ||
-        current[oldMainKey] ||
         '50',
         50
       );
@@ -6443,7 +6443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     storeActivePositionInDraft();
   };
 
-  window.renderMartyrCard = function(item) {
+window.renderMartyrCard = function(item) {
     const verified = item.verification_status === 'موثق';
     const pending = item.verification_status === 'بانتظار التوثيق';
     const needsCompletion = isNeedsCompletion(item);
@@ -6451,7 +6451,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const clickAction = pending && !isAdminLoggedIn
       ? 'showPendingInfo()'
       : `openMartyrDetails('${escapeAttr(item.martyr_id)}', 'homePage')`;
-    const positionStyle = getImagePositionStyleByMode(item, 'card');
+      
+    // الحل: استخراج بيانات الصورة المستهدفة أولاً بدلاً من الاعتماد على العنصر الخام
+    const targetImage = getPrimaryPositionTarget(item);
+    const positionStyle = getImagePositionStyleByMode(targetImage, 'card');
 
     return `
       <div class="martyr-card ${pending ? 'pending-card' : ''}" onclick="${clickAction}">
@@ -6473,7 +6476,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>`;
   };
-
   window.renderMartyrCardForFamily = function(item) {
     return renderMartyrCard(item).replace(
       `openMartyrDetails('${escapeAttr(item.martyr_id)}', 'homePage')`,
