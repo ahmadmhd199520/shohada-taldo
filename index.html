@@ -6279,26 +6279,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getPositionValue(target, mode, axis) {
-    const key = axis === 'x' ? 'x' : 'y';
-    const modePrefix = mode === 'card' ? 'card' : 'detail';
-    const oldPositionKey = key === 'x' ? 'position_x' : 'position_y';
-    const oldMainKey = key === 'x' ? 'image_position_x' : 'image_position_y';
-    const modeKey = `${modePrefix}_position_${key}`;
+  const key = axis === 'x' ? 'x' : 'y';
+  const source = target || {};
+  const current = window.currentDetailsItem || {};
 
-    const source = target || {};
-    const current = window.currentDetailsItem || {};
+  const cardKey = key === 'x' ? 'card_position_x' : 'card_position_y';
+  const detailKey = key === 'x' ? 'detail_position_x' : 'detail_position_y';
+  const oldPositionKey = key === 'x' ? 'position_x' : 'position_y';
+  const oldMainKey = key === 'x' ? 'image_position_x' : 'image_position_y';
 
+  if (mode === 'card') {
     return normalizePosition(
-      source[modeKey] ||
-      current[modeKey] ||
-      (mode === 'detail' ? (source[oldMainKey] || current[oldMainKey]) : '') ||
-      source[oldPositionKey] ||
-      current[oldPositionKey] ||
+      source[cardKey] ||
+      current[cardKey] ||
       current[oldMainKey] ||
-      50,
+      source[oldMainKey] ||
+      '50',
       50
     );
   }
+
+  return normalizePosition(
+    source[detailKey] ||
+    current[detailKey] ||
+    source[oldPositionKey] ||
+    current[oldPositionKey] ||
+    source[oldMainKey] ||
+    current[oldMainKey] ||
+    '50',
+    50
+  );
+}
 
   function getImagePositionStyleByMode(target, mode) {
     const x = getPositionValue(target, mode || 'detail', 'x');
@@ -6331,8 +6342,8 @@ document.addEventListener('DOMContentLoaded', () => {
             source_type: img.source_type || '',
             position_x: img.position_x || '50',
             position_y: img.position_y || '50',
-            card_position_x: img.card_position_x || img.position_x || item?.card_position_x || item?.image_position_x || '50',
-            card_position_y: img.card_position_y || img.position_y || item?.card_position_y || item?.image_position_y || '50',
+            card_position_x: img.card_position_x || item?.card_position_x || item?.image_position_x || '50',
+            card_position_y: img.card_position_y || item?.card_position_y || item?.image_position_y || '50',
             detail_position_x: img.detail_position_x || img.position_x || item?.detail_position_x || item?.image_position_x || '50',
             detail_position_y: img.detail_position_y || img.position_y || item?.detail_position_y || item?.image_position_y || '50'
           });
