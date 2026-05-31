@@ -1515,7 +1515,7 @@
         <div class="hero-top-row">
           <div class="hero-title-actions">
             <h1 class="hero-title mb-0">
-              أرشيف شهداء تلدو
+              توثيق شهداء مدينة تلدو
             </h1>
 
             <button class="btn btn-warning btn-sm" onclick="openAboutProjectModal()">
@@ -11335,10 +11335,20 @@ window.renderMartyrCard = function(item) {
     const existing = window.__taldoAdminScrollGuard;
     const pos = existing && Date.now() < existing.until ? existing : getScrollPos();
 
+    // لا حاجة لقفل السكرول عندما تكون الصفحة أصلًا في الأعلى.
+    // هذا يمنع المشكلة التي كانت تحدث عند فتح لوحة التحكم:
+    // يبدأ تحميل البيانات، فيلتقط القفل y=0 ثم يعيد الصفحة للأعلى مع كل محاولة سكرول.
+    if (!pos || (Number(pos.y) || 0) <= 40) {
+      window.__taldoAdminScrollGuard = null;
+      window.__taldoKeepScroll = false;
+      return { state: null, finish: function() {} };
+    }
+
     const state = {
       x: pos.x,
       y: pos.y,
-      until: Date.now() + (ms || 3200)
+      until: Date.now() + (ms || 3200),
+      userCanceled: false
     };
 
     window.__taldoAdminScrollGuard = state;
@@ -11355,14 +11365,14 @@ window.renderMartyrCard = function(item) {
     const restoreSchedule = [0, 40, 120, 260, 520, 900, 1400, 2200, 3200];
     restoreSchedule.forEach(delay => {
       setTimeout(() => {
-        if (window.__taldoAdminScrollGuard === state && Date.now() < state.until + 100) {
+        if (window.__taldoAdminScrollGuard === state && !state.userCanceled && Date.now() < state.until + 100) {
           restoreScroll(state);
         }
       }, delay);
     });
 
     const interval = setInterval(() => {
-      if (window.__taldoAdminScrollGuard !== state || Date.now() > state.until) {
+      if (window.__taldoAdminScrollGuard !== state || state.userCanceled || Date.now() > state.until) {
         clearInterval(interval);
         return;
       }
@@ -11370,6 +11380,7 @@ window.renderMartyrCard = function(item) {
     }, 180);
 
     const finish = function(extraMs) {
+      if (!state || state.userCanceled) return;
       extendGuard(state, extraMs || 900);
       restoreScroll(state);
 
@@ -11403,6 +11414,44 @@ window.renderMartyrCard = function(item) {
       throw error;
     }
   };
+
+
+  function unwrapDashboardRefreshIfNeeded() {
+    const fn = window.refreshDashboardData;
+    if (typeof fn === 'function' && fn.__taldoNoScrollRefreshWrapped && typeof fn.__taldoOriginal === 'function') {
+      window.refreshDashboardData = fn.__taldoOriginal;
+      try { refreshDashboardData = window.refreshDashboardData; } catch (e) {}
+    }
+  }
+
+  unwrapDashboardRefreshIfNeeded();
+  document.addEventListener('DOMContentLoaded', unwrapDashboardRefreshIfNeeded);
+  setTimeout(unwrapDashboardRefreshIfNeeded, 0);
+  setTimeout(unwrapDashboardRefreshIfNeeded, 150);
+
+  function cancelGuardBecauseUserScrolled() {
+    const state = window.__taldoAdminScrollGuard;
+    if (!state || Date.now() > state.until) return;
+
+    state.userCanceled = true;
+    state.until = 0;
+    window.__taldoAdminScrollGuard = null;
+    window.__taldoKeepScroll = false;
+  }
+
+  ['wheel', 'touchmove'].forEach(eventName => {
+    window.addEventListener(eventName, cancelGuardBecauseUserScrolled, {
+      passive: true,
+      capture: true
+    });
+  });
+
+  window.addEventListener('keydown', function(event) {
+    const scrollKeys = ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Spacebar'];
+    if (scrollKeys.includes(event.key)) {
+      cancelGuardBecauseUserScrolled();
+    }
+  }, true);
 
   function wrapFunction(name, holdMs) {
     const original = window[name];
@@ -11695,6 +11744,197 @@ window.renderMartyrCard = function(item) {
     reinstall: installBackGuardForDetails,
     syncControls: syncTabletFilterControls
   };
+})();
+</script>
+
+
+<style id="taldo-gallery-zoom-clip-fix">
+  /*
+    Fix image zoom in martyr detail page:
+    the transform must happen inside a fixed clipped frame, not on a free image element.
+  */
+  .image-gallery {
+    position: relative;
+  }
+
+  .gallery-main-frame {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    max-height: 390px;
+    overflow: hidden;
+    border-radius: 22px;
+    background: #f1f3f5;
+    position: relative;
+  }
+
+  .gallery-main-frame .gallery-main-image,
+  .gallery-main-frame .detail-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: none !important;
+    object-fit: cover;
+    border-radius: 0 !important;
+    background: #f1f3f5;
+    will-change: transform;
+  }
+
+  .gallery-thumb-crop {
+    width: 58px;
+    height: 58px;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 2px solid rgba(13, 110, 253, .15);
+    background: #f1f3f5;
+    cursor: pointer;
+  }
+
+  .gallery-thumb-crop.is-active {
+    border-color: #0d6efd;
+  }
+
+  .gallery-thumb-crop img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: none !important;
+    object-fit: cover;
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  @media (max-width: 1024px) {
+    .gallery-main-frame {
+      max-height: 72vh;
+      border-radius: 20px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .gallery-main-frame {
+      border-radius: 18px;
+    }
+  }
+</style>
+
+<script id="taldo-gallery-zoom-clip-fix-js">
+(function () {
+  'use strict';
+
+  function getImagesForGallery(item) {
+    try {
+      if (typeof window.normalizeImages === 'function') return window.normalizeImages(item || {});
+    } catch (e) {}
+
+    try {
+      if (typeof normalizeImages === 'function') return normalizeImages(item || {});
+    } catch (e) {}
+
+    return [];
+  }
+
+  function getFixedImageStyle(img, mode) {
+    try {
+      if (typeof window.getImageStyleFinalFixed === 'function') {
+        return window.getImageStyleFinalFixed(img || {}, mode || 'detail') || '';
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof getImageStyleFinal === 'function') {
+        return getImageStyleFinal(img || {}, mode || 'detail') || '';
+      }
+    } catch (e) {}
+
+    return '';
+  }
+
+  function renderGalleryPlaceholder() {
+    return `<div class="detail-image-placeholder"><div><i class="fa-solid fa-user fa-4x text-secondary mb-3"></i><div>لا توجد صورة مرفقة</div></div></div>`;
+  }
+
+  window.renderImageGallery = function(item) {
+    const images = getImagesForGallery(item);
+
+    if (!images.length) {
+      return renderGalleryPlaceholder();
+    }
+
+    if (typeof window.currentGalleryIndex === 'undefined') window.currentGalleryIndex = 0;
+    if (currentGalleryIndex >= images.length) currentGalleryIndex = 0;
+
+    const first = images[currentGalleryIndex] || images[0];
+    const mainStyle = getFixedImageStyle(first, 'detail');
+
+    return `
+      <div class="image-gallery">
+        <div class="gallery-main-frame">
+          <img id="galleryMainImage"
+               src="${escapeAttr(first.src)}"
+               class="gallery-main-image detail-image"
+               style="${mainStyle}"
+               alt=""
+               onerror="this.style.display='none';this.parentElement.style.display='none';this.parentElement.nextElementSibling.style.display='grid';">
+        </div>
+        <div class="detail-image-placeholder" style="display:none;"><div>تعذر عرض الصورة</div></div>
+
+        ${isAdminLoggedIn ? `
+          <button type="button" class="btn btn-light image-position-btn" title="ضبط موضع وحجم ظهور الصورة" onclick="openImagePositionModal(${currentGalleryIndex})">
+            <i class="fa-solid fa-crop-simple text-primary"></i>
+          </button>
+        ` : ''}
+
+        ${images.length > 1 ? `
+          <div class="gallery-controls mt-2 d-flex justify-content-center align-items-center gap-2">
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeGalleryImage(-1)">السابق</button>
+            <span class="badge text-bg-light align-self-center" id="galleryCounter">${currentGalleryIndex + 1} / ${images.length}</span>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeGalleryImage(1)">التالي</button>
+          </div>
+        ` : ''}
+
+        ${isAdminLoggedIn ? `
+          <div class="gallery-admin-tools">
+            <div class="small text-muted fw-bold mb-2"><i class="fa-solid fa-user-shield ms-1"></i> إدارة صور الشهيد</div>
+            <div class="gallery-thumb-row">
+              ${images.map((img, index) => `
+                <div class="gallery-thumb-item">
+                  <div class="gallery-thumb-crop ${index === currentGalleryIndex ? 'is-active' : ''}" onclick="setGalleryImageIndex(${index})">
+                    <img src="${escapeAttr(img.src)}" alt="" style="${getFixedImageStyle(img, 'detail')}">
+                  </div>
+                  <button type="button" class="btn btn-danger gallery-delete-btn" title="حذف الصورة" onclick="deleteMartyrImageFromDetails(${index})"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>`;
+  };
+
+  try { renderImageGallery = window.renderImageGallery; } catch (e) {}
+
+  window.changeGalleryImage = function(step) {
+    const images = getImagesForGallery(window.currentDetailsItem || {});
+    if (!images.length) return;
+
+    window.currentGalleryIndex = (currentGalleryIndex + step + images.length) % images.length;
+
+    const holder = document.querySelector('#detailsContainer .col-lg-5');
+    if (holder) holder.innerHTML = window.renderImageGallery(window.currentDetailsItem || {});
+  };
+
+  try { changeGalleryImage = window.changeGalleryImage; } catch (e) {}
+
+  window.setGalleryImageIndex = function(index) {
+    const images = getImagesForGallery(window.currentDetailsItem || {});
+    if (!images.length) return;
+
+    window.currentGalleryIndex = Math.max(0, Math.min(index, images.length - 1));
+
+    const holder = document.querySelector('#detailsContainer .col-lg-5');
+    if (holder) holder.innerHTML = window.renderImageGallery(window.currentDetailsItem || {});
+  };
+
+  try { setGalleryImageIndex = window.setGalleryImageIndex; } catch (e) {}
 })();
 </script>
 
