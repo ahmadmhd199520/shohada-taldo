@@ -7377,10 +7377,41 @@ window.renderMartyrCard = function(item) {
 
     if (!tbody) return;
 
-    const list = (dataUpdateRequests || []).filter(item => {
-      const status = String(item.status || '').trim();
-      return status === 'بانتظار المراجعة' || status === 'بانتظار التوثيق' || status === '';
-    });
+    const search = normalizeText(document.getElementById('dataUpdatesSearchInput')?.value || '');
+    const statusFilter = document.getElementById('dataUpdatesStatusFilter')?.value ?? 'بانتظار المراجعة';
+    const sortBy = document.getElementById('dataUpdatesSortSelect')?.value || 'newest';
+
+    let list = (dataUpdateRequests || []).slice();
+
+    if (statusFilter) {
+      list = list.filter(item => String(item.status || '').trim() === statusFilter);
+    } else {
+      list = list.filter(item => String(item.status || '').trim() !== '');
+    }
+
+    if (search) {
+      list = list.filter(item => {
+        const content = normalizeText([
+          item.created_at,
+          item.martyr_name,
+          item.family_name,
+          item.submitted_text,
+          item.request_text,
+          item.status,
+          item.source_type === 'message_reply' ? 'من ردود المستخدمين' : ''
+        ].join(' '));
+
+        return content.includes(search);
+      });
+    }
+
+    if (sortBy === 'oldest') {
+      list.sort((a, b) => String(a.created_at || '').localeCompare(String(b.created_at || '')));
+    } else if (sortBy === 'name') {
+      list.sort((a, b) => String(a.martyr_name || '').localeCompare(String(b.martyr_name || ''), 'ar'));
+    } else {
+      list.sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+    }
 
     if (countBadge) countBadge.textContent = list.length;
 
@@ -7388,7 +7419,7 @@ window.renderMartyrCard = function(item) {
       tbody.innerHTML = `
         <tr>
           <td colspan="6" class="text-center text-muted py-4">
-            لا توجد طلبات استكمال بانتظار المراجعة.
+            لا توجد طلبات مطابقة للبحث أو الفلترة الحالية.
           </td>
         </tr>`;
       return;
