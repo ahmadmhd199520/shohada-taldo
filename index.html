@@ -6279,37 +6279,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getPositionValue(target, mode, axis) {
-  const key = axis === 'x' ? 'x' : 'y';
-  const source = target || {};
-  const current = window.currentDetailsItem || {};
+    const key = axis === 'x' ? 'x' : 'y';
+    const source = target || {};
+    const current = window.currentDetailsItem || {};
 
-  const cardKey = key === 'x' ? 'card_position_x' : 'card_position_y';
-  const detailKey = key === 'x' ? 'detail_position_x' : 'detail_position_y';
-  const oldPositionKey = key === 'x' ? 'position_x' : 'position_y';
-  const oldMainKey = key === 'x' ? 'image_position_x' : 'image_position_y';
+    const cardKey = key === 'x' ? 'card_position_x' : 'card_position_y';
+    const detailKey = key === 'x' ? 'detail_position_x' : 'detail_position_y';
+    const oldPositionKey = key === 'x' ? 'position_x' : 'position_y';
+    const oldMainKey = key === 'x' ? 'image_position_x' : 'image_position_y';
 
-  if (mode === 'card') {
+    if (mode === 'card') {
+      return normalizePosition(
+        source[cardKey] ||
+        current[cardKey] ||
+        source[oldMainKey] ||
+        current[oldMainKey] ||
+        '50',
+        50
+      );
+    }
+
     return normalizePosition(
-      source[cardKey] ||
-      current[cardKey] ||
-      current[oldMainKey] ||
+      source[detailKey] ||
+      current[detailKey] ||
+      source[oldPositionKey] ||
+      current[oldPositionKey] ||
       source[oldMainKey] ||
+      current[oldMainKey] ||
       '50',
       50
     );
   }
-
-  return normalizePosition(
-    source[detailKey] ||
-    current[detailKey] ||
-    source[oldPositionKey] ||
-    current[oldPositionKey] ||
-    source[oldMainKey] ||
-    current[oldMainKey] ||
-    '50',
-    50
-  );
-}
 
   function getImagePositionStyleByMode(target, mode) {
     const x = getPositionValue(target, mode || 'detail', 'x');
@@ -6451,7 +6451,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clickAction = pending && !isAdminLoggedIn
       ? 'showPendingInfo()'
       : `openMartyrDetails('${escapeAttr(item.martyr_id)}', 'homePage')`;
-    const positionStyle = getImagePositionStyleByMode(getPrimaryPositionTarget(item), 'card');
+    const positionStyle = getImagePositionStyleByMode(item, 'card');
 
     return `
       <div class="martyr-card ${pending ? 'pending-card' : ''}" onclick="${clickAction}">
