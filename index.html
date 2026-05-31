@@ -5733,7 +5733,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { value: 'تحت التعذيب', id: 'typeTorture' },
     { value: 'معتقل', id: 'typeDetained' },
     { value: 'مفقود', id: 'typeMissing' },
-    { value: 'زلزال تركيا', id: 'typeTurkeyEarthquake' }
+    // { value: 'زلزال تركيا', id: 'typeTurkeyEarthquake' }
   ];
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -5758,7 +5758,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <input class="form-check-input" type="radio" name="martyrdom_type" value="${escapeAttr(item.value)}" id="${item.id}" required onchange="toggleCauseFields()">
           <label class="form-check-label" for="${item.id}">${escapeHtml(item.value)}</label>
         `;
-        row.appendChild(div);
+        row.insertBefore(div, typeOther.closest('.form-check'));
       });
     }
 
