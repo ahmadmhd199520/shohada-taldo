@@ -2930,6 +2930,12 @@ function openFamiliesStatsPage() {
   }
 
   byFamily.forEach(item => {
+    const verifiedCount = Number(item.verified || 0);
+    const pendingCount = Number(item.pending || 0);
+
+    // الإجمالي الظاهر للعامة يجب أن يستبعد المرفوضين
+    const visibleTotal = verifiedCount + pendingCount;
+
     const row = document.createElement('div');
     row.className = 'family-row';
 
@@ -2941,16 +2947,13 @@ function openFamiliesStatsPage() {
       <div class="d-flex justify-content-between align-items-center gap-3">
         <div>
           <h5 class="fw-bold mb-1">عائلة ${escapeHtml(item.family_name)}</h5>
-          <div class="text-muted small">إجمالي الأسماء: ${item.total}</div>
+          <div class="text-muted small">إجمالي الأسماء: ${visibleTotal}</div>
         </div>
 
         <div class="text-end">
-          <span class="badge badge-soft-blue me-1">موثق: ${item.verified}</span>
-<span class="badge text-bg-warning me-1">بانتظار: ${item.pending}</span>
-<!-- تم إخفاء عدد المرفوضين من العرض العام
-${item.rejected ? `<span class="badge text-bg-danger me-1">مرفوض: ${item.rejected}</span>` : ''}
--->
-<i class="fa-solid fa-chevron-left text-muted me-2"></i>
+          <span class="badge badge-soft-blue me-1">موثق: ${verifiedCount}</span>
+          <span class="badge text-bg-warning me-1">بانتظار: ${pendingCount}</span>
+          <i class="fa-solid fa-chevron-left text-muted me-2"></i>
         </div>
       </div>
     `;
