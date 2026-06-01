@@ -813,3 +813,283 @@ img { content-visibility: auto; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(26,127,79,.3); border-radius: 999px; }
 
+
+/* =========================================================
+   TALDO HOTFIX v2026-06-02-v07
+   إصلاحات: الخلفية الليلية، ظهور/تثبيت البحث، الشارات، الراديو/السويتش، الجوال والصور
+   ========================================================= */
+:root,
+body.theme-light,
+body:not(.theme-dark) {
+  --taldo-sticky-top: max(8px, env(safe-area-inset-top));
+  --taldo-sticky-z: 1030;
+}
+
+body.theme-dark {
+  --main-bg: #020605;
+  --ui-bg: #020605;
+  background:
+    radial-gradient(circle at 82% 8%, rgba(21, 128, 96, .24), transparent 34%),
+    radial-gradient(circle at 8% 88%, rgba(5, 66, 57, .32), transparent 38%),
+    linear-gradient(160deg, #020504 0%, #06100d 42%, #07271f 100%) !important;
+  color: var(--ui-text, #e8f5ee) !important;
+}
+
+.hero .hero-title,
+body.theme-light .hero .hero-title,
+body:not(.theme-dark) .hero .hero-title,
+body.theme-dark .hero .hero-title {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,.18);
+}
+
+/* Desktop: restore the main desktop filter/search card that previous hotfixes accidentally hid. */
+@media (min-width: 1025px) {
+  #homePage > .desktop-filter-card {
+    display: block !important;
+  }
+  #homePage > .mobile-search-filter,
+  #homePage > .unified-search-bar:not(.desktop-filter-card) {
+    display: none !important;
+  }
+  #dashboardMartyrsTab > .desktop-filter-card {
+    display: block !important;
+  }
+  #dashboardMartyrsTab > #dashboardMobileMartyrsControls,
+  #dashboardDataUpdatesTab > #dataUpdatesMobileControls {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  #homePage > .desktop-filter-card,
+  #dashboardMartyrsTab > .desktop-filter-card,
+  #dataUpdatesControls {
+    display: none !important;
+  }
+  #homePage > .mobile-search-filter,
+  #dashboardMartyrsTab > #dashboardMobileMartyrsControls,
+  #dashboardDataUpdatesTab > #dataUpdatesMobileControls,
+  #familiesSearchBar,
+  #familyCompactSearchBar {
+    display: flex !important;
+  }
+}
+
+/* Keep only one visible search block per page/tab. */
+.page-section:not(.active) .mobile-search-filter,
+.page-section:not(.active) .desktop-filter-card,
+.page-section:not(.active) .family-compact-search-filter,
+.page-section:not(.active) .dashboard-mobile-controls {
+  display: none !important;
+}
+#familyMartyrsSearchBar,
+#familyMartyrsSearchInput {
+  display: none !important;
+}
+
+/* Native sticky + JS fixed fallback. */
+.mobile-search-filter,
+.unified-search-bar,
+.desktop-filter-card,
+.family-compact-search-filter,
+.join-compact-search-filter,
+.houla-compact-search-filter,
+.dashboard-mobile-controls {
+  position: sticky !important;
+  top: var(--taldo-sticky-top) !important;
+  z-index: var(--taldo-sticky-z) !important;
+  background: color-mix(in srgb, var(--color-card-bg, var(--ui-surface-solid, #fff)) 88%, transparent) !important;
+  border: 1px solid var(--color-border, var(--ui-border, rgba(5,66,57,.14))) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.10) !important;
+  backdrop-filter: blur(18px) saturate(1.08) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.08) !important;
+}
+.taldo-fixed-search,
+.taldo-v07-fixed-search {
+  position: fixed !important;
+  top: var(--taldo-sticky-top) !important;
+  z-index: var(--taldo-sticky-z) !important;
+  margin: 0 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.20) !important;
+}
+body.modal-open .taldo-fixed-search,
+body.modal-open .taldo-v07-fixed-search,
+body.modal-open .mobile-search-filter,
+body.modal-open .desktop-filter-card,
+body.modal-open .family-compact-search-filter,
+body.modal-open .join-compact-search-filter,
+body.modal-open .houla-compact-search-filter,
+body.modal-open .dashboard-mobile-controls {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* علامة يحتاج استكمال: زاوية مثلثة فقط، لا مربع يغطي الصورة. */
+.needs-completion-corner {
+  top: 0 !important;
+  left: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: transparent !important;
+  box-shadow: none !important;
+  border-top: 54px solid var(--color-warning, #ffc107) !important;
+  border-right: 54px solid transparent !important;
+  line-height: 0 !important;
+  overflow: visible !important;
+  text-indent: -9999px !important;
+}
+.needs-completion-corner::after {
+  content: "!";
+  position: absolute;
+  top: -48px;
+  left: 11px;
+  text-indent: 0;
+  color: var(--color-warning-text, #212529);
+  font-weight: 900;
+  font-size: 1rem;
+  line-height: 1;
+}
+@media (max-width: 576px) {
+  .needs-completion-corner {
+    border-top-width: 42px !important;
+    border-right-width: 42px !important;
+  }
+  .needs-completion-corner::after {
+    top: -38px;
+    left: 8px;
+    font-size: .86rem;
+  }
+}
+
+/* Restore visible radio circles and switch knobs. */
+.form-check-input[type="radio"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 1.15em !important;
+  height: 1.15em !important;
+  border-radius: 50% !important;
+  border: 2px solid var(--ui-primary, #1a7f4f) !important;
+  background-color: var(--color-card-bg, #ffffff) !important;
+  background-image: none !important;
+  box-shadow: 0 0 0 2px rgba(26,127,79,.08) !important;
+}
+.form-check-input[type="radio"]:checked {
+  background-image: radial-gradient(circle, var(--ui-primary, #1a7f4f) 0 42%, transparent 45%) !important;
+  background-color: var(--color-card-bg, #ffffff) !important;
+}
+.form-switch .form-check-input[type="checkbox"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 2.8em !important;
+  height: 1.45em !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(5,66,57,.28) !important;
+  background-color: #adb5bd !important;
+  background-image: radial-gradient(circle at 25% 50%, #ffffff 0 33%, transparent 36%) !important;
+  transition: background-color .18s ease, background-image .18s ease !important;
+}
+.form-switch .form-check-input[type="checkbox"]:checked {
+  background-color: var(--ui-primary, #1a7f4f) !important;
+  border-color: var(--ui-primary, #1a7f4f) !important;
+  background-image: radial-gradient(circle at 75% 50%, #ffffff 0 33%, transparent 36%) !important;
+}
+body.theme-dark .form-check-input[type="radio"],
+body.theme-dark .form-switch .form-check-input[type="checkbox"] {
+  border-color: rgba(232,245,238,.55) !important;
+}
+
+/* Image crop/zoom tool: force all zooming inside a clipped frame. */
+.image-position-preview-wrap {
+  width: min(420px, 100%) !important;
+  height: auto !important;
+  aspect-ratio: 4 / 3 !important;
+  margin-inline: auto !important;
+  overflow: hidden !important;
+  border-radius: 22px !important;
+  background: #111b18 !important;
+  display: block !important;
+  position: relative !important;
+}
+.image-position-preview-wrap.image-position-card-preview {
+  width: min(320px, 100%) !important;
+  aspect-ratio: 1 / 1 !important;
+}
+.image-position-preview-wrap.image-position-detail-preview {
+  width: min(460px, 100%) !important;
+  aspect-ratio: 4 / 3 !important;
+}
+#imagePositionPreview {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  border-radius: 0 !important;
+  transform-origin: center center;
+  will-change: transform, object-position;
+}
+.martyr-image-wrap,
+.gallery-main-frame,
+.gallery-thumb-crop,
+.gallery-thumb-item {
+  overflow: hidden !important;
+}
+.martyr-image,
+.gallery-main-image,
+.gallery-thumb-crop img,
+.gallery-thumb-item img {
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+}
+
+/* Admin delete X on gallery thumbnails. */
+.gallery-thumb-item {
+  position: relative !important;
+  overflow: visible !important;
+}
+.gallery-delete-btn {
+  position: absolute !important;
+  top: -8px !important;
+  left: -8px !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  line-height: 1 !important;
+  z-index: 5 !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,.25) !important;
+}
+.gallery-delete-btn i { font-size: .78rem !important; }
+
+/* Mobile layout tightening. */
+@media (max-width: 576px) {
+  .app-shell { padding: 8px !important; }
+  .hero { border-radius: 18px !important; padding: 12px !important; }
+  .hero-top-row { align-items: flex-start !important; gap: 8px !important; }
+  .hero-brand { min-width: 0 !important; gap: 8px !important; }
+  .hero-title { font-size: 1.18rem !important; line-height: 1.25 !important; white-space: nowrap !important; }
+  .hero-tagline { font-size: .72rem !important; }
+  .hero-admin-actions { gap: 4px !important; }
+  .admin-icon-btn { padding: 7px 8px !important; min-width: auto !important; }
+  .admin-btn-text { display: none !important; }
+  .hero-actions-row { gap: 8px !important; }
+  .hero-actions-row .btn { padding: 8px 10px !important; font-size: .78rem !important; }
+  .page-header { gap: 8px !important; align-items: center !important; }
+  .page-header h3 { font-size: 1rem !important; line-height: 1.45 !important; }
+  .home-stats-row .card-body { padding: 8px !important; }
+  .mobile-search-filter, .unified-search-bar, .dashboard-mobile-controls, .family-compact-search-filter { padding: 7px 8px !important; border-radius: 14px !important; }
+  .mobile-search-filter .form-control, .unified-search-bar .form-control { font-size: .82rem !important; padding: 8px !important; }
+  .mobile-search-filter .btn, .unified-search-bar .btn { width: 38px !important; height: 38px !important; min-width: 38px !important; padding: 0 !important; }
+  .modal-header { padding-left: 3rem !important; }
+}
