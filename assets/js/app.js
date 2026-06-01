@@ -12812,3 +12812,307 @@ window.renderMartyrCard = function(item) {
   });
 })();
 
+
+
+/* =========================================================
+   TALDO HOTFIX v2026-06-02-v07
+   إصلاحات ربط البحث، منع التكرار، تثبيت الشريط، صفحة العوائل، ومعاينة القص
+   ========================================================= */
+(function() {
+  'use strict';
+
+  function ready(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  function $(id) { return document.getElementById(id); }
+
+  function getActivePageId() {
+    return document.querySelector('.page-section.active')?.id || 'homePage';
+  }
+
+  function isVisible(el) {
+    if (!el || !el.isConnected) return false;
+    const page = el.closest('.page-section');
+    if (page && !page.classList.contains('active')) return false;
+    const st = getComputedStyle(el);
+    if (st.display === 'none' || st.visibility === 'hidden') return false;
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  }
+
+  function removeDuplicateIds() {
+    ['dashboardMobileSearchInput', 'dataUpdatesMobileSearchInput', 'familyCompactSearchInput'].forEach(id => {
+      const nodes = Array.from(document.querySelectorAll('#' + CSS.escape(id)));
+      nodes.slice(1).forEach(node => {
+        const wrapper = node.closest('#dashboardMobileMartyrsControls,#dataUpdatesMobileControls,#familyCompactSearchBar,.dashboard-mobile-controls,.mobile-search-filter,.family-compact-search-filter');
+        if (wrapper) wrapper.remove();
+        else node.remove();
+      });
+    });
+
+    // If an older family search bar still exists, remove it because the compact bar is the canonical one.
+    const oldFamilyBar = $('familyMartyrsSearchBar');
+    if (oldFamilyBar && $('familyCompactSearchBar')) oldFamilyBar.remove();
+  }
+
+  function syncValue(fromId, toId) {
+    const from = $(fromId);
+    const to = $(toId);
+    if (from && to && to.value !== from.value) to.value = from.value || '';
+  }
+
+  function renderSafe(fnName) {
+    try {
+      if (typeof window[fnName] === 'function') window[fnName]();
+    } catch (e) {}
+  }
+
+  function bindSearchInputs() {
+    removeDuplicateIds();
+
+    const homeMobile = $('mobileSearchInput');
+    if (homeMobile && !homeMobile.__taldoV07Bound) {
+      homeMobile.__taldoV07Bound = true;
+      homeMobile.addEventListener('input', function() {
+        syncValue('mobileSearchInput', 'searchInput');
+        if (typeof window.resetMartyrsPageAndRender === 'function') window.resetMartyrsPageAndRender();
+        else renderSafe('renderMartyrs');
+      });
+    }
+
+    const homeDesktop = $('searchInput');
+    if (homeDesktop && !homeDesktop.__taldoV07Bound) {
+      homeDesktop.__taldoV07Bound = true;
+      homeDesktop.addEventListener('input', function() {
+        syncValue('searchInput', 'mobileSearchInput');
+      });
+    }
+
+    const dashMobile = $('dashboardMobileSearchInput');
+    if (dashMobile && !dashMobile.__taldoV07Bound) {
+      dashMobile.__taldoV07Bound = true;
+      dashMobile.addEventListener('input', function() {
+        syncValue('dashboardMobileSearchInput', 'dashboardSearchInput');
+        renderSafe('renderDashboardTable');
+      });
+    }
+
+    const dashDesktop = $('dashboardSearchInput');
+    if (dashDesktop && !dashDesktop.__taldoV07Bound) {
+      dashDesktop.__taldoV07Bound = true;
+      dashDesktop.addEventListener('input', function() {
+        syncValue('dashboardSearchInput', 'dashboardMobileSearchInput');
+      });
+    }
+
+    const updatesMobile = $('dataUpdatesMobileSearchInput');
+    if (updatesMobile && !updatesMobile.__taldoV07Bound) {
+      updatesMobile.__taldoV07Bound = true;
+      updatesMobile.addEventListener('input', function() {
+        syncValue('dataUpdatesMobileSearchInput', 'dataUpdatesSearchInput');
+        renderSafe('renderDataUpdateRequestsTable');
+      });
+    }
+
+    const updatesDesktop = $('dataUpdatesSearchInput');
+    if (updatesDesktop && !updatesDesktop.__taldoV07Bound) {
+      updatesDesktop.__taldoV07Bound = true;
+      updatesDesktop.addEventListener('input', function() {
+        syncValue('dataUpdatesSearchInput', 'dataUpdatesMobileSearchInput');
+      });
+    }
+
+    const familyInput = $('familyCompactSearchInput');
+    if (familyInput && !familyInput.__taldoV07Bound) {
+      familyInput.__taldoV07Bound = true;
+      familyInput.addEventListener('input', function() {
+        if (typeof window.goToFamilyPageFinal === 'function') window.goToFamilyPageFinal(1);
+        else if (typeof window.renderFamilyMartyrsPageFinal === 'function') window.renderFamilyMartyrsPageFinal();
+        else if (typeof window.filterFamilyMartyrs === 'function') window.filterFamilyMartyrs();
+      });
+    }
+  }
+
+  function ensureFamiliesPageHasContent() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('page') !== 'families') return;
+    const container = $('familiesStatsContainer');
+    if (!container) return;
+    if (container.children.length && container.textContent.trim()) return;
+    if (typeof window.openFamiliesStatsPage === 'function') {
+      window.openFamiliesStatsPage();
+    }
+  }
+
+  function currentStickyCandidates() {
+    const activeId = getActivePageId();
+    let selectors = [];
+    if (activeId === 'homePage') selectors = window.innerWidth >= 1025 ? ['#homePage > .desktop-filter-card'] : ['#homePage > .mobile-search-filter'];
+    else if (activeId === 'familiesPage') selectors = ['#familiesSearchBar'];
+    else if (activeId === 'familyMartyrsPage') selectors = ['#familyCompactSearchBar'];
+    else if (activeId === 'dashboardPage') selectors = [
+      '#dashboardMartyrsTab:not(.d-none) #dashboardMobileMartyrsControls',
+      '#dashboardMartyrsTab:not(.d-none) > .desktop-filter-card',
+      '#dashboardDataUpdatesTab:not(.d-none) #dataUpdatesMobileControls',
+      '#dashboardDataUpdatesTab:not(.d-none) #dataUpdatesControls',
+      '#dashboardJoinRequestsTab:not(.d-none) #joinCompactSearchBar'
+    ];
+    else selectors = ['.page-section.active .mobile-search-filter', '.page-section.active .desktop-filter-card'];
+    return selectors.flatMap(sel => Array.from(document.querySelectorAll(sel))).filter(isVisible);
+  }
+
+  function releaseSticky(el) {
+    if (!el) return;
+    el.classList.remove('taldo-v07-fixed-search', 'taldo-fixed-search', 'is-stuck');
+    ['left','right','width','top'].forEach(p => el.style.removeProperty(p));
+    const ph = el.__taldoV07Placeholder;
+    if (ph) {
+      ph.classList.remove('is-active');
+      ph.style.removeProperty('height');
+      ph.style.removeProperty('margin-bottom');
+    }
+  }
+
+  function releaseAllSticky() {
+    document.querySelectorAll('.taldo-v07-fixed-search,.taldo-fixed-search').forEach(releaseSticky);
+  }
+
+  function ensurePlaceholder(el) {
+    if (el.__taldoV07Placeholder && el.__taldoV07Placeholder.isConnected) return el.__taldoV07Placeholder;
+    let ph = el.previousElementSibling;
+    if (!ph || !ph.classList.contains('taldo-sticky-placeholder')) {
+      ph = document.createElement('div');
+      ph.className = 'taldo-sticky-placeholder';
+      el.parentNode.insertBefore(ph, el);
+    }
+    el.__taldoV07Placeholder = ph;
+    return ph;
+  }
+
+  function stickyTop() {
+    const value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--taldo-sticky-top'));
+    return Number.isFinite(value) ? value : 8;
+  }
+
+  function updateSticky() {
+    if (document.body.classList.contains('modal-open') || document.querySelector('.modal.show')) {
+      releaseAllSticky();
+      return;
+    }
+
+    const candidates = new Set(currentStickyCandidates());
+    document.querySelectorAll('.taldo-v07-fixed-search,.taldo-fixed-search').forEach(el => {
+      if (!candidates.has(el)) releaseSticky(el);
+    });
+
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    const top = stickyTop();
+
+    candidates.forEach(el => {
+      const ph = ensurePlaceholder(el);
+      const ref = el.classList.contains('taldo-v07-fixed-search') || el.classList.contains('taldo-fixed-search') ? ph : el;
+      const triggerY = ref.getBoundingClientRect().top + y;
+      if (y + top < triggerY) {
+        releaseSticky(el);
+        return;
+      }
+
+      const refRect = ph.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      const width = refRect.width || elRect.width;
+      const left = refRect.left || elRect.left;
+      const marginBottom = parseFloat(getComputedStyle(el).marginBottom || '0') || 0;
+      ph.style.height = elRect.height + 'px';
+      ph.style.marginBottom = marginBottom + 'px';
+      ph.classList.add('is-active');
+
+      el.classList.add('taldo-v07-fixed-search', 'is-stuck');
+      el.style.left = left + 'px';
+      el.style.right = 'auto';
+      el.style.width = width + 'px';
+      el.style.top = top + 'px';
+    });
+  }
+
+  function fixImagePositionPreview() {
+    const preview = $('imagePositionPreview');
+    if (!preview) return;
+    const x = $('imagePositionX')?.value || '50';
+    const y = $('imagePositionY')?.value || '50';
+    const zRaw = Number($('imagePositionZoom')?.value || 1);
+    const zoom = Math.min(3, Math.max(1, Number.isFinite(zRaw) ? zRaw : 1));
+    preview.style.objectPosition = x + '% ' + y + '%';
+    preview.style.transform = 'scale(' + zoom + ')';
+    preview.style.transformOrigin = x + '% ' + y + '%';
+    const zv = $('imagePositionZoomValue');
+    if (zv) zv.textContent = zoom.toFixed(2) + 'x';
+    if (window.__imagePositionDraft) {
+      const mode = $('imagePositionMode')?.value || 'card';
+      window.__imagePositionDraft[mode] = { x: String(x), y: String(y), zoom: String(zoom) };
+    }
+  }
+
+  const oldUpdateImagePositionPreview = window.updateImagePositionPreview;
+  window.updateImagePositionPreview = function() {
+    if (typeof oldUpdateImagePositionPreview === 'function') {
+      try { oldUpdateImagePositionPreview.apply(this, arguments); } catch (e) {}
+    }
+    fixImagePositionPreview();
+  };
+  try { updateImagePositionPreview = window.updateImagePositionPreview; } catch (e) {}
+
+  function afterDomWork() {
+    bindSearchInputs();
+    ensureFamiliesPageHasContent();
+    updateSticky();
+  }
+
+  ['scroll','resize','orientationchange'].forEach(evt => {
+    window.addEventListener(evt, updateSticky, { passive: true, capture: true });
+    document.addEventListener(evt, updateSticky, { passive: true, capture: true });
+  });
+  document.addEventListener('shown.bs.modal', releaseAllSticky, true);
+  document.addEventListener('hidden.bs.modal', () => setTimeout(updateSticky, 120), true);
+
+  const observer = new MutationObserver(() => {
+    clearTimeout(window.__taldoV07DomTimer);
+    window.__taldoV07DomTimer = setTimeout(afterDomWork, 60);
+  });
+
+  ready(function() {
+    afterDomWork();
+    observer.observe(document.body, { childList: true, subtree: true });
+    setTimeout(afterDomWork, 400);
+    setTimeout(afterDomWork, 1200);
+    setInterval(updateSticky, 700);
+  });
+
+  // Wrap route/load functions lightly so refresh on ?page=families always gets rendered content.
+  const oldApplyRoute = window.applyRouteFromLocation;
+  if (typeof oldApplyRoute === 'function' && !oldApplyRoute.__taldoV07Wrapped) {
+    window.applyRouteFromLocation = function() {
+      const result = oldApplyRoute.apply(this, arguments);
+      setTimeout(ensureFamiliesPageHasContent, 160);
+      setTimeout(afterDomWork, 220);
+      return result;
+    };
+    window.applyRouteFromLocation.__taldoV07Wrapped = true;
+    try { applyRouteFromLocation = window.applyRouteFromLocation; } catch (e) {}
+  }
+
+  const oldLoadInitial = window.loadInitialData;
+  if (typeof oldLoadInitial === 'function' && !oldLoadInitial.__taldoV07Wrapped) {
+    window.loadInitialData = function() {
+      const result = oldLoadInitial.apply(this, arguments);
+      Promise.resolve(result).finally(() => {
+        setTimeout(ensureFamiliesPageHasContent, 200);
+        setTimeout(afterDomWork, 260);
+      });
+      return result;
+    };
+    window.loadInitialData.__taldoV07Wrapped = true;
+    try { loadInitialData = window.loadInitialData; } catch (e) {}
+  }
+})();
