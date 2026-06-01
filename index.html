@@ -2997,7 +2997,7 @@
         ? `<div class="martyrs-grid">${pageList.map(renderMartyrCard).join('')}</div>`
         : `<div>${pageList.map(renderMartyrListItem).join('')}</div>`;
 
-      container.innerHTML = contentHtml + renderMartyrsPaginationPerf(totalPages, list.length, pageSize);
+      container.innerHTML = contentHtml + (typeof renderMartyrsPaginationPerf === 'function' ? renderMartyrsPaginationPerf(totalPages, list.length, MARTYRS_PAGE_SIZE) : renderMartyrsPagination(totalPages, list.length));
     }
 
     function renderMartyrsPagination(totalPages, totalItems) {
@@ -5119,19 +5119,29 @@ function toggleEditCauseFields(clearHiddenValues = true) {
 
   const battleBox = document.getElementById('editBattleNameBox');
   const otherBox = document.getElementById('editOtherCauseBox');
+  const securityBox = document.getElementById('editSecurityBranchBox');
+  const lastSeenBox = document.getElementById('editLastSeenPlaceBox');
 
   const battleInput = document.getElementById('edit_battle_name');
   const otherInput = document.getElementById('edit_other_cause');
+  const securityInput = document.getElementById('edit_security_branch');
+  const lastSeenInput = document.getElementById('edit_last_seen_place');
 
   if (battleBox) battleBox.classList.toggle('d-none', type !== 'المعارك');
   if (otherBox) otherBox.classList.toggle('d-none', type !== 'آخر');
+  if (securityBox) securityBox.classList.toggle('d-none', !(type === 'تحت التعذيب' || type === 'معتقل'));
+  if (lastSeenBox) lastSeenBox.classList.toggle('d-none', type !== 'مفقود');
 
   if (battleInput) battleInput.required = type === 'المعارك';
   if (otherInput) otherInput.required = type === 'آخر';
+  if (securityInput) securityInput.required = false;
+  if (lastSeenInput) lastSeenInput.required = false;
 
   if (clearHiddenValues) {
-    if (type !== 'المعارك' && battleInput) battleInput.value = '';
-    if (type !== 'آخر' && otherInput) otherInput.value = '';
+    if (battleInput && type !== 'المعارك') battleInput.value = '';
+    if (otherInput && type !== 'آخر') otherInput.value = '';
+    if (securityInput && !(type === 'تحت التعذيب' || type === 'معتقل')) securityInput.value = '';
+    if (lastSeenInput && type !== 'مفقود') lastSeenInput.value = '';
   }
 }
 
@@ -6319,27 +6329,48 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function ensureEditExtraFields() {
-    const placeField = document.getElementById('edit_martyrdom_place');
-    const holder = placeField ? placeField.closest('.col-md-6') : null;
-    if (holder && !document.getElementById('edit_security_branch')) {
-      holder.insertAdjacentHTML('afterend', `
-        <div class="col-md-6"><label class="form-label fw-bold">بيانات الفرع الأمني</label><input class="form-control" id="edit_security_branch"></div>
-        <div class="col-md-6"><label class="form-label fw-bold">آخر مكان شوهد فيه الشهيد</label><input class="form-control" id="edit_last_seen_place"></div>
+    const editTypeOther = document.getElementById('editTypeOther');
+    const row = editTypeOther ? editTypeOther.closest('.d-flex') : null;
+
+    if (row && !document.getElementById('editTypeTorture')) {
+      NEW_MARTYRDOM_TYPES.forEach(item => {
+        const editId = 'edit' + item.id.charAt(0).toUpperCase() + item.id.slice(1);
+        const div = document.createElement('div');
+        div.className = 'form-check';
+        div.innerHTML = `
+          <input class="form-check-input" type="radio" name="martyrdom_type" value="${escapeAttr(item.value)}" id="${editId}" required onchange="toggleEditCauseFields()">
+          <label class="form-check-label" for="${editId}">${escapeHtml(item.value)}</label>
+        `;
+        row.insertBefore(div, editTypeOther.closest('.form-check'));
+      });
+    }
+
+    const editOtherBox = document.getElementById('editOtherCauseBox');
+    if (editOtherBox && !document.getElementById('editSecurityBranchBox')) {
+      editOtherBox.insertAdjacentHTML('afterend', `
+        <div class="col-md-6 d-none" id="editSecurityBranchBox">
+          <label class="form-label fw-bold">بيانات الفرع الأمني</label>
+          <input type="text" class="form-control" id="edit_security_branch" name="security_branch" placeholder="اختياري">
+        </div>
+        <div class="col-md-6 d-none" id="editLastSeenPlaceBox">
+          <label class="form-label fw-bold">آخر مكان شوهد فيه الشهيد</label>
+          <input type="text" class="form-control" id="edit_last_seen_place" name="last_seen_place" placeholder="اختياري">
+        </div>
       `);
     }
   }
 
   window.toggleCauseFields = function() {
-    const type = document.querySelector('input[name="martyrdom_type"]:checked')?.value || '';
+    const type = document.querySelector('#martyrForm input[name="martyrdom_type"]:checked')?.value || '';
     const battleBox = document.getElementById('battleNameBox');
     const otherBox = document.getElementById('otherCauseBox');
     const securityBox = document.getElementById('securityBranchBox');
     const lastSeenBox = document.getElementById('lastSeenPlaceBox');
 
-    const battleInput = document.querySelector('[name="battle_name"]');
-    const otherInput = document.querySelector('[name="other_cause"]');
-    const securityInput = document.querySelector('[name="security_branch"]');
-    const lastSeenInput = document.querySelector('[name="last_seen_place"]');
+    const battleInput = document.querySelector('#martyrForm [name="battle_name"]');
+    const otherInput = document.querySelector('#martyrForm [name="other_cause"]');
+    const securityInput = document.querySelector('#martyrForm [name="security_branch"]');
+    const lastSeenInput = document.querySelector('#martyrForm [name="last_seen_place"]');
 
     if (battleBox) battleBox.classList.toggle('d-none', type !== 'المعارك');
     if (otherBox) otherBox.classList.toggle('d-none', type !== 'آخر');
@@ -6355,6 +6386,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (otherInput && type !== 'آخر') otherInput.value = '';
     if (securityInput && !(type === 'تحت التعذيب' || type === 'معتقل')) securityInput.value = '';
     if (lastSeenInput && type !== 'مفقود') lastSeenInput.value = '';
+  };
+
+  window.toggleEditCauseFields = function(clearHiddenValues = true) {
+    const type = document.querySelector('#editMartyrForm input[name="martyrdom_type"]:checked')?.value || '';
+
+    const battleBox = document.getElementById('editBattleNameBox');
+    const otherBox = document.getElementById('editOtherCauseBox');
+    const securityBox = document.getElementById('editSecurityBranchBox');
+    const lastSeenBox = document.getElementById('editLastSeenPlaceBox');
+
+    const battleInput = document.getElementById('edit_battle_name');
+    const otherInput = document.getElementById('edit_other_cause');
+    const securityInput = document.getElementById('edit_security_branch');
+    const lastSeenInput = document.getElementById('edit_last_seen_place');
+
+    if (battleBox) battleBox.classList.toggle('d-none', type !== 'المعارك');
+    if (otherBox) otherBox.classList.toggle('d-none', type !== 'آخر');
+    if (securityBox) securityBox.classList.toggle('d-none', !(type === 'تحت التعذيب' || type === 'معتقل'));
+    if (lastSeenBox) lastSeenBox.classList.toggle('d-none', type !== 'مفقود');
+
+    if (battleInput) battleInput.required = type === 'المعارك';
+    if (otherInput) otherInput.required = type === 'آخر';
+    if (securityInput) securityInput.required = false;
+    if (lastSeenInput) lastSeenInput.required = false;
+
+    if (clearHiddenValues) {
+      if (battleInput && type !== 'المعارك') battleInput.value = '';
+      if (otherInput && type !== 'آخر') otherInput.value = '';
+      if (securityInput && !(type === 'تحت التعذيب' || type === 'معتقل')) securityInput.value = '';
+      if (lastSeenInput && type !== 'مفقود') lastSeenInput.value = '';
+    }
   };
 
   function getImagePositionStyle(target) {
@@ -6693,39 +6755,121 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.openEditMartyrModal = function(focusField) {
     if (!currentDetailsItem) return;
+
     ensureEditExtraFields();
-    const fields = ['full_name','family_name','father_name','birth_year','nickname','martyrdom_type','battle_name','other_cause','security_branch','last_seen_place','martyrdom_date','martyrdom_place','extra_info'];
-    document.getElementById('editMartyrId').value = currentDetailsItem.martyr_id;
+
+    const form = document.getElementById('editMartyrForm');
+    if (form) form.reset();
+
+    const imageInput = document.getElementById('editImageInput');
+    if (imageInput) imageInput.value = '';
+
+    document.getElementById('editMartyrId').value = currentDetailsItem.martyr_id || '';
+
+    const fields = [
+      'full_name',
+      'family_name',
+      'father_name',
+      'birth_year',
+      'nickname',
+      'battle_name',
+      'other_cause',
+      'security_branch',
+      'last_seen_place',
+      'martyrdom_date',
+      'martyrdom_place',
+      'extra_info'
+    ];
+
     fields.forEach(field => {
       const el = document.getElementById('edit_' + field);
       if (el) el.value = currentDetailsItem[field] || '';
     });
+
+    const martyrdomType = String(currentDetailsItem.martyrdom_type || '').trim();
+    document.querySelectorAll('#editMartyrForm input[name="martyrdom_type"]').forEach(radio => {
+      radio.checked = radio.value === martyrdomType;
+    });
+
+    if (typeof toggleEditCauseFields === 'function') {
+      toggleEditCauseFields(false);
+    }
+
+    const dropdown = document.getElementById('editFamilyDropdown');
+    if (dropdown) dropdown.classList.add('d-none');
+
     modals.editMartyrModal.show();
-    setTimeout(() => document.getElementById('edit_' + focusField)?.focus(), 250);
+
+    setTimeout(() => {
+      const focusTarget =
+        document.getElementById('edit_' + focusField) ||
+        document.querySelector('#editMartyrForm input[name="martyrdom_type"]:checked') ||
+        document.getElementById('edit_full_name');
+
+      focusTarget?.focus();
+    }, 250);
   };
 
-  window.saveMartyrEdits = function() {
-    const fields = ['full_name','family_name','father_name','birth_year','nickname','martyrdom_type','battle_name','other_cause','security_branch','last_seen_place','martyrdom_date','martyrdom_place','extra_info'];
-    const payload = { martyr_id: document.getElementById('editMartyrId').value };
-    fields.forEach(field => payload[field] = document.getElementById('edit_' + field)?.value || '');
+  window.saveMartyrEdits = async function() {
+    const form = document.getElementById('editMartyrForm');
+
+    if (!form || !form.checkValidity()) {
+      if (form) form.reportValidity();
+      return;
+    }
+
+    const payload = {
+      martyr_id: document.getElementById('editMartyrId')?.value || ''
+    };
+
+    const formData = Object.fromEntries(new FormData(form).entries());
+    Object.assign(payload, formData);
+
+    if (payload.martyrdom_type !== 'المعارك') payload.battle_name = '';
+    if (payload.martyrdom_type !== 'آخر') payload.other_cause = '';
+    if (!(payload.martyrdom_type === 'تحت التعذيب' || payload.martyrdom_type === 'معتقل')) payload.security_branch = '';
+    if (payload.martyrdom_type !== 'مفقود') payload.last_seen_place = '';
+
+    const imageInput = document.getElementById('editImageInput');
+    if (imageInput && imageInput.files && imageInput.files.length && typeof filesToPayload === 'function') {
+      payload.imageFiles = await filesToPayload(imageInput.files);
+    }
 
     const btn = document.getElementById('editMartyrSaveBtn');
-    btn.disabled = true;
-    btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الحفظ...`;
+    const normalHtml = '<i class="fa-solid fa-floppy-disk ms-1"></i> حفظ التعديلات';
+    if (typeof setButtonLoading === 'function') setButtonLoading(btn, true, 'جاري الحفظ...', normalHtml);
+    else if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الحفظ...`;
+    }
 
     apiRequest('updateMartyrFields', payload)
       .then(res => {
-        btn.disabled = false;
-        btn.innerHTML = 'حفظ التعديلات';
-        if (!res.success) return showToast(res.message || 'تعذر الحفظ.');
+        if (typeof setButtonLoading === 'function') setButtonLoading(btn, false, '', normalHtml);
+        else if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = normalHtml;
+        }
+
+        if (!res || !res.success) return showToast(res?.message || 'تعذر الحفظ.');
+
         modals.editMartyrModal.hide();
-        showToast(res.message || 'تم الحفظ.');
+        showToast(res.message || 'تم حفظ التعديلات.');
+
+        if (currentDetailsItem) Object.assign(currentDetailsItem, payload);
         refreshDashboardData(false);
         loadInitialData();
+
+        setTimeout(() => {
+          if (payload.martyr_id) openMartyrDetails(payload.martyr_id, lastPageBeforeDetails || 'dashboardPage', true);
+        }, 700);
       })
       .catch(err => {
-        btn.disabled = false;
-        btn.innerHTML = 'حفظ التعديلات';
+        if (typeof setButtonLoading === 'function') setButtonLoading(btn, false, '', normalHtml);
+        else if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = normalHtml;
+        }
         showToast(err.message || 'تعذر الحفظ.');
       });
   };
@@ -9792,17 +9936,37 @@ window.renderMartyrCard = function(item) {
     return typeof runWithoutScrollJump === 'function' ? runWithoutScrollJump(runner) : runner();
   };
 
-  window.saveMartyrEdits = function() {
-    const fields = ['full_name','family_name','father_name','birth_year','nickname','martyrdom_type','battle_name','other_cause','martyrdom_date','martyrdom_place','extra_info'];
+  window.saveMartyrEdits = async function() {
+    const form = document.getElementById('editMartyrForm');
+
+    if (!form || !form.checkValidity()) {
+      if (form) form.reportValidity();
+      return;
+    }
+
     const martyrId = document.getElementById('editMartyrId')?.value || '';
     const payload = { martyr_id: martyrId };
+    const formData = Object.fromEntries(new FormData(form).entries());
+    Object.assign(payload, formData);
 
-    fields.forEach(field => {
-      payload[field] = document.getElementById('edit_' + field)?.value || '';
-    });
+    if (payload.martyrdom_type !== 'المعارك') payload.battle_name = '';
+    if (payload.martyrdom_type !== 'آخر') payload.other_cause = '';
+    if (!(payload.martyrdom_type === 'تحت التعذيب' || payload.martyrdom_type === 'معتقل')) payload.security_branch = '';
+    if (payload.martyrdom_type !== 'مفقود') payload.last_seen_place = '';
+
+    const imageInput = document.getElementById('editImageInput');
+
+    try {
+      if (imageInput && imageInput.files && imageInput.files.length && typeof filesToPayload === 'function') {
+        payload.imageFiles = await filesToPayload(imageInput.files);
+      }
+    } catch (error) {
+      showToast(error.message || 'تعذر قراءة الصورة المرفوعة.');
+      return;
+    }
 
     const btn = document.getElementById('editMartyrSaveBtn');
-    const normalHtml = 'حفظ التعديلات';
+    const normalHtml = '<i class="fa-solid fa-floppy-disk ms-1"></i> حفظ التعديلات';
     if (typeof setButtonLoading === 'function') setButtonLoading(btn, true, 'جاري الحفظ...', normalHtml);
     else if (btn) {
       btn.disabled = true;
@@ -9825,6 +9989,7 @@ window.renderMartyrCard = function(item) {
       showToast(res.message || 'تم الحفظ.');
 
       if (currentDetailsItem && currentDetailsItem.martyr_id === martyrId) {
+        Object.assign(currentDetailsItem, payload);
         openMartyrDetails(martyrId, lastPageBeforeDetails || 'dashboardPage', true);
       }
 
