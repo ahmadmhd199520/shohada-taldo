@@ -16020,6 +16020,163 @@ window.renderMartyrCard = function(item) {
 })();
 </script>
 
+
+<!-- ===== Hotfix: show dashboard action button on mobile + allow horizontal table scroll ===== -->
+<style id="taldo-dashboard-mobile-action-scroll-hotfix">
+  @media (max-width: 768px) {
+    #dashboardMartyrsTab .dashboard-table-card,
+    #dashboardMartyrsTab .table-responsive {
+      overflow-x: auto !important;
+      overflow-y: visible !important;
+      -webkit-overflow-scrolling: touch !important;
+      touch-action: pan-x pan-y !important;
+    }
+
+    #dashboardMartyrsTab table {
+      width: 100% !important;
+      min-width: 430px !important;
+      table-layout: fixed !important;
+    }
+
+    #dashboardMartyrsTab table thead th,
+    #dashboardMartyrsTab table tbody td {
+      white-space: normal !important;
+      vertical-align: middle !important;
+    }
+
+    /* في الجوال نُبقي فقط: الصورة، الاسم، العائلة، إجراء */
+    #dashboardMartyrsTab table thead th:nth-child(4),
+    #dashboardMartyrsTab table thead th:nth-child(5),
+    #dashboardMartyrsTab table tbody td:nth-child(4),
+    #dashboardMartyrsTab table tbody td:nth-child(5) {
+      display: none !important;
+    }
+
+    #dashboardMartyrsTab table thead th:nth-child(1),
+    #dashboardMartyrsTab table tbody td:nth-child(1) {
+      display: table-cell !important;
+      width: 62px !important;
+      min-width: 62px !important;
+      max-width: 62px !important;
+    }
+
+    #dashboardMartyrsTab table thead th:nth-child(2),
+    #dashboardMartyrsTab table tbody td:nth-child(2) {
+      display: table-cell !important;
+      width: 145px !important;
+      min-width: 145px !important;
+    }
+
+    #dashboardMartyrsTab table thead th:nth-child(3),
+    #dashboardMartyrsTab table tbody td:nth-child(3) {
+      display: table-cell !important;
+      width: 105px !important;
+      min-width: 105px !important;
+      font-size: .78rem !important;
+    }
+
+    #dashboardMartyrsTab table thead th:nth-child(6),
+    #dashboardMartyrsTab table tbody td:nth-child(6) {
+      display: table-cell !important;
+      width: 82px !important;
+      min-width: 82px !important;
+      max-width: 82px !important;
+      text-align: center !important;
+    }
+
+    #dashboardMartyrsTab .dashboard-desktop-actions {
+      display: none !important;
+    }
+
+    #dashboardMartyrsTab .dashboard-mobile-action-btn,
+    #dashboardMartyrsTab td:nth-child(6) .dashboard-mobile-action-btn {
+      display: inline-flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: auto !important;
+      min-width: 58px !important;
+      height: 32px !important;
+      padding: 5px 8px !important;
+      font-size: .72rem !important;
+      line-height: 1 !important;
+      border-radius: 10px !important;
+      white-space: nowrap !important;
+    }
+
+    #dashboardMartyrsTab .dashboard-mobile-image-wrap {
+      width: 50px !important;
+      height: 50px !important;
+      min-width: 50px !important;
+    }
+
+    #dashboardMartyrsTab .dashboard-mobile-image-wrap img,
+    #dashboardMartyrsTab .dashboard-mobile-placeholder {
+      width: 50px !important;
+      height: 50px !important;
+    }
+  }
+</style>
+<script id="taldo-dashboard-mobile-action-scroll-hotfix-js">
+(function() {
+  'use strict';
+
+  function normalizeDashboardActionHeader() {
+    const header = document.querySelector('#dashboardMartyrsTab table thead th:nth-child(6)');
+    if (header) header.textContent = 'إجراء';
+  }
+
+  function ensureDashboardMobileActionButtons() {
+    normalizeDashboardActionHeader();
+
+    const rows = document.querySelectorAll('#dashboardMartyrsTab tbody tr');
+    rows.forEach(row => {
+      const lastCell = row.querySelector('td:nth-child(6)');
+      if (!lastCell) return;
+
+      const desktopActions = lastCell.querySelector('.dashboard-desktop-actions');
+      const existingMobileBtn = lastCell.querySelector('.dashboard-mobile-action-btn');
+      if (existingMobileBtn) return;
+
+      const viewBtn = desktopActions ? desktopActions.querySelector('button[onclick*="openMartyrDetails"]') : null;
+      const onclickText = viewBtn ? (viewBtn.getAttribute('onclick') || '') : '';
+      const match = onclickText.match(/openMartyrDetails\('([^']+)'/);
+      const martyrId = match && match[1] ? match[1] : '';
+      if (!martyrId || typeof window.openDashboardActionModalFinal !== 'function') return;
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-sm btn-primary dashboard-mobile-action-btn';
+      btn.textContent = 'إجراء';
+      btn.onclick = function(event) {
+        window.openDashboardActionModalFinal(martyrId, event);
+      };
+      lastCell.appendChild(btn);
+    });
+  }
+
+  const previousRenderDashboardTable = window.renderDashboardTable || (typeof renderDashboardTable === 'function' ? renderDashboardTable : null);
+  if (typeof previousRenderDashboardTable === 'function' && !previousRenderDashboardTable.__actionScrollHotfixWrapped) {
+    window.renderDashboardTable = function() {
+      const result = previousRenderDashboardTable.apply(this, arguments);
+      setTimeout(ensureDashboardMobileActionButtons, 0);
+      return result;
+    };
+    window.renderDashboardTable.__actionScrollHotfixWrapped = true;
+    try { renderDashboardTable = window.renderDashboardTable; } catch (e) {}
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    ensureDashboardMobileActionButtons();
+  });
+
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    setTimeout(ensureDashboardMobileActionButtons, 100);
+  }
+})();
+</script>
+
 </body>
 
 </html>
