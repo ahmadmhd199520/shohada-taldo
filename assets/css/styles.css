@@ -4161,3 +4161,167 @@ body.theme-dark .site-footer .btn-light {
 body.theme-dark .modal-backdrop.show {
   opacity: .78;
 }
+
+/* =========================================================
+   TALDO FINAL UX FIXES v2026-06-01-04
+   - JS fixed fallback for sticky search
+   - Mobile dashboard: show only زر إجراء
+   - Houla family filter visual safety
+   - Stronger dark-mode card footer contrast
+   ========================================================= */
+:root,
+body.theme-light,
+body:not(.theme-dark) {
+  --taldo-sticky-top: max(8px, env(safe-area-inset-top));
+  --taldo-sticky-z: 1120;
+  --color-card-main-bg: var(--color-surface, #ffffff);
+  --color-card-footer-bg: var(--color-surface-alt, #edebe0);
+  --color-card-footer-border: rgba(5, 66, 57, .18);
+}
+
+body.theme-dark {
+  --color-card-main-bg: #161616;
+  --color-card-footer-bg: #002623;
+  --color-card-footer-border: #054239;
+}
+
+/* Sticky fallback class added by JS when native sticky is blocked */
+.taldo-fixed-search {
+  position: fixed !important;
+  top: var(--taldo-sticky-top) !important;
+  z-index: var(--taldo-sticky-z) !important;
+  margin: 0 !important;
+  border-radius: 18px !important;
+  box-shadow: var(--shadow-strong, 0 18px 45px rgba(0,0,0,.18)) !important;
+  backdrop-filter: blur(18px) saturate(1.12) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
+}
+
+.taldo-sticky-placeholder {
+  display: none;
+  pointer-events: none;
+}
+
+.taldo-sticky-placeholder.is-active {
+  display: block;
+}
+
+.mobile-search-filter,
+.desktop-filter-card,
+.houla-compact-search-filter,
+.family-compact-search-filter,
+.join-compact-search-filter,
+.dashboard-mobile-controls {
+  scroll-margin-top: 90px;
+  position: sticky !important;
+  top: var(--taldo-sticky-top) !important;
+  z-index: calc(var(--taldo-sticky-z) - 1) !important;
+}
+
+/* Card footer contrast, especially in dark mode */
+.martyr-card {
+  background: var(--color-card-main-bg) !important;
+}
+
+.martyr-image-wrap {
+  background: color-mix(in srgb, var(--color-card-main-bg) 88%, var(--color-primary, #054239) 12%) !important;
+}
+
+.martyr-body {
+  background: var(--color-card-footer-bg) !important;
+  border-top: 1px solid var(--color-card-footer-border) !important;
+}
+
+body.theme-dark .martyr-card {
+  border-color: rgba(66, 129, 119, .38) !important;
+}
+
+body.theme-dark .martyr-body {
+  box-shadow: inset 0 1px 0 rgba(66, 129, 119, .28) !important;
+}
+
+body.theme-dark .martyr-name,
+body.theme-dark .martyr-family {
+  color: #ffffff !important;
+}
+
+body.theme-dark .martyr-family {
+  opacity: .82;
+}
+
+/* Dashboard actions: desktop shows all actions, mobile shows only the action button */
+#dashboardMartyrsTab .dashboard-mobile-action-btn {
+  display: none !important;
+}
+
+@media (min-width: 769px) {
+  #dashboardMartyrsTab .dashboard-desktop-actions,
+  #dashboardMartyrsTab td:nth-child(6) > .d-flex:not(.dashboard-mobile-actions) {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #dashboardMartyrsTab .dashboard-table-card,
+  #dashboardMartyrsTab .table-responsive {
+    overflow: visible !important;
+  }
+
+  #dashboardMartyrsTab table {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  #dashboardMartyrsTab td:nth-child(6) > .d-flex,
+  #dashboardMartyrsTab .dashboard-desktop-actions {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #dashboardMartyrsTab .dashboard-mobile-action-btn,
+  #dashboardMartyrsTab td:nth-child(6) > .dashboard-mobile-action-btn {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 64px !important;
+    height: 34px !important;
+    padding: 6px 10px !important;
+    font-size: .76rem !important;
+    line-height: 1 !important;
+    border-radius: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  #dashboardMartyrsTab table tbody tr:not(.dash-pagination-row) {
+    grid-template-areas:
+      "photo name"
+      "photo family"
+      "status actions" !important;
+  }
+
+  #dashboardMartyrsTab table tbody tr:not(.dash-pagination-row) > td:nth-child(4) {
+    display: none !important;
+  }
+
+  #dashboardMartyrsTab table tbody tr:not(.dash-pagination-row) > td:nth-child(5) {
+    grid-area: status !important;
+  }
+
+  #dashboardMartyrsTab table tbody tr:not(.dash-pagination-row) > td:nth-child(6) {
+    grid-area: actions !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+  }
+}
+
+/* Houla filters: make sure the select is usable when populated dynamically */
+#houlaFamilyFilter,
+#houlaCompactFamilyFilter {
+  min-width: 100%;
+}
