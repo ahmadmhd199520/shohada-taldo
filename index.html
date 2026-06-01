@@ -4338,6 +4338,13 @@ function selectFamily(family) {
               <label class="form-label fw-bold">مكان الاستشهاد</label>
               <input type="text" class="form-control" id="edit_martyrdom_place" name="martyrdom_place">
             </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">إضافة صورة للشهيد</label>
+              <input type="file" class="form-control" id="editImageInput" accept="image/*" multiple>
+              <div class="form-text">
+                اختياري. عند اختيار صورة هنا ستُضاف إلى صور الشهيد الحالية.
+              </div>
+            </div>
 
             <div class="col-12">
               <label class="form-label fw-bold">معلومات أخرى ترغب بإضافتها</label>
@@ -4990,6 +4997,8 @@ function openEditMartyrModal(focusField) {
 
   const form = document.getElementById('editMartyrForm');
   if (form) form.reset();
+  const editImageInput = document.getElementById('editImageInput');
+  if (editImageInput) editImageInput.value = '';
 
   document.getElementById('editMartyrId').value = currentDetailsItem.martyr_id || '';
 
@@ -5037,7 +5046,7 @@ function openEditMartyrModal(focusField) {
 }
 
 
-function saveMartyrEdits() {
+async function saveMartyrEdits() {
   const form = document.getElementById('editMartyrForm');
 
   if (!form.checkValidity()) {
@@ -5050,7 +5059,6 @@ function saveMartyrEdits() {
   };
 
   const formData = Object.fromEntries(new FormData(form).entries());
-
   Object.assign(payload, formData);
 
   if (payload.martyrdom_type !== 'المعارك') {
@@ -5059,6 +5067,12 @@ function saveMartyrEdits() {
 
   if (payload.martyrdom_type !== 'آخر') {
     payload.other_cause = '';
+  }
+
+  const imageInput = document.getElementById('editImageInput');
+
+  if (imageInput && imageInput.files && imageInput.files.length) {
+    payload.imageFiles = await filesToPayload(imageInput.files);
   }
 
   const btn = document.getElementById('editMartyrSaveBtn');
@@ -5099,7 +5113,7 @@ function saveMartyrEdits() {
       showToast(err.message || 'تعذر الحفظ.');
     });
 }
-
+  
 function toggleEditCauseFields(clearHiddenValues = true) {
   const type = document.querySelector('#editMartyrForm input[name="martyrdom_type"]:checked')?.value || '';
 
