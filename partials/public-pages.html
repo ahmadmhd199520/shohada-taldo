@@ -29,9 +29,12 @@
   </div>
 
   <!-- Unified search bar for family martyrs -->
-  <div class="mobile-search-filter unified-search-bar mb-3" id="familyMartyrsSearchBar">
-    <input class="form-control" type="search" id="familyMartyrsSearchInput"
-           placeholder="ابحث بالاسم..." oninput="filterFamilyMartyrs()"/>
+  <div class="mobile-search-filter unified-search-bar mb-3 family-compact-search-filter" id="familyCompactSearchBar">
+    <input class="form-control" type="search" id="familyCompactSearchInput"
+           placeholder="ابحث ضمن هذه العائلة..."/>
+    <button class="btn btn-primary" type="button" onclick="openFamilyCompactFilterModalFinal()" aria-label="فلترة العائلة">
+      <i class="fa-solid fa-filter"></i>
+    </button>
   </div>
 
   <div id="familyMartyrsContainer"></div>
