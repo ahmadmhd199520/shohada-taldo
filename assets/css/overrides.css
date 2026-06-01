@@ -1,0 +1,815 @@
+/* =================================================================
+   TALDO OVERRIDES - Green Theme + Performance + Layout Fixes
+   ================================================================= */
+
+/* ── 1. CSS Variables: Green Palette ─────────────────────────── */
+:root {
+  --tg: #1a7f4f;          /* taldo green primary */
+  --tg2: #0f5132;         /* taldo green dark */
+  --tg3: #d1f5e3;         /* taldo green light bg */
+  --tg-soft: rgba(26,127,79,.14);
+  --ta: #f5a623;          /* amber accent */
+  --ta-soft: rgba(245,166,35,.18);
+
+  --ui-bg: #f0f7f4;
+  --ui-surface: rgba(255,255,255,.90);
+  --ui-surface-solid: #ffffff;
+  --ui-text: #162420;
+  --ui-muted: #5a706a;
+  --ui-primary: var(--tg);
+  --ui-primary-2: var(--tg2);
+  --ui-primary-soft: var(--tg-soft);
+  --ui-accent: var(--ta);
+  --ui-border: rgba(26,127,79,.12);
+  --ui-shadow: 0 12px 36px rgba(10,60,35,.10);
+  --ui-shadow-strong: 0 20px 55px rgba(10,60,35,.16);
+  --card-radius: 20px;
+  --soft-shadow: 0 8px 24px rgba(10,60,35,.08);
+  --main-bg: var(--ui-bg);
+}
+
+/* Dark mode green variant */
+body.theme-dark {
+  --ui-bg: #0d1f17;
+  --ui-surface: rgba(20,50,35,.80);
+  --ui-surface-solid: #142316;
+  --ui-surface-2: #1c3028;
+  --ui-text: #e8f5ee;
+  --ui-muted: #87b09a;
+  --ui-primary: #2ecc7d;
+  --ui-primary-2: #1a7f4f;
+  --ui-primary-soft: rgba(46,204,125,.18);
+  --ui-border: rgba(255,255,255,.10);
+  --ui-shadow: 0 18px 48px rgba(0,0,0,.36);
+  --ui-shadow-strong: 0 28px 72px rgba(0,0,0,.50);
+}
+
+/* ── 2. Body & Background ────────────────────────────────────── */
+body {
+  font-family: 'Tajawal', sans-serif;
+  background:
+    radial-gradient(circle at 8% 6%, rgba(26,127,79,.13), transparent 32%),
+    radial-gradient(circle at 90% 88%, rgba(15,81,50,.09), transparent 28%),
+    linear-gradient(160deg, #f0f7f4 0%, #e8f4ee 50%, #f0f7f4 100%) !important;
+  color: var(--ui-text) !important;
+  font-size: 15px;
+}
+
+@media (max-width: 576px) {
+  body { font-size: 13.5px; }
+}
+
+/* ── 3. App Shell ────────────────────────────────────────────── */
+.app-shell {
+  max-width: 1200px;
+  margin: auto;
+  padding: 16px;
+}
+@media (max-width: 576px) {
+  .app-shell { padding: 8px; }
+}
+
+/* ── 4. Hero / Header ─────────────────────────────────────────── */
+.hero,
+.site-footer {
+  background:
+    radial-gradient(circle at top right, rgba(255,255,255,.15), transparent 30%),
+    linear-gradient(145deg, var(--tg) 0%, var(--tg2) 100%) !important;
+  box-shadow: var(--ui-shadow-strong) !important;
+}
+
+.hero {
+  border-radius: 24px;
+  padding: 20px 22px !important;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 14px !important;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.07);
+  top: -100px; left: -80px;
+  pointer-events: none;
+}
+
+.hero > *, .hero-layout { position: relative; z-index: 2; }
+
+/* Hero Layout: 2 rows */
+.hero-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.hero-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.hero-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.hero-logo-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.20);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,.30);
+}
+
+.hero-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.hero-title-block { min-width: 0; }
+
+.hero-title {
+  font-weight: 800;
+  font-size: clamp(1.3rem, 3.5vw, 2rem);
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.hero-tagline {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,.75);
+  margin-top: 2px;
+}
+
+/* Admin buttons */
+.hero-admin-actions,
+.top-login-bar.header-inline-actions {
+  position: static !important;
+  left: auto !important; right: auto !important;
+  top: auto !important; transform: none !important;
+  z-index: auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  flex-shrink: 0;
+}
+
+.admin-icon-btn,
+.hero-admin-actions .btn {
+  width: 38px !important; height: 38px !important;
+  min-width: 38px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.65) !important;
+  background: rgba(255,255,255,.12) !important;
+  font-size: 0 !important;
+  transition: background .2s;
+}
+
+.admin-icon-btn:hover { background: rgba(255,255,255,.25) !important; }
+.admin-icon-btn i { font-size: .95rem !important; margin: 0 !important; }
+.admin-btn-text { display: none !important; }
+
+#loginBtn.d-none, #dashboardBtn.d-none, #logoutBtn.d-none { display: none !important; }
+
+/* Hero actions row */
+.hero-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* PRIMARY CTA - توثيق شهيد */
+.btn-document,
+.highlight-submit-btn {
+  background: linear-gradient(135deg, #f5a623, #e08800) !important;
+  color: #1a1a1a !important;
+  border: none !important;
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+  padding: 11px 24px !important;
+  border-radius: 14px !important;
+  box-shadow: 0 0 0 rgba(245,166,35,0), 0 6px 18px rgba(0,0,0,.15) !important;
+  animation: greenCTAPulse 2s ease-in-out infinite !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@keyframes greenCTAPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(245,166,35,0), 0 6px 18px rgba(0,0,0,.15);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(245,166,35,.25), 0 8px 24px rgba(0,0,0,.18);
+    transform: translateY(-1px);
+  }
+}
+
+.hero-secondary-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.hero-secondary-actions .btn {
+  font-size: .83rem !important;
+  padding: 8px 13px !important;
+  border-radius: 12px !important;
+  white-space: nowrap;
+}
+
+/* Mobile hero */
+@media (max-width: 576px) {
+  .hero { padding: 12px 12px !important; border-radius: 18px; }
+
+  .hero-logo-wrap { width: 38px; height: 38px; border-radius: 11px; }
+  .hero-logo { width: 28px; height: 28px; }
+
+  .hero-title { font-size: clamp(.95rem, 4.5vw, 1.18rem) !important; }
+  .hero-tagline { display: none; }
+
+  .admin-icon-btn, .hero-admin-actions .btn {
+    width: 32px !important; height: 32px !important; min-width: 32px !important;
+    border-radius: 10px !important;
+  }
+
+  .hero-actions-row { gap: 7px; }
+
+  .btn-document, .highlight-submit-btn {
+    font-size: .88rem !important;
+    padding: 9px 16px !important;
+  }
+
+  .hero-secondary-actions .btn {
+    font-size: .75rem !important;
+    padding: 7px 9px !important;
+  }
+
+  .hero-secondary-actions .btn span { display: none; }
+  .hero-secondary-actions .btn i { margin: 0 !important; }
+}
+
+/* ── 5. Page Header (inner pages) ─────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.page-header h3 {
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+}
+
+/* ── 6. Cards & Filter ────────────────────────────────────────── */
+.stat-card {
+  border: 0 !important;
+  border-radius: var(--card-radius) !important;
+  box-shadow: var(--soft-shadow) !important;
+  background: var(--ui-surface-solid) !important;
+  transition: transform .22s, box-shadow .22s;
+  height: 100%;
+  overflow: hidden;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--ui-shadow) !important; }
+
+.stat-label { font-size: .8rem; color: var(--ui-muted); }
+
+.stat-icon {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* Green primary for stat icons */
+.bg-success-subtle { background: var(--tg-soft) !important; }
+.text-success { color: var(--tg) !important; }
+
+.filter-card {
+  background: var(--ui-surface) !important;
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--ui-border) !important;
+  border-radius: var(--card-radius) !important;
+  box-shadow: var(--soft-shadow) !important;
+  padding: 14px;
+}
+
+/* ── 7. Unified Search Bar ────────────────────────────────────── */
+/*
+  KEY FIX: The search bar must be sticky with proper z-index.
+  The problem was that parent containers had overflow:hidden or transforms
+  that blocked sticky positioning. Fix: use position:sticky on the bar
+  itself and ensure no ancestor has overflow:hidden up the stack.
+*/
+
+.unified-search-bar,
+.mobile-search-filter {
+  display: flex !important;
+  gap: 8px;
+  align-items: center;
+  background: var(--ui-surface) !important;
+  backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid var(--ui-border) !important;
+  border-radius: 16px !important;
+  padding: 8px 10px !important;
+  box-shadow: var(--soft-shadow) !important;
+  margin-bottom: 12px;
+  /* Sticky */
+  position: sticky !important;
+  top: 6px !important;
+  z-index: 1060 !important;
+  will-change: transform;
+  transition: box-shadow .2s;
+}
+
+.unified-search-bar.is-stuck,
+.mobile-search-filter.is-stuck {
+  box-shadow: 0 14px 40px rgba(10,60,35,.18) !important;
+}
+
+/* Desktop: show filter-card as sticky, hide mobile bar */
+.desktop-filter-card {
+  display: block;
+  position: sticky !important;
+  top: 6px !important;
+  z-index: 1060 !important;
+  background: var(--ui-surface) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--ui-border) !important;
+  border-radius: var(--card-radius) !important;
+  box-shadow: var(--soft-shadow) !important;
+  margin-bottom: 12px;
+  will-change: transform;
+}
+
+/* On desktop: hide mobile search bars */
+@media (min-width: 577px) {
+  #homePage .mobile-search-filter,
+  #homePage .unified-search-bar:not(.desktop-filter-card) { display: none !important; }
+  #familiesSearchBar, #familyMartyrsSearchBar { display: flex !important; }
+
+  /* Dashboard: always show mobile controls for dashboard, hide desktop */
+  #dashboardMartyrsTab .mobile-search-filter { display: flex !important; }
+  #dashboardMartyrsTab .desktop-filter-card { display: none !important; }
+}
+
+/* On mobile: hide desktop filter, show mobile bars */
+@media (max-width: 576px) {
+  .desktop-filter-card { display: none !important; }
+  .mobile-search-filter, .unified-search-bar { display: flex !important; }
+
+  /* Remove old dashboard mobile controls div to avoid duplication */
+  #dashboardMobileMartyrsControls,
+  #dataUpdatesMobileControls { display: none !important; }
+}
+
+.unified-search-bar .form-control,
+.mobile-search-filter .form-control {
+  flex: 1 1 auto;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 7px 10px !important;
+  font-size: .9rem;
+}
+
+.unified-search-bar .btn,
+.mobile-search-filter .btn {
+  flex-shrink: 0;
+  width: 40px; height: 40px;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  display: grid; place-items: center;
+  font-size: .9rem;
+}
+
+.unified-search-bar .btn.btn-outline-success,
+.unified-search-bar .btn-icon {
+  background: var(--tg-soft) !important;
+  border-color: var(--tg) !important;
+  color: var(--tg) !important;
+}
+
+/* ── 8. Overflow Fix for Sticky ──────────────────────────────── */
+/* Ensure no ancestor blocks sticky */
+html, body {
+  overflow-x: hidden;
+}
+
+.app-shell,
+.page-section,
+.page-section.active,
+#homePage,
+#dashboardPage,
+#dashboardMartyrsTab,
+#dashboardDataUpdatesTab,
+#dashboardJoinRequestsTab,
+#familiesPage,
+#familyMartyrsPage {
+  overflow-x: hidden;
+  overflow-y: visible !important;
+  transform: none !important;
+  contain: none !important;
+}
+
+/* ── 9. Martyr Cards ──────────────────────────────────────────── */
+.martyr-card {
+  background: var(--ui-surface-solid) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--soft-shadow) !important;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform .22s, box-shadow .22s;
+  border: 1px solid var(--ui-border) !important;
+}
+.martyr-card:hover { transform: translateY(-4px); box-shadow: var(--ui-shadow) !important; }
+
+.martyr-image-wrap {
+  display: block !important;
+  position: relative !important;
+  height: 170px;
+  background: linear-gradient(135deg, #e8f4ee, #f0f7f4);
+}
+
+.martyr-image {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important; height: 100% !important;
+  object-fit: cover !important;
+}
+
+.martyr-placeholder {
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important; height: 100% !important;
+  color: #adb5bd;
+  font-size: 2.2rem;
+}
+
+.martyr-body { padding: 12px; text-align: center; }
+.martyr-name { font-weight: 800; font-size: .97rem; line-height: 1.45; margin: 0; }
+.martyr-family { color: var(--ui-muted); font-size: .82rem; margin-top: 3px; }
+
+/* Pending card: show dot corner, NO text bar */
+.martyr-card.pending-card { opacity: .60; filter: grayscale(.4); }
+
+.pending-corner {
+  position: absolute; top: 0; left: 0;
+  background: rgba(108,117,125,.85);
+  color: white;
+  padding: 4px 9px;
+  border-bottom-right-radius: 12px;
+  font-size: .68rem;
+  font-weight: 800;
+  z-index: 4;
+}
+
+/* On mobile: suppress the pending text bar inside .martyr-body */
+@media (max-width: 576px) {
+  .martyr-body .badge.text-bg-secondary { display: none !important; }
+  .martyr-body .badge.text-bg-warning { display: none !important; }
+  .martyr-body .badge.badge-soft-blue { display: none !important; }
+
+  .martyr-image-wrap { height: 130px; }
+  .martyr-name { font-size: .84rem; }
+  .martyr-family { font-size: .75rem; }
+  .martyr-body { padding: 8px; }
+}
+
+/* Verified / needs-completion corners */
+.verified-corner {
+  position: absolute; top: 0; right: 0;
+  background: var(--tg);
+  color: white;
+  width: 28px; height: 28px;
+  border-bottom-left-radius: 12px;
+  display: grid; place-items: center;
+  font-size: .78rem;
+  z-index: 4;
+}
+
+.needs-completion-corner {
+  position: absolute; top: 0; left: 0;
+  background: rgba(255,165,0,.85);
+  color: white;
+  padding: 4px 9px;
+  border-bottom-right-radius: 12px;
+  font-size: .68rem;
+  font-weight: 800;
+  z-index: 4;
+}
+
+/* Grid */
+.martyrs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 576px) {
+  .martyrs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+}
+
+/* ── 10. Buttons ──────────────────────────────────────────────── */
+.btn {
+  border-radius: 12px;
+  padding: 9px 16px;
+  font-weight: 700;
+  transition: transform .15s, box-shadow .15s;
+}
+.btn:active { transform: scale(.97); }
+
+.btn-primary {
+  background: var(--tg) !important;
+  border-color: var(--tg) !important;
+  color: #fff !important;
+}
+.btn-primary:hover {
+  background: var(--tg2) !important;
+  border-color: var(--tg2) !important;
+}
+
+.btn-outline-primary {
+  color: var(--tg) !important;
+  border-color: var(--tg) !important;
+  background: transparent !important;
+}
+.btn-outline-primary:hover {
+  background: var(--tg) !important;
+  color: #fff !important;
+}
+
+.btn-success { background: var(--tg) !important; border-color: var(--tg) !important; }
+.btn-outline-success {
+  color: var(--tg) !important; border-color: var(--tg) !important;
+}
+
+/* ── 11. Form Controls ────────────────────────────────────────── */
+.form-control, .form-select {
+  border-radius: 12px;
+  padding: 9px 12px;
+  border-color: var(--ui-border) !important;
+  background: var(--ui-surface-solid) !important;
+  color: var(--ui-text) !important;
+  font-size: .9rem;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--tg) !important;
+  box-shadow: 0 0 0 3px rgba(26,127,79,.18) !important;
+}
+
+/* ── 12. Stats Row Mobile ─────────────────────────────────────── */
+.home-stats-row {
+  --bs-gutter-x: .4rem;
+  --bs-gutter-y: .4rem;
+}
+
+@media (max-width: 576px) {
+  .home-stats-row .card-body {
+    padding: 8px 6px !important;
+    justify-content: center;
+    gap: 5px !important;
+    flex-direction: column;
+    text-align: center;
+  }
+  .home-stats-row .stat-icon {
+    width: 30px; height: 30px;
+    border-radius: 10px;
+    font-size: .9rem;
+    margin: 0 auto;
+  }
+  .home-stats-row .stat-label { display: none; }
+  .home-stats-row h3 { font-size: .95rem; }
+  .home-stats-row h5 { font-size: .78rem; }
+  .home-stats-row .family-details-text { display: inline; }
+  .home-stats-row > [class*="col-"] { width: 33.333%; flex: 0 0 auto; }
+}
+
+/* ── 13. Dashboard ────────────────────────────────────────────── */
+.dashboard-card {
+  background: var(--ui-surface-solid) !important;
+  border-radius: var(--card-radius) !important;
+  box-shadow: var(--soft-shadow) !important;
+  padding: 16px;
+  border: 1px solid var(--ui-border) !important;
+}
+
+.dashboard-tabs {
+  background: var(--ui-surface-solid) !important;
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow: var(--soft-shadow);
+  gap: 6px;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.dashboard-tabs::-webkit-scrollbar { display: none; }
+
+.dashboard-tabs .nav-link {
+  border-radius: 12px;
+  font-weight: 800;
+  color: var(--ui-muted);
+  white-space: nowrap;
+  font-size: .87rem;
+  padding: 8px 14px;
+}
+.dashboard-tabs .nav-link.active {
+  background: var(--tg) !important;
+  color: #fff !important;
+}
+
+.dashboard-table-card,
+.dashboard-section-card {
+  background: var(--ui-surface-solid) !important;
+  border-radius: var(--card-radius) !important;
+  box-shadow: var(--soft-shadow) !important;
+  border: 1px solid var(--ui-border) !important;
+  overflow: hidden;
+}
+
+.dashboard-section-header {
+  padding: 14px 16px;
+  background: rgba(26,127,79,.05);
+  border-bottom: 1px solid var(--ui-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Dashboard mobile table: card grid */
+@media (max-width: 768px) {
+  #dashboardMartyrsTab .dashboard-table-card,
+  #dashboardMartyrsTab .table-responsive { overflow: visible !important; }
+
+  #dashboardMartyrsTab table {
+    display: block !important;
+    min-width: 0 !important; width: 100% !important;
+    border-collapse: separate !important;
+  }
+  #dashboardMartyrsTab table thead { display: none !important; }
+  #dashboardMartyrsTab table tbody {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+  #dashboardMartyrsTab table tbody tr:not(.dash-pagination-row) {
+    display: grid !important;
+    grid-template-columns: 54px minmax(0,1fr) !important;
+    grid-template-areas:
+      "photo name"
+      "photo family"
+      "status father"
+      "actions actions" !important;
+    gap: 6px 10px !important;
+    width: 100% !important;
+    border: 1px solid var(--ui-border) !important;
+    border-radius: 16px !important;
+    background: var(--ui-surface-solid) !important;
+    padding: 10px !important;
+    box-shadow: var(--soft-shadow) !important;
+  }
+}
+
+/* ── 14. Footer ───────────────────────────────────────────────── */
+.site-footer {
+  margin-top: 24px;
+  border-radius: 20px;
+  padding: 14px 18px;
+  box-shadow: var(--soft-shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: .88rem;
+}
+.site-footer a { color: #fff; font-weight: 800; text-decoration: none; }
+.site-footer a:hover { text-decoration: underline; }
+
+@media (max-width: 576px) {
+  .site-footer {
+    border-radius: 16px; padding: 11px 14px;
+    justify-content: center; text-align: center; font-size: .8rem;
+  }
+}
+
+/* ── 15. Modal ────────────────────────────────────────────────── */
+.modal-content {
+  border: 0 !important;
+  border-radius: 24px !important;
+  box-shadow: var(--ui-shadow-strong) !important;
+  background: var(--ui-surface-solid) !important;
+}
+.modal-header {
+  border-bottom: 1px solid var(--ui-border) !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+.modal-footer {
+  border-top: 1px solid var(--ui-border) !important;
+  border-radius: 0 0 24px 24px !important;
+}
+
+@media (max-width: 576px) {
+  .modal-dialog { margin: .5rem; }
+  .modal-content { border-radius: 20px !important; }
+}
+
+/* ── 16. Pagination ───────────────────────────────────────────── */
+.martyrs-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 16px;
+}
+.martyrs-pagination .page-btn {
+  min-width: 36px; padding: 7px 10px;
+  border-radius: 10px; font-size: .85rem;
+}
+
+/* ── 17. Global Loading Overlay ──────────────────────────────── */
+.global-loading-overlay { display: none !important; }
+.global-loading-overlay.show { display: grid !important; }
+
+/* ── 18. Empty State ─────────────────────────────────────────── */
+.empty-state {
+  background: var(--ui-surface-solid) !important;
+  border-radius: var(--card-radius) !important;
+  border: 1px solid var(--ui-border) !important;
+  box-shadow: var(--soft-shadow) !important;
+  padding: 36px 24px;
+  text-align: center;
+  color: var(--ui-muted);
+}
+
+/* ── 19. List items ───────────────────────────────────────────── */
+.list-item, .family-row {
+  background: var(--ui-surface-solid) !important;
+  border: 1px solid var(--ui-border) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--soft-shadow) !important;
+}
+
+/* ── 20. Text wrapping ────────────────────────────────────────── */
+.table, .table * { overflow-wrap: anywhere; word-break: normal; }
+
+/* ── 21. View toggle ──────────────────────────────────────────── */
+.view-toggle .btn { padding: 8px 12px; }
+
+/* ── 22. Badges ───────────────────────────────────────────────── */
+.badge-soft-blue {
+  background: var(--tg-soft) !important;
+  color: var(--tg) !important;
+  border-radius: 8px;
+  font-size: .72rem;
+  padding: 3px 8px;
+}
+
+/* ── 23. Performance ──────────────────────────────────────────── */
+img { content-visibility: auto; }
+.martyr-card, .stat-card { will-change: transform; }
+
+/* ── 24. Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(26,127,79,.3); border-radius: 999px; }
+
