@@ -12526,3 +12526,289 @@ window.renderMartyrCard = function(item) {
     observer.observe(document.body, { childList: true, subtree: true });
   });
 })();
+
+/* =========================================================
+   TALDO BUGFIX v2026-06-01-05
+   - sticky search without modal dependency
+   - hide/release sticky while modals are open
+   - Houla family filter fallback from stats + actual list
+   - reduce aria-hidden focus warnings by blurring before modal hide
+   ========================================================= */
+(function() {
+  'use strict';
+
+  function ready(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  function getScrollY() {
+    return Math.max(
+      window.scrollY || 0,
+      document.documentElement ? document.documentElement.scrollTop || 0 : 0,
+      document.body ? document.body.scrollTop || 0 : 0
+    );
+  }
+
+  function getGlobalArraySafe(name) {
+    try {
+      if (name === 'allMartyrs' && typeof allMartyrs !== 'undefined' && Array.isArray(allMartyrs)) return allMartyrs;
+      if (name === 'dashboardData' && typeof dashboardData !== 'undefined' && Array.isArray(dashboardData)) return dashboardData;
+    } catch (e) {}
+    return Array.isArray(window[name]) ? window[name] : [];
+  }
+
+  function getAdminFlagSafe() {
+    try { return !!isAdminLoggedIn; } catch (e) { return !!window.isAdminLoggedIn; }
+  }
+
+  function normalizeArabic(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[أإآٱ]/g, 'ا')
+      .replace(/ة/g, 'ه')
+      .replace(/ى/g, 'ي')
+      .replace(/[ًٌٍَُِّْـ]/g, '')
+      .replace(/\s+/g, ' ');
+  }
+
+  function safeHtmlV05(value) {
+    if (typeof window.escapeHtml === 'function') return window.escapeHtml(value);
+    try { if (typeof escapeHtml === 'function') return escapeHtml(value); } catch (e) {}
+    return String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function safeAttrV05(value) {
+    if (typeof window.escapeAttr === 'function') return window.escapeAttr(value);
+    try { if (typeof escapeAttr === 'function') return escapeAttr(value); } catch (e) {}
+    return safeHtmlV05(value).replaceAll('`', '&#096;');
+  }
+
+  function isModalOpen() {
+    return document.body.classList.contains('modal-open') || !!document.querySelector('.modal.show');
+  }
+
+  const stickySelectorV05 = [
+    '.mobile-search-filter',
+    '.desktop-filter-card',
+    '.houla-compact-search-filter',
+    '.family-compact-search-filter',
+    '.join-compact-search-filter',
+    '.dashboard-mobile-controls'
+  ].join(',');
+
+  function isActiveAndVisible(el) {
+    if (!el || !el.isConnected) return false;
+    const page = el.closest('.page-section');
+    if (page && !page.classList.contains('active')) return false;
+    const style = getComputedStyle(el);
+    if (style.display === 'none' || style.visibility === 'hidden') return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  }
+
+  function stickyTop() {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--taldo-sticky-top').trim();
+    const parsed = parseFloat(raw);
+    return Number.isFinite(parsed) ? parsed : 8;
+  }
+
+  function ensureStickyPlaceholderV05(el) {
+    if (el.__taldoStickyPlaceholderV05 && el.__taldoStickyPlaceholderV05.isConnected) return el.__taldoStickyPlaceholderV05;
+
+    let ph = el.previousElementSibling;
+    if (!ph || !ph.classList || !ph.classList.contains('taldo-sticky-placeholder')) {
+      ph = document.createElement('div');
+      ph.className = 'taldo-sticky-placeholder';
+      el.parentNode.insertBefore(ph, el);
+    }
+
+    el.__taldoStickyPlaceholderV05 = ph;
+    return ph;
+  }
+
+  function releaseStickyV05(el) {
+    if (!el) return;
+    el.classList.remove('taldo-fixed-search', 'is-stuck');
+    ['left', 'right', 'width', 'top'].forEach(prop => el.style.removeProperty(prop));
+
+    const ph = el.__taldoStickyPlaceholderV05 || el.__taldoStickyPlaceholder;
+    if (ph) {
+      ph.classList.remove('is-active');
+      ph.style.removeProperty('height');
+      ph.style.removeProperty('margin-bottom');
+    }
+  }
+
+  function releaseAllStickyV05() {
+    document.querySelectorAll(stickySelectorV05 + ', .taldo-fixed-search').forEach(releaseStickyV05);
+  }
+
+  function applyStickyV05(el, ph) {
+    const phRect = ph.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const width = phRect.width || elRect.width;
+    const left = phRect.left || elRect.left;
+    const mb = parseFloat(getComputedStyle(el).marginBottom || '0') || 0;
+
+    ph.style.height = elRect.height + 'px';
+    ph.style.marginBottom = mb + 'px';
+    ph.classList.add('is-active');
+
+    el.classList.add('taldo-fixed-search', 'is-stuck');
+    el.style.left = left + 'px';
+    el.style.right = 'auto';
+    el.style.width = width + 'px';
+    el.style.top = stickyTop() + 'px';
+  }
+
+  function updateStickyV05() {
+    if (isModalOpen()) {
+      releaseAllStickyV05();
+      return;
+    }
+
+    const y = getScrollY();
+    const top = stickyTop();
+
+    document.querySelectorAll(stickySelectorV05).forEach(el => {
+      if (!isActiveAndVisible(el)) {
+        releaseStickyV05(el);
+        return;
+      }
+
+      const ph = ensureStickyPlaceholderV05(el);
+      const ref = el.classList.contains('taldo-fixed-search') ? ph : el;
+      const triggerTop = ref.getBoundingClientRect().top + y;
+      const shouldFix = y + top >= triggerTop;
+
+      if (shouldFix) applyStickyV05(el, ph);
+      else releaseStickyV05(el);
+    });
+  }
+
+  window.taldoRefreshStickySearch = updateStickyV05;
+  window.taldoReleaseStickySearch = releaseAllStickyV05;
+
+  ['scroll', 'resize', 'orientationchange'].forEach(eventName => {
+    window.addEventListener(eventName, updateStickyV05, { passive: true, capture: true });
+    document.addEventListener(eventName, updateStickyV05, { passive: true, capture: true });
+  });
+
+  document.addEventListener('show.bs.modal', releaseAllStickyV05, true);
+  document.addEventListener('shown.bs.modal', releaseAllStickyV05, true);
+  document.addEventListener('hide.bs.modal', function(event) {
+    const active = document.activeElement;
+    if (event.target && active && event.target.contains(active)) {
+      try { active.blur(); } catch (e) {}
+    }
+    releaseAllStickyV05();
+  }, true);
+  document.addEventListener('hidden.bs.modal', function() {
+    releaseAllStickyV05();
+    setTimeout(updateStickyV05, 160);
+  }, true);
+
+  ready(function() {
+    updateStickyV05();
+    setTimeout(updateStickyV05, 300);
+    setTimeout(updateStickyV05, 1000);
+    setInterval(updateStickyV05, 600);
+  });
+
+  const TRUE_HOULA_VALUES_V05 = new Set([
+    'نعم', 'yes', 'true', '1', 'مجزره', 'مجزرة', 'شهداء المجزره', 'شهداء المجزرة',
+    'houla', 'hula', 'massacre', 'الحوله', 'الحولة'
+  ]);
+
+  function isHoulaV05(item) {
+    if (!item) return false;
+    const raw = item.is_houla_massacre ?? item.houla_massacre ?? item.massacre_houla ?? item.houlaMassacre ?? '';
+    return TRUE_HOULA_VALUES_V05.has(normalizeArabic(raw));
+  }
+
+  function getHoulaFamiliesV05() {
+    const seen = new Set();
+    const families = [];
+
+    function addFamily(family) {
+      family = String(family || '').trim();
+      if (!family || seen.has(family)) return;
+      seen.add(family);
+      families.push(family);
+    }
+
+    const source = (getAdminFlagSafe() && getGlobalArraySafe('dashboardData').length)
+      ? getGlobalArraySafe('dashboardData')
+      : getGlobalArraySafe('allMartyrs');
+
+    source.forEach(item => {
+      if (!isHoulaV05(item)) return;
+      if (String(item.verification_status || '').trim() === 'مرفوض') return;
+      addFamily(item.family_name);
+    });
+
+    try {
+      const byFamily = statsData && Array.isArray(statsData.byFamily) ? statsData.byFamily : [];
+      byFamily.forEach(item => {
+        const count = Number(item.houla_massacre || item.houlaMassacre || item.massacre || 0);
+        if (count > 0) addFamily(item.family_name);
+      });
+    } catch (e) {}
+
+    return families.sort((a, b) => a.localeCompare(b, 'ar'));
+  }
+
+  function fillHoulaSelectV05(selectId) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    const oldValue = select.value || '';
+    const families = getHoulaFamiliesV05();
+
+    select.innerHTML = ['<option value="">كل عوائل شهداء المجزرة</option>']
+      .concat(families.map(family => `<option value="${safeAttrV05(family)}">${safeHtmlV05(family)}</option>`))
+      .join('');
+
+    if (oldValue && families.includes(oldValue)) select.value = oldValue;
+  }
+
+  function refreshHoulaFiltersV05() {
+    fillHoulaSelectV05('houlaFamilyFilter');
+    fillHoulaSelectV05('houlaCompactFamilyFilter');
+  }
+
+  window.taldoRefreshHoulaFamilyFilters = refreshHoulaFiltersV05;
+
+  function wrapFunctionV05(fnName, after) {
+    const current = window[fnName] || null;
+    if (typeof current !== 'function' || current.__taldoV05Wrapped) return;
+    const wrapped = function() {
+      const result = current.apply(this, arguments);
+      setTimeout(after, 0);
+      setTimeout(after, 200);
+      return result;
+    };
+    wrapped.__taldoV05Wrapped = true;
+    window[fnName] = wrapped;
+    try { eval(fnName + ' = wrapped'); } catch (e) {}
+  }
+
+  ready(function() {
+    refreshHoulaFiltersV05();
+    wrapFunctionV05('openHoulaMassacrePage', function() {
+      refreshHoulaFiltersV05();
+      updateStickyV05();
+    });
+    wrapFunctionV05('renderHoulaMassacrePage', refreshHoulaFiltersV05);
+    wrapFunctionV05('renderDashboardTable', updateStickyV05);
+    setTimeout(refreshHoulaFiltersV05, 500);
+    setTimeout(refreshHoulaFiltersV05, 1800);
+  });
+})();
+
