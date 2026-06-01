@@ -4325,3 +4325,202 @@ body.theme-dark .martyr-family {
 #houlaCompactFamilyFilter {
   min-width: 100%;
 }
+
+/* =========================================================
+   TALDO BUGFIX v2026-06-01-05
+   1) منع شريط البحث من الظهور فوق أي مودال
+   2) تثبيت شريط البحث عبر fallback بدون الاعتماد على Bootstrap modal
+   3) لوحة التحكم في الجوال: إخفاء عمود الحالة النصي والاكتفاء بالنقطة/المثلث
+   4) تباين أعلى لفوتر بطاقة الشهيد في الوضع الليلي
+   ========================================================= */
+:root,
+body.theme-light,
+body:not(.theme-dark) {
+  --taldo-sticky-top: max(8px, env(safe-area-inset-top));
+  --taldo-sticky-z: 44;
+  --color-card-main-bg: var(--color-surface, #ffffff);
+  --color-card-footer-bg: #edebe0;
+  --color-card-footer-border: rgba(5, 66, 57, .22);
+}
+
+body.theme-dark {
+  --color-card-main-bg: #161616;
+  --color-card-footer-bg: #054239;
+  --color-card-footer-border: rgba(66, 129, 119, .72);
+}
+
+body.theme-dark .martyr-card {
+  background: var(--color-card-main-bg) !important;
+  border-color: rgba(66, 129, 119, .44) !important;
+}
+
+body.theme-dark .martyr-image-wrap {
+  background: #0f1716 !important;
+}
+
+body.theme-dark .martyr-body {
+  background: linear-gradient(180deg, #054239 0%, #002623 100%) !important;
+  border-top: 1px solid var(--color-card-footer-border) !important;
+  box-shadow: inset 0 1px 0 rgba(237, 235, 224, .14), 0 -10px 24px rgba(0,0,0,.18) !important;
+}
+
+body.theme-dark .martyr-name {
+  color: #ffffff !important;
+}
+
+body.theme-dark .martyr-family {
+  color: rgba(255,255,255,.78) !important;
+}
+
+/* شريط البحث لا يجب أن يظهر فوق طبقة المودال */
+body.modal-open .mobile-search-filter,
+body.modal-open .desktop-filter-card,
+body.modal-open .houla-compact-search-filter,
+body.modal-open .family-compact-search-filter,
+body.modal-open .join-compact-search-filter,
+body.modal-open .dashboard-mobile-controls,
+body.modal-open .taldo-fixed-search {
+  visibility: hidden !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+.taldo-fixed-search {
+  position: fixed !important;
+  top: var(--taldo-sticky-top) !important;
+  z-index: var(--taldo-sticky-z) !important;
+  margin: 0 !important;
+  border-radius: 18px !important;
+  box-shadow: var(--shadow-strong, 0 18px 45px rgba(0,0,0,.18)) !important;
+  backdrop-filter: blur(18px) saturate(1.12) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
+}
+
+.mobile-search-filter,
+.desktop-filter-card,
+.houla-compact-search-filter,
+.family-compact-search-filter,
+.join-compact-search-filter,
+.dashboard-mobile-controls {
+  position: sticky !important;
+  top: var(--taldo-sticky-top) !important;
+  z-index: calc(var(--taldo-sticky-z) - 1) !important;
+}
+
+.taldo-sticky-placeholder {
+  display: none;
+  pointer-events: none;
+}
+
+.taldo-sticky-placeholder.is-active {
+  display: block;
+}
+
+/* لوحة التحكم في الجوال: لا نعرض عمود الحالة النصي لأنه ممثل بالنقطة والمثلث */
+@media (max-width: 768px) {
+  #dashboardMartyrsTab .dashboard-table-card,
+  #dashboardMartyrsTab .table-responsive {
+    overflow: visible !important;
+  }
+
+  #dashboardMartyrsTab table,
+  #dashboardMartyrsTab tbody {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #dashboardMartyrsTab thead {
+    display: none !important;
+  }
+
+  #dashboardMartyrsTab tbody tr:not(.dash-pagination-row) {
+    display: grid !important;
+    grid-template-columns: 58px minmax(0, 1fr) 74px !important;
+    grid-template-areas:
+      "photo name actions"
+      "photo family actions" !important;
+    gap: 6px 8px !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-bottom: 10px !important;
+    padding: 10px !important;
+    border-radius: 18px !important;
+    background: var(--color-surface, #ffffff) !important;
+    border: 1px solid var(--color-border, rgba(5,66,57,.14)) !important;
+    box-shadow: var(--shadow-soft, 0 8px 22px rgba(15,23,42,.07)) !important;
+  }
+
+  body.theme-dark #dashboardMartyrsTab tbody tr:not(.dash-pagination-row) {
+    background: #161616 !important;
+    border-color: rgba(66,129,119,.34) !important;
+  }
+
+  #dashboardMartyrsTab tbody tr:not(.dash-pagination-row) td {
+    display: block !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 0 !important;
+    border: 0 !important;
+    white-space: normal !important;
+  }
+
+  #dashboardMartyrsTab tbody td:nth-child(1) { grid-area: photo !important; }
+  #dashboardMartyrsTab tbody td:nth-child(2) { grid-area: name !important; }
+  #dashboardMartyrsTab tbody td:nth-child(3) { grid-area: family !important; color: var(--color-muted, #6b7280) !important; font-size: .78rem !important; }
+  #dashboardMartyrsTab tbody td:nth-child(4),
+  #dashboardMartyrsTab tbody td:nth-child(5) { display: none !important; }
+  #dashboardMartyrsTab tbody td:nth-child(6) { grid-area: actions !important; text-align: center !important; align-self: center !important; }
+
+  #dashboardMartyrsTab td:nth-child(6) > .dashboard-desktop-actions,
+  #dashboardMartyrsTab td:nth-child(6) > .d-flex,
+  #dashboardMartyrsTab .dashboard-desktop-actions {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+
+  #dashboardMartyrsTab .dashboard-mobile-action-btn,
+  #dashboardMartyrsTab td:nth-child(6) > .dashboard-mobile-action-btn {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 58px !important;
+    height: 32px !important;
+    padding: 5px 9px !important;
+    font-size: .74rem !important;
+    line-height: 1 !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+    pointer-events: auto !important;
+  }
+
+  #dashboardMartyrsTab .dashboard-mobile-name {
+    font-size: .83rem !important;
+    line-height: 1.38 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  #dashboardMartyrsTab .dashboard-mobile-subtext {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  #dashboardMartyrsTab .dashboard-desktop-actions {
+    display: flex !important;
+  }
+  #dashboardMartyrsTab .dashboard-mobile-action-btn {
+    display: none !important;
+  }
+}
+
