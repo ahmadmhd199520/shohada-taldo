@@ -1,0 +1,42 @@
+<section class="hero mb-4">
+<div class="hero-layout">
+<div class="hero-top-row">
+<div class="hero-title-actions">
+<h1 class="hero-title mb-0">
+              أرشيف شهداء تلدو
+            </h1>
+<button class="btn btn-warning btn-sm" onclick="openAboutProjectModal()">
+<i class="fa-solid fa-triangle-exclamation ms-1"></i>
+              عن المشروع
+            </button>
+</div>
+<div class="top-login-bar header-inline-actions">
+<button aria-label="تسجيل الدخول" class="btn btn-outline-light btn-sm admin-icon-btn" id="loginBtn" onclick="openLoginModal()" title="تسجيل الدخول">
+<i class="fa-solid fa-right-to-bracket"></i>
+<span class="admin-btn-text">تسجيل الدخول</span>
+</button>
+<button aria-label="لوحة التحكم" class="btn btn-outline-light btn-sm admin-icon-btn d-none" id="dashboardBtn" onclick="openDashboardPage()" title="لوحة التحكم">
+<i class="fa-solid fa-gauge-high"></i>
+<span class="admin-btn-text">لوحة التحكم</span>
+</button>
+<button aria-label="تسجيل الخروج" class="btn btn-outline-light btn-sm admin-icon-btn d-none" id="logoutBtn" onclick="logoutAdmin()" title="تسجيل الخروج">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span class="admin-btn-text">تسجيل الخروج</span>
+</button>
+</div>
+</div>
+<p class="hero-subtitle mb-0">
+<!-- منصة مجتمعية لحفظ أسماء الشهداء وبياناتهم من الضياع، مع مراجعة البيانات قبل اعتمادها ونشرها. -->
+</p>
+<div class="top-actions">
+<button class="btn btn-light text-primary highlight-submit-btn" onclick="showDuplicateWarning()">
+<i class="fa-solid fa-plus ms-1"></i>
+            توثيق شهيد
+          </button>
+<button class="btn btn-outline-light" onclick="goHome()">
+<i class="fa-solid fa-house ms-1"></i>
+<span class="home-btn-text">الرئيسية</span>
+</button>
+</div>
+</div>
+</section>
