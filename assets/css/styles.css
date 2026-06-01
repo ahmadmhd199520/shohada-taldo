@@ -3722,3 +3722,442 @@ body.theme-dark .modal-backdrop.show {
     border-color: var(--color-border) !important;
   }
 }
+
+/* =========================================================
+   TALDO COLOR PALETTE VARIABLES v2026-06-01-03
+   لوحة ألوان المشروع الجديدة
+   غيّر الألوان الأصلية من قسم PALETTE فقط، وكل المشروع يتبعها.
+   ========================================================= */
+:root,
+body.theme-light,
+body:not(.theme-dark) {
+  color-scheme: light;
+
+  /* PALETTE - الألوان الأصلية */
+  --palette-forest-900: #002623;
+  --palette-forest-700: #054239;
+  --palette-forest-500: #428177;
+
+  --palette-wheat-100: #edebe0;
+  --palette-wheat-500: #b9a779;
+  --palette-wheat-700: #988561;
+
+  --palette-umber-700: #6b1f2a;
+  --palette-umber-900: #4a151e;
+  --palette-umber-950: #260f14;
+
+  --palette-white: #ffffff;
+  --palette-charcoal-600: #3d3a3b;
+  --palette-charcoal-900: #161616;
+
+  /* RGB helpers */
+  --rgb-forest-900: 0, 38, 35;
+  --rgb-forest-700: 5, 66, 57;
+  --rgb-forest-500: 66, 129, 119;
+  --rgb-wheat-100: 237, 235, 224;
+  --rgb-wheat-500: 185, 167, 121;
+  --rgb-wheat-700: 152, 133, 97;
+  --rgb-umber-700: 107, 31, 42;
+  --rgb-umber-900: 74, 21, 30;
+  --rgb-umber-950: 38, 15, 20;
+  --rgb-white: 255, 255, 255;
+  --rgb-charcoal-600: 61, 58, 59;
+  --rgb-charcoal-900: 22, 22, 22;
+
+  /* الخلفيات العامة */
+  --color-page-bg: var(--palette-wheat-100);
+  --color-page-bg-2: var(--palette-white);
+  --color-body-gradient-1: rgba(var(--rgb-forest-500), .16);
+  --color-body-gradient-2: rgba(var(--rgb-wheat-700), .18);
+  --color-body-gradient-3: rgba(var(--rgb-umber-700), .08);
+  --color-hero-glow: rgba(var(--rgb-white), .16);
+  --color-outline-on-dark: rgba(var(--rgb-white), .44);
+  --color-body-background:
+    radial-gradient(circle at 12% 8%, var(--color-body-gradient-1), transparent 34%),
+    radial-gradient(circle at 88% 18%, var(--color-body-gradient-2), transparent 30%),
+    radial-gradient(circle at 50% 100%, var(--color-body-gradient-3), transparent 38%),
+    linear-gradient(135deg, var(--color-page-bg) 0%, var(--color-page-bg-2) 46%, var(--color-page-bg) 100%);
+
+  /* النصوص */
+  --color-text: var(--palette-charcoal-600);
+  --color-text-strong: var(--palette-charcoal-900);
+  --color-text-muted: rgba(var(--rgb-charcoal-600), .78);
+  --color-white: var(--palette-white);
+  --color-text-on-primary: var(--palette-white);
+  --color-placeholder: rgba(var(--rgb-charcoal-600), .56);
+
+  /* الأسطح والبطاقات */
+  --color-surface: var(--palette-white);
+  --color-surface-glass: rgba(var(--rgb-white), .92);
+  --color-surface-alt: var(--palette-wheat-100);
+  --color-surface-soft: rgba(var(--rgb-wheat-100), .62);
+  --color-card-bg: var(--color-surface-glass);
+  --color-card-border: rgba(var(--rgb-forest-700), .13);
+  --color-border: rgba(var(--rgb-forest-700), .16);
+  --color-divider: rgba(var(--rgb-forest-700), .12);
+
+  /* الهوية */
+  --color-primary: var(--palette-forest-700);
+  --color-primary-dark: var(--palette-forest-900);
+  --color-primary-light: var(--palette-forest-500);
+  --color-primary-soft: rgba(var(--rgb-forest-700), .13);
+  --color-primary-border: rgba(var(--rgb-forest-700), .25);
+  --color-accent: var(--palette-wheat-700);
+  --color-accent-2: var(--palette-wheat-500);
+  --color-accent-soft: rgba(var(--rgb-wheat-700), .20);
+
+  /* حالات */
+  --color-success: var(--palette-forest-500);
+  --color-success-soft: rgba(var(--rgb-forest-500), .18);
+  --color-warning: var(--palette-wheat-500);
+  --color-warning-text: var(--palette-charcoal-900);
+  --color-warning-soft: rgba(var(--rgb-wheat-500), .26);
+  --color-danger: var(--palette-umber-700);
+  --color-danger-dark: var(--palette-umber-900);
+  --color-danger-soft: rgba(var(--rgb-umber-700), .13);
+  --color-info: var(--palette-forest-500);
+  --color-info-soft: rgba(var(--rgb-forest-500), .15);
+
+  /* الحقول والجداول */
+  --color-input-bg: rgba(var(--rgb-white), .96);
+  --color-input-text: var(--color-text-strong);
+  --color-input-border: rgba(var(--rgb-forest-700), .22);
+  --color-table-bg: transparent;
+  --color-table-head-bg: rgba(var(--rgb-forest-700), .09);
+  --color-table-row-hover: rgba(var(--rgb-forest-500), .08);
+
+  /* الظلال */
+  --shadow-soft: 0 18px 42px rgba(var(--rgb-forest-900), .13);
+  --shadow-strong: 0 26px 65px rgba(var(--rgb-forest-900), .22);
+
+  /* توافق مع أسماء المتغيرات القديمة */
+  --main-bg: var(--color-page-bg);
+  --blue: var(--color-primary);
+  --dark: var(--color-text);
+  --muted: var(--color-text-muted);
+  --soft-shadow: var(--shadow-soft);
+  --ui-bg: var(--color-page-bg);
+  --ui-surface: var(--color-card-bg);
+  --ui-surface-solid: var(--color-surface);
+  --ui-surface-2: var(--color-surface-alt);
+  --ui-text: var(--color-text);
+  --ui-muted: var(--color-text-muted);
+  --ui-primary: var(--color-primary);
+  --ui-primary-2: var(--color-primary-dark);
+  --ui-primary-soft: var(--color-primary-soft);
+  --ui-accent: var(--color-accent);
+  --ui-border: var(--color-border);
+  --ui-shadow: var(--shadow-soft);
+  --ui-shadow-strong: var(--shadow-strong);
+
+  /* Bootstrap variables */
+  --bs-body-bg: var(--color-page-bg);
+  --bs-body-color: var(--color-text);
+  --bs-heading-color: var(--color-text-strong);
+  --bs-secondary-color: var(--color-text-muted);
+  --bs-border-color: var(--color-border);
+  --bs-tertiary-bg: var(--color-surface-alt);
+  --bs-primary: var(--color-primary);
+  --bs-primary-rgb: var(--rgb-forest-700);
+  --bs-link-color: var(--color-primary);
+  --bs-link-hover-color: var(--color-primary-dark);
+}
+
+body.theme-dark {
+  color-scheme: dark;
+
+  /* PALETTE - نفس الألوان الأصلية، لكن توزيعها للوضع الليلي */
+  --palette-forest-900: #002623;
+  --palette-forest-700: #054239;
+  --palette-forest-500: #428177;
+
+  --palette-wheat-100: #edebe0;
+  --palette-wheat-500: #b9a779;
+  --palette-wheat-700: #988561;
+
+  --palette-umber-700: #6b1f2a;
+  --palette-umber-900: #4a151e;
+  --palette-umber-950: #260f14;
+
+  --palette-white: #ffffff;
+  --palette-charcoal-600: #3d3a3b;
+  --palette-charcoal-900: #161616;
+
+  --rgb-forest-900: 0, 38, 35;
+  --rgb-forest-700: 5, 66, 57;
+  --rgb-forest-500: 66, 129, 119;
+  --rgb-wheat-100: 237, 235, 224;
+  --rgb-wheat-500: 185, 167, 121;
+  --rgb-wheat-700: 152, 133, 97;
+  --rgb-umber-700: 107, 31, 42;
+  --rgb-umber-900: 74, 21, 30;
+  --rgb-umber-950: 38, 15, 20;
+  --rgb-white: 255, 255, 255;
+  --rgb-charcoal-600: 61, 58, 59;
+  --rgb-charcoal-900: 22, 22, 22;
+
+  --color-page-bg: var(--palette-forest-900);
+  --color-page-bg-2: var(--palette-charcoal-900);
+  --color-body-gradient-1: rgba(var(--rgb-forest-500), .24);
+  --color-body-gradient-2: rgba(var(--rgb-umber-700), .30);
+  --color-body-gradient-3: rgba(var(--rgb-wheat-700), .10);
+  --color-hero-glow: rgba(var(--rgb-white), .10);
+  --color-outline-on-dark: rgba(var(--rgb-wheat-100), .46);
+  --color-body-background:
+    radial-gradient(circle at 12% 10%, var(--color-body-gradient-1), transparent 34%),
+    radial-gradient(circle at 88% 22%, var(--color-body-gradient-2), transparent 30%),
+    radial-gradient(circle at 52% 100%, var(--color-body-gradient-3), transparent 34%),
+    linear-gradient(135deg, var(--palette-charcoal-900) 0%, var(--palette-forest-900) 56%, var(--palette-forest-700) 100%);
+
+  --color-text: var(--palette-white);
+  --color-text-strong: var(--palette-white);
+  --color-text-muted: var(--palette-wheat-100);
+  --color-white: var(--palette-white);
+  --color-text-on-primary: var(--palette-white);
+  --color-placeholder: rgba(var(--rgb-wheat-100), .64);
+
+  --color-surface: var(--palette-forest-900);
+  --color-surface-glass: rgba(var(--rgb-forest-900), .94);
+  --color-surface-alt: var(--palette-forest-700);
+  --color-surface-soft: rgba(var(--rgb-charcoal-900), .72);
+  --color-card-bg: rgba(var(--rgb-forest-700), .92);
+  --color-card-border: rgba(var(--rgb-forest-500), .30);
+  --color-border: rgba(var(--rgb-forest-500), .34);
+  --color-divider: rgba(var(--rgb-wheat-100), .13);
+
+  --color-primary: var(--palette-forest-500);
+  --color-primary-dark: var(--palette-forest-700);
+  --color-primary-light: var(--palette-wheat-500);
+  --color-primary-soft: rgba(var(--rgb-forest-500), .22);
+  --color-primary-border: rgba(var(--rgb-forest-500), .46);
+  --color-accent: var(--palette-wheat-500);
+  --color-accent-2: var(--palette-wheat-700);
+  --color-accent-soft: rgba(var(--rgb-wheat-500), .18);
+
+  --color-success: var(--palette-forest-500);
+  --color-success-soft: rgba(var(--rgb-forest-500), .22);
+  --color-warning: var(--palette-wheat-500);
+  --color-warning-text: var(--palette-charcoal-900);
+  --color-warning-soft: rgba(var(--rgb-wheat-500), .18);
+  --color-danger: var(--palette-umber-700);
+  --color-danger-dark: var(--palette-umber-900);
+  --color-danger-soft: rgba(var(--rgb-umber-700), .26);
+  --color-info: var(--palette-forest-500);
+  --color-info-soft: rgba(var(--rgb-forest-500), .20);
+
+  --color-input-bg: rgba(var(--rgb-charcoal-900), .48);
+  --color-input-text: var(--palette-white);
+  --color-input-border: rgba(var(--rgb-forest-500), .42);
+  --color-table-bg: transparent;
+  --color-table-head-bg: rgba(var(--rgb-forest-900), .64);
+  --color-table-row-hover: rgba(var(--rgb-forest-500), .16);
+
+  --shadow-soft: 0 22px 50px rgba(0, 0, 0, .40);
+  --shadow-strong: 0 32px 80px rgba(0, 0, 0, .56);
+
+  --main-bg: var(--color-page-bg);
+  --blue: var(--color-primary);
+  --dark: var(--color-text);
+  --muted: var(--color-text-muted);
+  --soft-shadow: var(--shadow-soft);
+  --ui-bg: var(--color-page-bg);
+  --ui-surface: var(--color-card-bg);
+  --ui-surface-solid: var(--color-surface);
+  --ui-surface-2: var(--color-surface-alt);
+  --ui-text: var(--color-text);
+  --ui-muted: var(--color-text-muted);
+  --ui-primary: var(--color-primary);
+  --ui-primary-2: var(--color-primary-dark);
+  --ui-primary-soft: var(--color-primary-soft);
+  --ui-accent: var(--color-accent);
+  --ui-border: var(--color-border);
+  --ui-shadow: var(--shadow-soft);
+  --ui-shadow-strong: var(--shadow-strong);
+
+  --bs-body-bg: var(--color-page-bg);
+  --bs-body-color: var(--color-text);
+  --bs-heading-color: var(--color-text-strong);
+  --bs-secondary-color: var(--color-text-muted);
+  --bs-border-color: var(--color-border);
+  --bs-tertiary-bg: var(--color-surface-alt);
+  --bs-primary: var(--color-primary);
+  --bs-primary-rgb: var(--rgb-forest-500);
+  --bs-link-color: var(--color-primary);
+  --bs-link-hover-color: var(--color-accent);
+}
+
+/* تطبيق صارم للوضع الليلي حتى لا تبقى أي بطاقة بيضاء */
+body.theme-dark,
+body.theme-dark .app-shell,
+body.theme-dark .page-section,
+body.theme-dark .modal,
+body.theme-dark .offcanvas,
+body.theme-dark .dropdown-menu,
+body.theme-dark .toast {
+  background-color: transparent !important;
+  color: var(--color-text) !important;
+}
+
+body.theme-dark .card,
+body.theme-dark .stat-card,
+body.theme-dark .filter-card,
+body.theme-dark .dashboard-card,
+body.theme-dark .dashboard-table-card,
+body.theme-dark .dashboard-section-card,
+body.theme-dark .detail-box,
+body.theme-dark .family-row,
+body.theme-dark .list-item,
+body.theme-dark .empty-state,
+body.theme-dark .settings-card,
+body.theme-dark .modal-content,
+body.theme-dark .martyr-card,
+body.theme-dark .completed-info-box,
+body.theme-dark .admin-box,
+body.theme-dark .dashboard-tabs,
+body.theme-dark .family-dropdown,
+body.theme-dark .dropdown-menu,
+body.theme-dark .gallery-admin-tools,
+body.theme-dark .dashboard-controls-row,
+body.theme-dark .join-request-controls,
+body.theme-dark .message-card,
+body.theme-dark .reply-card,
+body.theme-dark .request-card,
+body.theme-dark .image-gallery,
+body.theme-dark .mobile-search-filter,
+body.theme-dark .desktop-filter-card,
+body.theme-dark .dashboard-mobile-controls,
+body.theme-dark .accordion-item,
+body.theme-dark .list-group-item,
+body.theme-dark .table-responsive {
+  background: var(--color-card-bg) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-card-border) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+body.theme-dark .bg-white,
+body.theme-dark .bg-light,
+body.theme-dark .p-3.bg-light,
+body.theme-dark .table thead th,
+body.theme-dark .dashboard-section-header,
+body.theme-dark .martyr-image-wrap,
+body.theme-dark .detail-image-placeholder,
+body.theme-dark .martyr-placeholder,
+body.theme-dark .gallery-main-image,
+body.theme-dark .dashboard-thumb,
+body.theme-dark .dashboard-mobile-placeholder {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+body.theme-dark h1,
+body.theme-dark h2,
+body.theme-dark h3,
+body.theme-dark h4,
+body.theme-dark h5,
+body.theme-dark h6,
+body.theme-dark .fw-bold,
+body.theme-dark .martyr-name,
+body.theme-dark .modal-title,
+body.theme-dark .table,
+body.theme-dark .table td,
+body.theme-dark .table th,
+body.theme-dark label,
+body.theme-dark p,
+body.theme-dark div,
+body.theme-dark span {
+  color: inherit;
+}
+
+body.theme-dark .text-muted,
+body.theme-dark .form-text,
+body.theme-dark .small.text-muted,
+body.theme-dark .martyr-family,
+body.theme-dark .family-row .text-muted,
+body.theme-dark .detail-box .text-muted {
+  color: var(--color-text-muted) !important;
+}
+
+body.theme-dark .form-control,
+body.theme-dark .form-select,
+body.theme-dark textarea,
+body.theme-dark input,
+body.theme-dark select {
+  background-color: var(--color-input-bg) !important;
+  color: var(--color-input-text) !important;
+  border-color: var(--color-input-border) !important;
+}
+
+body.theme-dark .form-control::placeholder,
+body.theme-dark textarea::placeholder,
+body.theme-dark input::placeholder {
+  color: var(--color-placeholder) !important;
+}
+
+body.theme-dark .table,
+body.theme-dark .table > :not(caption) > * > * {
+  --bs-table-bg: var(--color-table-bg) !important;
+  --bs-table-color: var(--color-text) !important;
+  --bs-table-border-color: var(--color-divider) !important;
+  --bs-table-hover-bg: var(--color-table-row-hover) !important;
+  --bs-table-hover-color: var(--color-text-strong) !important;
+  background-color: var(--bs-table-bg) !important;
+  color: var(--bs-table-color) !important;
+  border-color: var(--bs-table-border-color) !important;
+}
+
+body.theme-dark .btn-light {
+  background: var(--color-warning) !important;
+  border-color: var(--color-warning) !important;
+  color: var(--color-warning-text) !important;
+}
+
+body.theme-dark .btn-outline-light {
+  color: var(--palette-white) !important;
+  border-color: rgba(var(--rgb-white), .58) !important;
+}
+
+body.theme-dark .btn-outline-light:hover,
+body.theme-dark .btn-outline-light:focus {
+  background: rgba(var(--rgb-white), .12) !important;
+  color: var(--palette-white) !important;
+}
+
+body.theme-dark .btn-warning,
+body.theme-dark .text-bg-warning,
+body.theme-dark .needs-completion-corner {
+  background: var(--color-warning) !important;
+  border-color: var(--color-warning) !important;
+  color: var(--color-warning-text) !important;
+}
+
+body.theme-dark .text-primary,
+body.theme-dark .family-option:hover,
+body.theme-dark .dropdown-item:hover,
+body.theme-dark .dropdown-item:focus {
+  color: var(--color-primary-light) !important;
+}
+
+body.theme-dark .hero,
+body.theme-dark .site-footer {
+  background:
+    radial-gradient(circle at top left, var(--color-hero-glow), transparent 28%),
+    linear-gradient(160deg, var(--palette-forest-900) 0%, var(--palette-forest-700) 58%, var(--palette-forest-500) 100%) !important;
+  color: var(--palette-white) !important;
+}
+
+body.theme-dark .hero *,
+body.theme-dark .site-footer * {
+  color: inherit !important;
+}
+
+body.theme-dark .hero .btn-warning,
+body.theme-dark .hero .btn-light,
+body.theme-dark .site-footer .btn-light {
+  color: var(--color-warning-text) !important;
+}
+
+body.theme-dark .modal-backdrop.show {
+  opacity: .78;
+}
