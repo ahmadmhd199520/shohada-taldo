@@ -1234,7 +1234,7 @@
 
   .text-bg-light {
     
-    color: #ffffff !important;
+    color: var(--color-text-on-primary) !important;
     background-color: rgb(255 193 7) !important;
     font-size: 15px !important;
   }
@@ -3196,5 +3196,529 @@ body,
     width: 52px !important;
     height: 52px !important;
     border-radius: 14px !important;
+  }
+}
+
+/* =========================================================
+   THEME VARIABLES SYSTEM v2026-06-01-02
+   غيّر الألوان من هنا فقط قدر الإمكان.
+   كل البطاقات، الجداول، المودالات، الحقول، والأزرار تعتمد على هذه المتغيرات.
+   ========================================================= */
+:root,
+body.theme-light,
+body:not(.theme-dark) {
+  color-scheme: light;
+
+  /* الخلفيات العامة */
+  --color-page-bg: #eef1fb;
+  --color-page-bg-2: #f8edf4;
+  --color-body-gradient-1: rgba(162, 13, 78, .16);
+  --color-body-gradient-2: rgba(242, 106, 61, .12);
+  --color-hero-glow: rgba(255, 255, 255, .14);
+  --color-outline-on-dark: rgba(255, 255, 255, .38);
+  --color-body-background:
+    radial-gradient(circle at 16% 8%, var(--color-body-gradient-1), transparent 34%),
+    radial-gradient(circle at 86% 22%, var(--color-body-gradient-2), transparent 30%),
+    linear-gradient(135deg, var(--color-page-bg) 0%, var(--color-page-bg-2) 48%, var(--color-page-bg) 100%);
+
+  /* النصوص */
+  --color-text: #201827;
+  --color-text-strong: #120d18;
+  --color-text-muted: #6f6478;
+  --color-white: #ffffff;
+  --color-text-on-primary: var(--color-white);
+  --color-placeholder: rgba(32, 24, 39, .52);
+
+  /* الأسطح والبطاقات */
+  --color-surface: #ffffff;
+  --color-surface-glass: rgba(255, 255, 255, .88);
+  --color-surface-alt: #f7f2f8;
+  --color-surface-soft: #fbf7fb;
+  --color-card-bg: var(--color-surface-glass);
+  --color-card-border: rgba(90, 31, 72, .12);
+  --color-border: rgba(90, 31, 72, .13);
+  --color-divider: rgba(90, 31, 72, .11);
+
+  /* الهوية */
+  --color-primary: #a20d4e;
+  --color-primary-dark: #5e0836;
+  --color-primary-soft: rgba(162, 13, 78, .13);
+  --color-primary-border: rgba(162, 13, 78, .25);
+  --color-accent: #f26a3d;
+  --color-accent-soft: rgba(242, 106, 61, .14);
+
+  /* حالات */
+  --color-success: #198754;
+  --color-success-soft: rgba(25, 135, 84, .13);
+  --color-warning: #ffc107;
+  --color-warning-text: #4d3600;
+  --color-warning-soft: rgba(255, 193, 7, .18);
+  --color-danger: #dc3545;
+  --color-danger-soft: rgba(220, 53, 69, .13);
+  --color-info: #0dcaf0;
+  --color-info-soft: rgba(13, 202, 240, .14);
+
+  /* الحقول والجداول */
+  --color-input-bg: rgba(255, 255, 255, .96);
+  --color-input-text: var(--color-text);
+  --color-input-border: rgba(90, 31, 72, .18);
+  --color-table-bg: transparent;
+  --color-table-head-bg: rgba(162, 13, 78, .08);
+  --color-table-row-hover: rgba(162, 13, 78, .055);
+
+  /* الظلال */
+  --shadow-soft: 0 18px 42px rgba(50, 18, 48, .12);
+  --shadow-strong: 0 26px 65px rgba(50, 18, 48, .20);
+
+  /* توافق مع أسماء المتغيرات القديمة */
+  --main-bg: var(--color-page-bg);
+  --blue: var(--color-primary);
+  --dark: var(--color-text);
+  --muted: var(--color-text-muted);
+  --soft-shadow: var(--shadow-soft);
+  --ui-bg: var(--color-page-bg);
+  --ui-surface: var(--color-card-bg);
+  --ui-surface-solid: var(--color-surface);
+  --ui-surface-2: var(--color-surface-alt);
+  --ui-text: var(--color-text);
+  --ui-muted: var(--color-text-muted);
+  --ui-primary: var(--color-primary);
+  --ui-primary-2: var(--color-primary-dark);
+  --ui-primary-soft: var(--color-primary-soft);
+  --ui-accent: var(--color-accent);
+  --ui-border: var(--color-border);
+  --ui-shadow: var(--shadow-soft);
+  --ui-shadow-strong: var(--shadow-strong);
+
+  /* Bootstrap variables */
+  --bs-body-bg: var(--color-page-bg);
+  --bs-body-color: var(--color-text);
+  --bs-heading-color: var(--color-text-strong);
+  --bs-secondary-color: var(--color-text-muted);
+  --bs-border-color: var(--color-border);
+  --bs-tertiary-bg: var(--color-surface-alt);
+  --bs-primary: var(--color-primary);
+  --bs-primary-rgb: 162, 13, 78;
+  --bs-link-color: var(--color-primary);
+  --bs-link-hover-color: var(--color-primary-dark);
+}
+
+body.theme-dark {
+  color-scheme: dark;
+
+  --color-page-bg: #0e0a16;
+  --color-page-bg-2: #21172e;
+  --color-body-gradient-1: rgba(217, 74, 127, .18);
+  --color-body-gradient-2: rgba(255, 122, 69, .15);
+  --color-hero-glow: rgba(255, 255, 255, .12);
+  --color-outline-on-dark: rgba(255, 255, 255, .38);
+  --color-body-background:
+    radial-gradient(circle at 16% 18%, var(--color-body-gradient-1), transparent 32%),
+    radial-gradient(circle at 88% 26%, var(--color-body-gradient-2), transparent 28%),
+    linear-gradient(135deg, #15101f 0%, var(--color-page-bg-2) 50%, var(--color-page-bg) 100%);
+
+  --color-text: #f8f2fb;
+  --color-text-strong: #ffffff;
+  --color-text-muted: #d4c6dc;
+  --color-white: #ffffff;
+  --color-text-on-primary: var(--color-white);
+  --color-placeholder: rgba(248, 242, 251, .58);
+
+  --color-surface: #211a2d;
+  --color-surface-glass: rgba(39, 31, 53, .94);
+  --color-surface-alt: #2e253d;
+  --color-surface-soft: #191322;
+  --color-card-bg: var(--color-surface-glass);
+  --color-card-border: rgba(255, 255, 255, .12);
+  --color-border: rgba(255, 255, 255, .13);
+  --color-divider: rgba(255, 255, 255, .11);
+
+  --color-primary: #f05f97;
+  --color-primary-dark: #9e1c5b;
+  --color-primary-soft: rgba(240, 95, 151, .20);
+  --color-primary-border: rgba(240, 95, 151, .38);
+  --color-accent: #ff8a55;
+  --color-accent-soft: rgba(255, 138, 85, .16);
+
+  --color-success: #4ade80;
+  --color-success-soft: rgba(74, 222, 128, .16);
+  --color-warning: #facc15;
+  --color-warning-text: #fff5c4;
+  --color-warning-soft: rgba(250, 204, 21, .16);
+  --color-danger: #fb7185;
+  --color-danger-soft: rgba(251, 113, 133, .16);
+  --color-info: #67e8f9;
+  --color-info-soft: rgba(103, 232, 249, .16);
+
+  --color-input-bg: rgba(255, 255, 255, .075);
+  --color-input-text: var(--color-text);
+  --color-input-border: rgba(255, 255, 255, .18);
+  --color-table-bg: transparent;
+  --color-table-head-bg: rgba(255, 255, 255, .075);
+  --color-table-row-hover: rgba(255, 255, 255, .055);
+
+  --shadow-soft: 0 22px 50px rgba(0, 0, 0, .38);
+  --shadow-strong: 0 32px 80px rgba(0, 0, 0, .52);
+
+  --bs-body-bg: var(--color-page-bg);
+  --bs-body-color: var(--color-text);
+  --bs-heading-color: var(--color-text-strong);
+  --bs-secondary-color: var(--color-text-muted);
+  --bs-border-color: var(--color-border);
+  --bs-tertiary-bg: var(--color-surface-alt);
+  --bs-link-color: var(--color-primary);
+  --bs-link-hover-color: var(--color-accent);
+}
+
+html,
+body {
+  background: var(--color-body-background) !important;
+  color: var(--color-text) !important;
+}
+
+body,
+.app-shell,
+.page-section,
+.modal,
+.offcanvas,
+.dropdown-menu,
+.toast {
+  color: var(--color-text) !important;
+}
+
+/* الأسطح: أي بطاقة أو صندوق ظاهر يجب أن يأخذ لون الوضع الحالي */
+.card,
+.stat-card,
+.filter-card,
+.dashboard-card,
+.dashboard-table-card,
+.dashboard-section-card,
+.detail-box,
+.family-row,
+.list-item,
+.empty-state,
+.settings-card,
+.modal-content,
+.martyr-card,
+.completed-info-box,
+.admin-box,
+.dashboard-tabs,
+.family-dropdown,
+.dropdown-menu,
+.gallery-admin-tools,
+.dashboard-controls-row,
+.join-request-controls,
+.message-card,
+.reply-card,
+.request-card,
+.image-gallery,
+.mobile-search-filter,
+.desktop-filter-card,
+.dashboard-mobile-controls,
+.toast,
+.accordion-item,
+.list-group-item {
+  background: var(--color-card-bg) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-card-border) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.card,
+.modal-content,
+.dropdown-menu,
+.accordion-item,
+.list-group-item {
+  --bs-card-bg: var(--color-card-bg);
+  --bs-card-color: var(--color-text);
+  --bs-card-border-color: var(--color-card-border);
+  --bs-modal-bg: var(--color-card-bg);
+  --bs-modal-color: var(--color-text);
+  --bs-dropdown-bg: var(--color-surface);
+  --bs-dropdown-color: var(--color-text);
+  --bs-dropdown-link-color: var(--color-text);
+  --bs-dropdown-link-hover-bg: var(--color-surface-alt);
+  --bs-dropdown-link-hover-color: var(--color-text-strong);
+}
+
+.hero,
+.site-footer {
+  background:
+    radial-gradient(circle at top left, var(--color-hero-glow, rgba(255, 255, 255, .14)), transparent 26%),
+    linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 100%) !important;
+  color: var(--color-text-on-primary) !important;
+  box-shadow: var(--shadow-strong) !important;
+}
+
+.hero *,
+.site-footer * {
+  color: inherit;
+}
+
+.martyr-image-wrap,
+.detail-image-placeholder,
+.martyr-placeholder,
+.gallery-main-image,
+.dashboard-thumb,
+.dashboard-mobile-placeholder,
+.p-3.bg-light,
+.bg-light,
+.bg-white,
+.table thead th,
+.dashboard-section-header {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.text-muted,
+.form-text,
+.small.text-muted,
+.martyr-family,
+.family-row .text-muted,
+.detail-box .text-muted {
+  color: var(--color-text-muted) !important;
+}
+
+.text-dark,
+.text-body,
+.text-black,
+h1, h2, h3, h4, h5, h6,
+.fw-bold,
+.martyr-name,
+.modal-title {
+  color: var(--color-text-strong) !important;
+}
+
+/* الجداول */
+.table,
+.table > :not(caption) > * > * {
+  --bs-table-bg: var(--color-table-bg) !important;
+  --bs-table-color: var(--color-text) !important;
+  --bs-table-border-color: var(--color-divider) !important;
+  --bs-table-hover-bg: var(--color-table-row-hover) !important;
+  --bs-table-hover-color: var(--color-text-strong) !important;
+  background-color: var(--bs-table-bg) !important;
+  color: var(--bs-table-color) !important;
+  border-color: var(--bs-table-border-color) !important;
+}
+
+.table thead,
+.table thead th {
+  background: var(--color-table-head-bg) !important;
+  color: var(--color-text-strong) !important;
+}
+
+.table-hover > tbody > tr:hover > * {
+  background: var(--color-table-row-hover) !important;
+  color: var(--color-text-strong) !important;
+}
+
+/* الحقول */
+.form-control,
+.form-select,
+textarea,
+input,
+select {
+  background-color: var(--color-input-bg) !important;
+  color: var(--color-input-text) !important;
+  border-color: var(--color-input-border) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus,
+input:focus,
+select:focus {
+  background-color: var(--color-input-bg) !important;
+  color: var(--color-input-text) !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 .22rem var(--color-primary-soft) !important;
+}
+
+.form-control::placeholder,
+textarea::placeholder,
+input::placeholder {
+  color: var(--color-placeholder) !important;
+}
+
+select option {
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-input-text) !important;
+  box-shadow: 0 0 0 1000px var(--color-input-bg) inset !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* الأزرار والهوية */
+.btn-primary,
+.dashboard-tabs .nav-link.active {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-text-on-primary) !important;
+}
+
+.btn-primary:hover,
+.dashboard-tabs .nav-link.active:hover {
+  background: var(--color-primary-dark) !important;
+  border-color: var(--color-primary-dark) !important;
+  color: var(--color-text-on-primary) !important;
+}
+
+.btn-outline-primary {
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background: var(--color-primary) !important;
+  color: var(--color-text-on-primary) !important;
+}
+
+.btn-light,
+body.theme-dark .btn-light {
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-primary) !important;
+}
+
+body.theme-dark .btn-outline-light {
+  color: var(--color-text) !important;
+  border-color: var(--color-outline-on-dark, rgba(255, 255, 255, .38)) !important;
+}
+
+body.theme-dark .btn-outline-secondary,
+body.theme-dark .btn-outline-dark {
+  color: var(--color-text-muted) !important;
+  border-color: var(--color-border) !important;
+}
+
+body.theme-dark .btn-outline-secondary:hover,
+body.theme-dark .btn-outline-dark:hover {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text-strong) !important;
+}
+
+.text-primary { color: var(--color-primary) !important; }
+.bg-primary-subtle { background: var(--color-primary-soft) !important; }
+.bg-success-subtle { background: var(--color-success-soft) !important; }
+.bg-warning-subtle { background: var(--color-warning-soft) !important; }
+.bg-danger-subtle { background: var(--color-danger-soft) !important; }
+.bg-info-subtle { background: var(--color-info-soft) !important; }
+
+.badge-soft-blue,
+.badge.bg-primary-subtle {
+  background: var(--color-primary-soft) !important;
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary-border) !important;
+}
+
+.text-bg-light {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text) !important;
+}
+
+.text-bg-warning,
+.needs-completion-corner {
+  background: var(--color-warning) !important;
+  color: var(--color-warning-text) !important;
+}
+
+.text-bg-danger {
+  background: var(--color-danger) !important;
+  color: var(--color-text-on-primary) !important;
+}
+
+.text-bg-success {
+  background: var(--color-success) !important;
+  color: var(--color-text-on-primary) !important;
+}
+
+.alert,
+.alert-info {
+  background: var(--color-info-soft) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.alert-warning,
+.completed-info-box,
+.admin-box {
+  background: var(--color-warning-soft) !important;
+  color: var(--color-text) !important;
+  border-color: color-mix(in srgb, var(--color-warning) 38%, transparent) !important;
+}
+
+/* القوائم المنسدلة والاقتراحات */
+.family-option,
+.family-suggestion-title,
+.family-new-hint,
+.dropdown-item {
+  background: transparent !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-divider) !important;
+}
+
+.family-option:hover,
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text-strong) !important;
+}
+
+.family-suggestion-title {
+  background: var(--color-surface-alt) !important;
+  color: var(--color-text-muted) !important;
+}
+
+.family-new-hint {
+  background: var(--color-success-soft) !important;
+  color: var(--color-text) !important;
+}
+
+/* المودالات */
+.modal-header,
+.modal-footer {
+  border-color: var(--color-divider) !important;
+}
+
+body.theme-dark .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+body.theme-dark .modal-backdrop.show {
+  opacity: .72;
+}
+
+/* شريط البحث اللاصق يأخذ لون الوضع */
+.desktop-filter-card,
+.mobile-search-filter,
+.dashboard-mobile-controls {
+  background: var(--color-card-bg) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.desktop-filter-card.is-stuck,
+.mobile-search-filter.is-stuck,
+.dashboard-mobile-controls.is-stuck {
+  box-shadow: var(--shadow-strong) !important;
+}
+
+/* كروت جدول التوثيقات في الجوال */
+@media (max-width: 768px) {
+  #dashboardMartyrsTab table tbody tr:not(.dash-pagination-row) {
+    background: var(--color-card-bg) !important;
+    color: var(--color-text) !important;
+    border-color: var(--color-border) !important;
   }
 }
