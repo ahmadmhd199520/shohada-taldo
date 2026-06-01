@@ -4250,30 +4250,115 @@ function selectFamily(family) {
         </h5>
         <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
       </div>
+
       <div class="modal-body px-4">
-        <input type="hidden" id="editMartyrId">
-        <div class="row g-3">
-          <div class="col-md-6"><label class="form-label fw-bold">الاسم والكنية</label><input class="form-control" id="edit_full_name"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">العائلة</label><input class="form-control" id="edit_family_name"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">اسم الأب</label><input class="form-control" id="edit_father_name"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">المواليد</label><input class="form-control" id="edit_birth_year"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">اللقب</label><input class="form-control" id="edit_nickname"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">استشهد بـ</label><input class="form-control" id="edit_martyrdom_type"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">اسم المعركة</label><input class="form-control" id="edit_battle_name"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">سبب آخر</label><input class="form-control" id="edit_other_cause"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">تاريخ الاستشهاد</label><input class="form-control" id="edit_martyrdom_date"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">مكان الاستشهاد</label><input class="form-control" id="edit_martyrdom_place"></div>
-          <div class="col-12"><label class="form-label fw-bold">معلومات إضافية</label><textarea class="form-control" id="edit_extra_info" rows="4"></textarea></div>
-        </div>
+        <form id="editMartyrForm">
+          <input type="hidden" id="editMartyrId">
+
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">الاسم والكنية <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="edit_full_name" name="full_name" required>
+            </div>
+
+            <div class="col-md-6 position-relative">
+              <label class="form-label fw-bold">من عائلة <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                id="edit_family_name"
+                name="family_name"
+                placeholder="اكتب اسم العائلة..."
+                autocomplete="off"
+                required
+                oninput="handleEditFamilySearchInput()"
+                onfocus="showEditFamilyDropdown()"
+              >
+
+              <div id="editFamilyDropdown" class="family-dropdown d-none"></div>
+
+              <div class="form-text">
+                اكتب اسم العائلة، وإن ظهرت لك في القائمة فاخترها لتفادي التكرار الإملائي.
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">اسم الأب <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="edit_father_name" name="father_name" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">المواليد</label>
+              <input type="number" class="form-control" id="edit_birth_year" name="birth_year" min="1900" max="2100" placeholder="مثال: 1995">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">لقب يعرف به الشهيد إن وجد</label>
+              <input type="text" class="form-control" id="edit_nickname" name="nickname">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">تاريخ الاستشهاد</label>
+              <input type="date" class="form-control" id="edit_martyrdom_date" name="martyrdom_date">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-bold">استشهد بـ <span class="text-danger">*</span></label>
+
+              <div class="d-flex flex-wrap gap-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="martyrdom_type" value="المعارك" id="editTypeBattle" required onchange="toggleEditCauseFields()">
+                  <label class="form-check-label" for="editTypeBattle">المعارك</label>
+                </div>
+
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="martyrdom_type" value="القصف" id="editTypeShelling" required onchange="toggleEditCauseFields()">
+                  <label class="form-check-label" for="editTypeShelling">القصف</label>
+                </div>
+
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="martyrdom_type" value="آخر" id="editTypeOther" required onchange="toggleEditCauseFields()">
+                  <label class="form-check-label" for="editTypeOther">آخر</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 d-none" id="editBattleNameBox">
+              <label class="form-label fw-bold">اسم المعركة <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="edit_battle_name" name="battle_name">
+            </div>
+
+            <div class="col-md-6 d-none" id="editOtherCauseBox">
+              <label class="form-label fw-bold">اذكر السبب <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="edit_other_cause" name="other_cause">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">مكان الاستشهاد</label>
+              <input type="text" class="form-control" id="edit_martyrdom_place" name="martyrdom_place">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-bold">معلومات أخرى ترغب بإضافتها</label>
+              <textarea class="form-control" id="edit_extra_info" name="extra_info" rows="4"></textarea>
+            </div>
+
+          </div>
+        </form>
       </div>
+
       <div class="modal-footer px-4 pb-4">
         <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-        <button class="btn btn-primary" id="editMartyrSaveBtn" onclick="saveMartyrEdits()">حفظ التعديلات</button>
+        <button class="btn btn-primary" id="editMartyrSaveBtn" onclick="saveMartyrEdits()">
+          <i class="fa-solid fa-floppy-disk ms-1"></i>
+          حفظ التعديلات
+        </button>
       </div>
     </div>
   </div>
 </div>
-
+  
 <div class="modal fade" id="aboutUsModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -4902,44 +4987,223 @@ function detailItemEditable(label, value, field) {
 
 function openEditMartyrModal(focusField) {
   if (!currentDetailsItem) return;
-  const fields = ['full_name','family_name','father_name','birth_year','nickname','martyrdom_type','battle_name','other_cause','martyrdom_date','martyrdom_place','extra_info'];
-  document.getElementById('editMartyrId').value = currentDetailsItem.martyr_id;
+
+  const form = document.getElementById('editMartyrForm');
+  if (form) form.reset();
+
+  document.getElementById('editMartyrId').value = currentDetailsItem.martyr_id || '';
+
+  const fields = [
+    'full_name',
+    'family_name',
+    'father_name',
+    'birth_year',
+    'nickname',
+    'battle_name',
+    'other_cause',
+    'martyrdom_date',
+    'martyrdom_place',
+    'extra_info'
+  ];
+
   fields.forEach(field => {
     const el = document.getElementById('edit_' + field);
     if (el) el.value = currentDetailsItem[field] || '';
   });
+
+  const martyrdomType = String(currentDetailsItem.martyrdom_type || '').trim();
+
+  document
+    .querySelectorAll('#editMartyrForm input[name="martyrdom_type"]')
+    .forEach(radio => {
+      radio.checked = radio.value === martyrdomType;
+    });
+
+  toggleEditCauseFields(false);
+
+  const dropdown = document.getElementById('editFamilyDropdown');
+  if (dropdown) dropdown.classList.add('d-none');
+
   modals.editMartyrModal.show();
-  setTimeout(() => document.getElementById('edit_' + focusField)?.focus(), 250);
+
+  setTimeout(() => {
+    const focusTarget =
+      document.getElementById('edit_' + focusField) ||
+      document.querySelector('#editMartyrForm input[name="martyrdom_type"]:checked') ||
+      document.getElementById('edit_full_name');
+
+    focusTarget?.focus();
+  }, 250);
 }
 
+
 function saveMartyrEdits() {
-  const fields = ['full_name','family_name','father_name','birth_year','nickname','martyrdom_type','battle_name','other_cause','martyrdom_date','martyrdom_place','extra_info'];
-  const payload = { martyr_id: document.getElementById('editMartyrId').value };
-  fields.forEach(field => {
-    payload[field] = document.getElementById('edit_' + field)?.value || '';
-  });
+  const form = document.getElementById('editMartyrForm');
+
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  const payload = {
+    martyr_id: document.getElementById('editMartyrId').value
+  };
+
+  const formData = Object.fromEntries(new FormData(form).entries());
+
+  Object.assign(payload, formData);
+
+  if (payload.martyrdom_type !== 'المعارك') {
+    payload.battle_name = '';
+  }
+
+  if (payload.martyrdom_type !== 'آخر') {
+    payload.other_cause = '';
+  }
 
   const btn = document.getElementById('editMartyrSaveBtn');
+  const normalBtn = `<i class="fa-solid fa-floppy-disk ms-1"></i> حفظ التعديلات`;
+
   btn.disabled = true;
   btn.innerHTML = `<span class="spinner-border spinner-border-sm ms-1"></span> جاري الحفظ...`;
 
   apiRequest('updateMartyrFields', payload)
     .then(res => {
       btn.disabled = false;
-      btn.innerHTML = 'حفظ التعديلات';
-      if (!res.success) return showToast(res.message || 'تعذر الحفظ.');
+      btn.innerHTML = normalBtn;
+
+      if (!res || !res.success) {
+        showToast(res?.message || 'تعذر الحفظ.');
+        return;
+      }
+
       modals.editMartyrModal.hide();
-      showToast(res.message || 'تم الحفظ.');
+      showToast(res.message || 'تم حفظ التعديلات.');
+
+      if (currentDetailsItem) {
+        Object.assign(currentDetailsItem, payload);
+      }
+
       refreshDashboardData(false);
       loadInitialData();
+
+      setTimeout(() => {
+        if (payload.martyr_id) {
+          openMartyrDetails(payload.martyr_id, lastPageBeforeDetails || 'dashboardPage', true);
+        }
+      }, 700);
     })
     .catch(err => {
       btn.disabled = false;
-      btn.innerHTML = 'حفظ التعديلات';
+      btn.innerHTML = normalBtn;
       showToast(err.message || 'تعذر الحفظ.');
     });
 }
 
+function toggleEditCauseFields(clearHiddenValues = true) {
+  const type = document.querySelector('#editMartyrForm input[name="martyrdom_type"]:checked')?.value || '';
+
+  const battleBox = document.getElementById('editBattleNameBox');
+  const otherBox = document.getElementById('editOtherCauseBox');
+
+  const battleInput = document.getElementById('edit_battle_name');
+  const otherInput = document.getElementById('edit_other_cause');
+
+  if (battleBox) battleBox.classList.toggle('d-none', type !== 'المعارك');
+  if (otherBox) otherBox.classList.toggle('d-none', type !== 'آخر');
+
+  if (battleInput) battleInput.required = type === 'المعارك';
+  if (otherInput) otherInput.required = type === 'آخر';
+
+  if (clearHiddenValues) {
+    if (type !== 'المعارك' && battleInput) battleInput.value = '';
+    if (type !== 'آخر' && otherInput) otherInput.value = '';
+  }
+}
+
+
+function handleEditFamilySearchInput() {
+  const input = document.getElementById('edit_family_name');
+  renderEditFamilyDropdown(input?.value || '');
+}
+
+
+function showEditFamilyDropdown() {
+  const input = document.getElementById('edit_family_name');
+  renderEditFamilyDropdown(input?.value || '');
+}
+
+
+function renderEditFamilyDropdown(query) {
+  const dropdown = document.getElementById('editFamilyDropdown');
+  if (!dropdown) return;
+
+  const typedValue = String(query || '').trim();
+  const matches = getFamilyMatches(typedValue);
+
+  dropdown.classList.remove('d-none');
+  dropdown.innerHTML = '';
+
+  if (!typedValue && !matches.length) {
+    dropdown.classList.add('d-none');
+    return;
+  }
+
+  if (matches.length) {
+    const title = document.createElement('div');
+    title.className = 'family-suggestion-title';
+    title.textContent = 'عوائل مشابهة أو مسجلة سابقًا';
+    dropdown.appendChild(title);
+
+    matches.forEach(family => {
+      const option = document.createElement('div');
+      option.className = 'family-option';
+      option.textContent = family;
+      option.onclick = function() {
+        selectEditFamily(family);
+      };
+      dropdown.appendChild(option);
+    });
+  }
+
+  if (typedValue) {
+    const exactExists = allFamilies.some(family => {
+      return normalizeFamilyForSearch(family) === normalizeFamilyForSearch(typedValue);
+    });
+
+    if (!exactExists) {
+      const hint = document.createElement('div');
+      hint.className = 'family-new-hint';
+      hint.innerHTML = `
+        إن لم تكن العائلة موجودة أعلاه، سيتم حفظها كعائلة جديدة باسم:
+        <strong>${escapeHtml(typedValue)}</strong>
+      `;
+      dropdown.appendChild(hint);
+    }
+  }
+}
+
+
+function selectEditFamily(family) {
+  const input = document.getElementById('edit_family_name');
+  const dropdown = document.getElementById('editFamilyDropdown');
+
+  if (input) input.value = family;
+  if (dropdown) dropdown.classList.add('d-none');
+}
+
+
+document.addEventListener('click', function(e) {
+  const input = document.getElementById('edit_family_name');
+  const dropdown = document.getElementById('editFamilyDropdown');
+
+  if (!input || !dropdown) return;
+
+  if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.add('d-none');
+  }
+});
+  
 renderAdminActions = function(item) {
   const allowChecked = isAllowUpdatesEnabled(item.allow_updates) ? 'checked' : '';
   const needsChecked = isNeedsCompletion(item) ? 'checked' : '';
