@@ -705,7 +705,7 @@
       }
 
       .home-stats-row .text-muted {
-        /* display: none; */
+        display: none;
       }
 
       .home-stats-row h3 {
@@ -14412,6 +14412,630 @@ window.renderMartyrCard = function(item) {
     fillHoulaFamilySelect();
     installJoinRequestControls();
     if (typeof updateStatsCards === 'function') updateStatsCards();
+  }
+})();
+</script>
+
+
+<!-- ===== Final compact home/search + mobile scroll fix ===== -->
+<style id="taldo-compact-home-search-scroll-final">
+  /* منع بقاء الصفحة مقفلة بعد إغلاق أي مودال، وحل مشكلة عدم التمرير في الصفحة الرئيسية على الجوال */
+  html,
+  body {
+    min-height: 100% !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+    touch-action: pan-y !important;
+  }
+
+  body:not(.modal-open) {
+    overflow-y: auto !important;
+    padding-right: 0 !important;
+  }
+
+  .app-shell,
+  #homePage.page-section.active {
+    overflow: visible !important;
+    touch-action: pan-y !important;
+  }
+
+  /* شريط البحث المختصر يظهر على كل الأجهزة، بدل كرت الفلاتر الكبير */
+  .desktop-filter-card {
+    display: none !important;
+  }
+
+  .mobile-search-filter {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 0 10px 0 !important;
+    padding: 8px !important;
+    border-radius: 16px !important;
+    position: sticky !important;
+    top: 6px !important;
+    z-index: 45 !important;
+    background: linear-gradient(180deg, rgba(245,247,251,.98), rgba(245,247,251,.90)) !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07) !important;
+  }
+
+  .mobile-search-filter .form-control {
+    min-width: 0 !important;
+    height: 42px !important;
+    padding: 8px 12px !important;
+    font-size: .92rem !important;
+  }
+
+  .mobile-search-filter .btn {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* تصغير كروت الإحصائيات قدر الإمكان مع بقاء النص والسهم ظاهرين */
+  .home-stats-row {
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+    padding: 2px 2px 8px !important;
+    touch-action: pan-x pan-y !important;
+    align-items: stretch !important;
+  }
+
+  .home-stats-row > [class*="col-"],
+  .home-stats-row > .col {
+    flex: 0 0 218px !important;
+    width: 218px !important;
+    max-width: 218px !important;
+  }
+
+  .home-stats-row .stat-card {
+    border-radius: 17px !important;
+    min-height: 0 !important;
+  }
+
+  .home-stats-row .stat-card .card-body {
+    min-height: 66px !important;
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    text-align: start !important;
+    justify-content: flex-start !important;
+  }
+
+  .home-stats-row .stat-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 12px !important;
+    font-size: .92rem !important;
+  }
+
+  .home-stats-row .stat-card-label,
+  .home-stats-row .text-muted.stat-card-label {
+    display: block !important;
+    font-size: .78rem !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+    color: #6c757d !important;
+  }
+
+  .home-stats-row h3,
+  .home-stats-row h5 {
+    font-size: 1rem !important;
+    line-height: 1.1 !important;
+    margin-top: 1px !important;
+  }
+
+  .home-stats-row .stat-action-arrow,
+  .home-stats-row .fa-chevron-left.stat-action-arrow {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: .9rem !important;
+    margin-inline-start: auto !important;
+    color: #6c757d !important;
+  }
+
+  @media (max-width: 576px) {
+    .home-stats-row {
+      gap: 7px !important;
+      margin-bottom: 7px !important;
+      padding-bottom: 7px !important;
+    }
+
+    .home-stats-row > [class*="col-"],
+    .home-stats-row > .col {
+      flex-basis: 182px !important;
+      width: 182px !important;
+      max-width: 182px !important;
+    }
+
+    .home-stats-row .stat-card .card-body {
+      min-height: 58px !important;
+      padding: 7px 8px !important;
+      gap: 7px !important;
+    }
+
+    .home-stats-row .stat-icon {
+      width: 30px !important;
+      height: 30px !important;
+      min-width: 30px !important;
+      border-radius: 10px !important;
+      font-size: .82rem !important;
+    }
+
+    .home-stats-row .stat-card-label,
+    .home-stats-row .text-muted.stat-card-label {
+      font-size: .72rem !important;
+    }
+
+    .home-stats-row h3,
+    .home-stats-row h5 {
+      font-size: .88rem !important;
+    }
+
+    .home-stats-row .stat-action-arrow,
+    .home-stats-row .fa-chevron-left.stat-action-arrow {
+      display: inline-flex !important;
+      font-size: .82rem !important;
+    }
+
+    .mobile-search-filter {
+      top: 4px !important;
+      margin-bottom: 8px !important;
+      padding: 7px !important;
+      border-radius: 15px !important;
+    }
+
+    .mobile-search-filter .form-control,
+    .mobile-search-filter .btn {
+      height: 39px !important;
+    }
+  }
+</style>
+
+<script id="taldo-home-scroll-unlock-final">
+(function() {
+  'use strict';
+
+  function hasOpenModal() {
+    return !!document.querySelector('.modal.show');
+  }
+
+  function unlockPageScroll() {
+    if (hasOpenModal()) return;
+
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
+    document.documentElement.style.overflowY = 'auto';
+    document.body.style.overflowY = 'auto';
+
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      if (!hasOpenModal()) backdrop.remove();
+    });
+  }
+
+  document.addEventListener('hidden.bs.modal', function() {
+    setTimeout(unlockPageScroll, 80);
+    setTimeout(unlockPageScroll, 250);
+  });
+
+  const previousShowPage = window.showPage || (typeof showPage === 'function' ? showPage : null);
+  if (typeof previousShowPage === 'function' && !previousShowPage.__scrollUnlockFinal) {
+    const wrapped = function(pageId) {
+      previousShowPage(pageId);
+      setTimeout(unlockPageScroll, 80);
+      setTimeout(unlockPageScroll, 300);
+    };
+    wrapped.__scrollUnlockFinal = true;
+    window.showPage = wrapped;
+    try { showPage = window.showPage; } catch (e) {}
+  }
+
+  function syncCompactSearchInitialValue() {
+    const mobile = document.getElementById('mobileSearchInput');
+    const desktop = document.getElementById('searchInput');
+    if (mobile && desktop && !mobile.value && desktop.value) mobile.value = desktop.value;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    syncCompactSearchInitialValue();
+    setTimeout(unlockPageScroll, 300);
+    setTimeout(unlockPageScroll, 1200);
+  });
+
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    syncCompactSearchInitialValue();
+    setTimeout(unlockPageScroll, 100);
+  }
+})();
+</script>
+
+
+<!-- ===== Final Houla compact search/filter fix ===== -->
+<style id="taldo-houla-compact-filter-final">
+  #houlaMassacrePage > .filter-card {
+    display: none !important;
+  }
+
+  .houla-compact-search-filter {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 0 10px 0 !important;
+    padding: 8px !important;
+    border-radius: 16px !important;
+    position: sticky !important;
+    top: 6px !important;
+    z-index: 45 !important;
+    background: linear-gradient(180deg, rgba(245,247,251,.98), rgba(245,247,251,.90)) !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07) !important;
+  }
+
+  .houla-compact-search-filter .form-control {
+    min-width: 0 !important;
+    height: 42px !important;
+    padding: 8px 12px !important;
+    font-size: .92rem !important;
+  }
+
+  .houla-compact-search-filter .btn {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  @media (max-width: 576px) {
+    .houla-compact-search-filter {
+      top: 4px !important;
+      margin-bottom: 8px !important;
+      padding: 7px !important;
+      border-radius: 15px !important;
+    }
+
+    .houla-compact-search-filter .form-control,
+    .houla-compact-search-filter .btn {
+      height: 39px !important;
+    }
+  }
+</style>
+
+<script id="taldo-houla-compact-filter-final-js">
+(function() {
+  'use strict';
+
+  const TRUE_VALUES = new Set([
+    'نعم', 'yes', 'true', '1', 'مجزرة', 'مجزره', 'شهداء المجزرة', 'شهداء المجزره',
+    'houla', 'hula', 'massacre', 'الحولة', 'الحوله'
+  ]);
+
+  function normalizeHoulaValue(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[أإآٱ]/g, 'ا')
+      .replace(/ة/g, 'ه')
+      .replace(/ى/g, 'ي')
+      .replace(/[ًٌٍَُِّْـ]/g, '')
+      .replace(/\s+/g, ' ');
+  }
+
+  function isHoulaItem(item) {
+    if (!item) return false;
+    const raw = item.is_houla_massacre ?? item.houla_massacre ?? item.massacre_houla ?? item.houlaMassacre ?? '';
+    return TRUE_VALUES.has(normalizeHoulaValue(raw));
+  }
+
+  function getHoulaOnlyList() {
+    const source = (window.isAdminLoggedIn && Array.isArray(window.dashboardData) && window.dashboardData.length)
+      ? window.dashboardData
+      : (window.allMartyrs || []);
+
+    return source.filter(item => {
+      if (!item || !isHoulaItem(item)) return false;
+      return String(item.verification_status || '').trim() !== 'مرفوض';
+    });
+  }
+
+  function getHoulaFamiliesOnly() {
+    const seen = new Set();
+    const families = [];
+
+    getHoulaOnlyList().forEach(item => {
+      const family = String(item.family_name || '').trim();
+      if (!family || seen.has(family)) return;
+      seen.add(family);
+      families.push(family);
+    });
+
+    return families.sort((a, b) => a.localeCompare(b, 'ar'));
+  }
+
+  function safeHtml(value) {
+    if (typeof window.escapeHtml === 'function') return window.escapeHtml(value);
+    return String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function safeAttr(value) {
+    if (typeof window.escapeAttr === 'function') return window.escapeAttr(value);
+    return safeHtml(value).replaceAll('`', '&#096;');
+  }
+
+  function fillSelectWithHoulaFamilies(selectId) {
+    const select = document.getElementById(selectId);
+    if (!select) return false;
+
+    const oldValue = select.value || '';
+    const families = getHoulaFamiliesOnly();
+    select.innerHTML = ['<option value="">كل عوائل شهداء المجزرة</option>']
+      .concat(families.map(family => `<option value="${safeAttr(family)}">${safeHtml(family)}</option>`))
+      .join('');
+
+    if (oldValue && families.includes(oldValue)) {
+      select.value = oldValue;
+      return false;
+    }
+
+    if (oldValue && !families.includes(oldValue)) {
+      select.value = '';
+      return true;
+    }
+
+    return false;
+  }
+
+  function syncHoulaCompactSearchFromHidden() {
+    const compact = document.getElementById('houlaCompactSearchInput');
+    const hidden = document.getElementById('houlaSearchInput');
+    if (compact && hidden && compact.value !== hidden.value) {
+      compact.value = hidden.value || '';
+    }
+  }
+
+  function ensureHoulaCompactFilterModal() {
+    if (document.getElementById('houlaCompactFilterModal')) return;
+
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="modal fade" id="houlaCompactFilterModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header px-4 pt-4">
+              <h5 class="modal-title fw-bold">
+                <i class="fa-solid fa-filter text-danger ms-2"></i>
+                خيارات شهداء المجزرة
+              </h5>
+              <button type="button" class="btn-close ms-0" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body px-4">
+              <div class="mb-3">
+                <label class="form-label fw-bold">فلترة حسب العائلة</label>
+                <select id="houlaCompactFamilyFilter" class="form-select"></select>
+                <div class="form-text">تظهر هنا فقط العوائل التي لديها أسماء مصنفة ضمن شهداء المجزرة.</div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">الحالة</label>
+                <select id="houlaCompactStatusFilter" class="form-select">
+                  <option value="موثق">الأسماء الموثقة</option>
+                  <option value="بانتظار التوثيق">أسماء بانتظار التوثق</option>
+                  <option value="">الكل</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">حالة الاستكمال</label>
+                <select id="houlaCompactCompletionFilter" class="form-select">
+                  <option value="">الكل</option>
+                  <option value="needs">يحتاج استكمال</option>
+                  <option value="complete">لا يحتاج استكمال</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">الفرز</label>
+                <select id="houlaCompactSortSelect" class="form-select">
+                  <option value="name">أبجديًا حسب الاسم</option>
+                  <option value="family">أبجديًا حسب العائلة</option>
+                  <option value="newest">الأحدث رفعًا</option>
+                  <option value="oldest">الأقدم رفعًا</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label fw-bold">طريقة العرض</label>
+                <div class="btn-group w-100">
+                  <button type="button" class="btn btn-outline-primary" onclick="setHoulaViewMode('cards')">
+                    <i class="fa-solid fa-grip ms-1"></i>
+                    بطاقات
+                  </button>
+                  <button type="button" class="btn btn-outline-primary" onclick="setHoulaViewMode('list')">
+                    <i class="fa-solid fa-list ms-1"></i>
+                    قائمة
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer px-4 pb-4">
+              <button class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+              <button class="btn btn-danger" onclick="applyHoulaCompactFilters()">تطبيق</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+
+    if (window.bootstrap && window.bootstrap.Modal && window.modals) {
+      const el = document.getElementById('houlaCompactFilterModal');
+      window.modals.houlaCompactFilterModal = new bootstrap.Modal(el);
+    }
+  }
+
+  function ensureHoulaCompactSearchBar() {
+    const page = document.getElementById('houlaMassacrePage');
+    if (!page) return;
+
+    const legacyFilter = page.querySelector(':scope > .filter-card');
+    if (legacyFilter) legacyFilter.classList.add('houla-legacy-filter-card');
+
+    if (!document.getElementById('houlaCompactSearchBar')) {
+      const anchor = legacyFilter || document.getElementById('houlaMassacreContainer');
+      const bar = document.createElement('div');
+      bar.id = 'houlaCompactSearchBar';
+      bar.className = 'houla-compact-search-filter';
+      bar.innerHTML = `
+        <input type="search" id="houlaCompactSearchInput" class="form-control" placeholder="ابحث ضمن شهداء المجزرة...">
+        <button class="btn btn-danger" type="button" onclick="openHoulaCompactFilterModal()" aria-label="فلترة شهداء المجزرة">
+          <i class="fa-solid fa-filter"></i>
+        </button>
+      `;
+
+      if (anchor && anchor.parentNode) {
+        anchor.parentNode.insertBefore(bar, anchor);
+      } else {
+        page.appendChild(bar);
+      }
+
+      const input = document.getElementById('houlaCompactSearchInput');
+      input.addEventListener('input', function() {
+        const hidden = document.getElementById('houlaSearchInput');
+        if (hidden) hidden.value = input.value || '';
+        if (typeof window.resetHoulaPageAndRender === 'function') window.resetHoulaPageAndRender();
+      });
+    }
+
+    ensureHoulaCompactFilterModal();
+    syncHoulaCompactSearchFromHidden();
+    refreshHoulaFamilyFilters(false);
+  }
+
+  function refreshHoulaFamilyFilters(shouldRerender) {
+    const hiddenChanged = fillSelectWithHoulaFamilies('houlaFamilyFilter');
+    fillSelectWithHoulaFamilies('houlaCompactFamilyFilter');
+
+    if (hiddenChanged && shouldRerender && typeof window.resetHoulaPageAndRender === 'function') {
+      window.resetHoulaPageAndRender();
+    }
+  }
+
+  window.openHoulaCompactFilterModal = function() {
+    ensureHoulaCompactSearchBar();
+    refreshHoulaFamilyFilters(false);
+
+    const pairs = [
+      ['houlaFamilyFilter', 'houlaCompactFamilyFilter'],
+      ['houlaStatusFilter', 'houlaCompactStatusFilter'],
+      ['houlaCompletionFilter', 'houlaCompactCompletionFilter'],
+      ['houlaSortSelect', 'houlaCompactSortSelect']
+    ];
+
+    pairs.forEach(([sourceId, targetId]) => {
+      const source = document.getElementById(sourceId);
+      const target = document.getElementById(targetId);
+      if (source && target) target.value = source.value || '';
+    });
+
+    if (window.modals && window.modals.houlaCompactFilterModal) {
+      window.modals.houlaCompactFilterModal.show();
+      return;
+    }
+
+    if (window.bootstrap && window.bootstrap.Modal) {
+      const modal = new bootstrap.Modal(document.getElementById('houlaCompactFilterModal'));
+      modal.show();
+    }
+  };
+
+  window.applyHoulaCompactFilters = function() {
+    const pairs = [
+      ['houlaCompactFamilyFilter', 'houlaFamilyFilter'],
+      ['houlaCompactStatusFilter', 'houlaStatusFilter'],
+      ['houlaCompactCompletionFilter', 'houlaCompletionFilter'],
+      ['houlaCompactSortSelect', 'houlaSortSelect']
+    ];
+
+    pairs.forEach(([sourceId, targetId]) => {
+      const source = document.getElementById(sourceId);
+      const target = document.getElementById(targetId);
+      if (source && target) target.value = source.value || '';
+    });
+
+    if (window.modals && window.modals.houlaCompactFilterModal) {
+      window.modals.houlaCompactFilterModal.hide();
+    } else {
+      const el = document.getElementById('houlaCompactFilterModal');
+      if (window.bootstrap && window.bootstrap.Modal && el) bootstrap.Modal.getOrCreateInstance(el).hide();
+    }
+
+    if (typeof window.resetHoulaPageAndRender === 'function') window.resetHoulaPageAndRender();
+  };
+
+  const oldOpenHoulaPage = window.openHoulaMassacrePage;
+  if (typeof oldOpenHoulaPage === 'function' && !oldOpenHoulaPage.__compactFilterWrapped) {
+    const wrappedOpen = function(noRoute) {
+      oldOpenHoulaPage(noRoute);
+      setTimeout(function() {
+        ensureHoulaCompactSearchBar();
+        refreshHoulaFamilyFilters(true);
+      }, 30);
+    };
+    wrappedOpen.__compactFilterWrapped = true;
+    window.openHoulaMassacrePage = wrappedOpen;
+    try { openHoulaMassacrePage = window.openHoulaMassacrePage; } catch (e) {}
+  }
+
+  const oldRenderHoula = window.renderHoulaMassacrePage;
+  if (typeof oldRenderHoula === 'function' && !oldRenderHoula.__compactFilterWrapped) {
+    const wrappedRender = function() {
+      ensureHoulaCompactSearchBar();
+      refreshHoulaFamilyFilters(false);
+      oldRenderHoula();
+      syncHoulaCompactSearchFromHidden();
+    };
+    wrappedRender.__compactFilterWrapped = true;
+    window.renderHoulaMassacrePage = wrappedRender;
+    try { renderHoulaMassacrePage = window.renderHoulaMassacrePage; } catch (e) {}
+  }
+
+  const oldSetHoulaMassacreForMartyr = window.setHoulaMassacreForMartyr;
+  if (typeof oldSetHoulaMassacreForMartyr === 'function' && !oldSetHoulaMassacreForMartyr.__familyFilterWrapped) {
+    window.setHoulaMassacreForMartyr = async function(martyrId, checked) {
+      await oldSetHoulaMassacreForMartyr(martyrId, checked);
+      setTimeout(function() {
+        refreshHoulaFamilyFilters(true);
+      }, 250);
+    };
+    window.setHoulaMassacreForMartyr.__familyFilterWrapped = true;
+    try { setHoulaMassacreForMartyr = window.setHoulaMassacreForMartyr; } catch (e) {}
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      ensureHoulaCompactSearchBar();
+      refreshHoulaFamilyFilters(false);
+    }, 350);
+  });
+
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    setTimeout(function() {
+      ensureHoulaCompactSearchBar();
+      refreshHoulaFamilyFilters(false);
+    }, 100);
   }
 })();
 </script>
