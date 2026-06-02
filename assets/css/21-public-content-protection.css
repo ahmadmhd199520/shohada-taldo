@@ -112,3 +112,33 @@ html.taldo-public-protection:not(.taldo-admin-mode).taldo-screen-guard-active .t
     font-family: 'Tajawal', sans-serif;
   }
 }
+
+
+.admin-submit-options-box {
+  border: 1px solid rgba(255, 193, 7, 0.45);
+  background: #fff8e1;
+  border-radius: 18px;
+  padding: 14px;
+  margin-top: 16px;
+}
+
+.admin-submit-switch-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 193, 7, 0.25);
+  border-radius: 14px;
+  padding: 12px 42px 12px 12px;
+  min-height: 100%;
+}
+
+body.dark-mode .admin-submit-options-box,
+html[data-theme="dark"] .admin-submit-options-box {
+  background: rgba(255, 193, 7, 0.10);
+  border-color: rgba(255, 193, 7, 0.35);
+}
+
+body.dark-mode .admin-submit-switch-card,
+html[data-theme="dark"] .admin-submit-switch-card {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+
