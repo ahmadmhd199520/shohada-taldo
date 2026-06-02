@@ -205,3 +205,24 @@ html[data-theme="dark"] .admin-submit-switch-card {
     margin-left: 3px !important;
   }
 }
+
+/* إظهار لون التحديد داخل حقول الإدخال فقط */
+html.taldo-public-protection:not(.taldo-admin-mode) input::selection,
+html.taldo-public-protection:not(.taldo-admin-mode) textarea::selection,
+html.taldo-public-protection:not(.taldo-admin-mode) .form-control::selection,
+html.taldo-public-protection:not(.taldo-admin-mode) [contenteditable="true"]::selection,
+html.taldo-public-protection:not(.taldo-admin-mode) [role="textbox"]::selection,
+html.taldo-public-protection:not(.taldo-admin-mode) [role="searchbox"]::selection {
+  background: #428177 !important;
+  color: #ffffff !important;
+}
+
+html.taldo-public-protection:not(.taldo-admin-mode) input::-moz-selection,
+html.taldo-public-protection:not(.taldo-admin-mode) textarea::-moz-selection,
+html.taldo-public-protection:not(.taldo-admin-mode) .form-control::-moz-selection,
+html.taldo-public-protection:not(.taldo-admin-mode) [contenteditable="true"]::-moz-selection,
+html.taldo-public-protection:not(.taldo-admin-mode) [role="textbox"]::-moz-selection,
+html.taldo-public-protection:not(.taldo-admin-mode) [role="searchbox"]::-moz-selection {
+  background: #428177 !important;
+  color: #ffffff !important;
+}
