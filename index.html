@@ -14736,17 +14736,22 @@ window.renderMartyrCard = function(item) {
     return TRUE_VALUES.has(normalizeHoulaValue(raw));
   }
 
-  function getHoulaOnlyList() {
-    const source = (window.isAdminLoggedIn && Array.isArray(window.dashboardData) && window.dashboardData.length)
-      ? window.dashboardData
-      : (window.allMartyrs || []);
+function getHoulaOnlyList() {
+    // قراءة المتغيرات العامة بشكل مباشر دون استخدام الكلمة المفتاحية window لتفادي قيود المتغير let
+    const adminActive = typeof isAdminLoggedIn !== 'undefined' ? isAdminLoggedIn : false;
+    const dashList = typeof dashboardData !== 'undefined' ? dashboardData : [];
+    const martyrsList = typeof allMartyrs !== 'undefined' ? allMartyrs : [];
+
+    const source = (adminActive && Array.isArray(dashList) && dashList.length)
+      ? dashList
+      : (Array.isArray(martyrsList) ? martyrsList : []);
 
     return source.filter(item => {
       if (!item || !isHoulaItem(item)) return false;
       return String(item.verification_status || '').trim() !== 'مرفوض';
     });
   }
-
+  
   function getHoulaFamiliesOnly() {
     const seen = new Set();
     const families = [];
