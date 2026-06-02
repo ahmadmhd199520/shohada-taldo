@@ -18,16 +18,29 @@ let screenGuardTimer = null;
   }
 
   function isEditableTarget(target) {
-    if (!target) return false;
+  if (!target) return false;
 
-    const el = target.nodeType === 3 ? target.parentElement : target;
+  const el = target.nodeType === 3 ? target.parentElement : target;
 
-    if (!el || !el.closest) return false;
+  if (!el || !el.closest) return false;
 
-    return !!el.closest(
-      'input, textarea, select, option, [contenteditable="true"], [contenteditable=""]'
-    );
-  }
+  return !!el.closest(`
+    input,
+    textarea,
+    select,
+    option,
+    button,
+    label,
+    .form-control,
+    .form-select,
+    [contenteditable="true"],
+    [contenteditable=""],
+    [role="textbox"],
+    [role="combobox"],
+    [role="searchbox"]
+  `);
+}
+  
 
   function setProtectionMode() {
     const isAdmin = isProtectionAdmin();
@@ -59,6 +72,14 @@ function notifyProtection() {
 
 function blockEvent(event) {
   if (isProtectionAdmin()) return false;
+
+  /*
+    لا نمنع النسخ/اللصق/القص/التحديد/القائمة اليمنى
+    داخل حقول الإدخال والبحث والنماذج.
+  */
+  if (isEditableTarget(event.target)) {
+    return false;
+  }
 
   event.preventDefault();
   event.stopPropagation();
@@ -172,11 +193,12 @@ function clearClipboardIfPossible() {
       منع الزر اليميني على الصفحة كلها للزوار،
       بما في ذلك الصور في الرئيسية وصفحة الشهيد.
     */
-    document.addEventListener('contextmenu', function(event) {
-      if (isProtectionAdmin()) return;
+document.addEventListener('contextmenu', function(event) {
+  if (isProtectionAdmin()) return;
+  if (isEditableTarget(event.target)) return;
 
-      blockEvent(event, 'هذا الإجراء غير متاح للزوار.');
-    }, true);
+  blockEvent(event);
+}, true);
 
     /*
       منع تحديد النصوص المعروضة.
@@ -211,17 +233,19 @@ function clearClipboardIfPossible() {
     /*
       منع نسخ النصوص أو الصور.
     */
-    document.addEventListener('copy', function(event) {
-      if (isProtectionAdmin()) return;
+ document.addEventListener('copy', function(event) {
+  if (isProtectionAdmin()) return;
+  if (isEditableTarget(event.target)) return;
 
-      blockEvent(event, 'نسخ المحتوى غير متاح للزوار.');
-    }, true);
+  blockEvent(event);
+}, true);
 
-    document.addEventListener('cut', function(event) {
-      if (isProtectionAdmin()) return;
+  document.addEventListener('cut', function(event) {
+  if (isProtectionAdmin()) return;
+  if (isEditableTarget(event.target)) return;
 
-      blockEvent(event, 'قص المحتوى غير متاح للزوار.');
-    }, true);
+  blockEvent(event);
+}, true);
 
     /*
       منع الاختصارات الشائعة:
@@ -235,14 +259,16 @@ function clearClipboardIfPossible() {
 document.addEventListener('keydown', function(event) {
   if (isProtectionAdmin()) return;
 
+  /*
+    السماح الكامل داخل حقول الإدخال:
+    نسخ، لصق، قص، تحديد، كتابة، إلخ.
+  */
+  if (isEditableTarget(event.target)) return;
+
   const keyRaw = String(event.key || '');
   const key = keyRaw.toLowerCase();
   const ctrlOrMeta = event.ctrlKey || event.metaKey;
 
-  /*
-    Print Screen في الكمبيوتر.
-    بعض المتصفحات ترسله كـ PrintScreen وبعضها لا يرسله إطلاقًا.
-  */
   if (keyRaw === 'PrintScreen' || key === 'printscreen') {
     activateScreenGuard(2600);
     clearClipboardIfPossible();
@@ -250,16 +276,13 @@ document.addEventListener('keydown', function(event) {
     return;
   }
 
-  /*
-    محاولات شائعة للحفظ والطباعة والنسخ وتحديد الكل.
-  */
   if (ctrlOrMeta) {
     if (key === 'c' || key === 'x') {
       blockEvent(event);
       return;
     }
 
-    if (key === 'a' && !isEditableTarget(event.target)) {
+    if (key === 'a') {
       blockEvent(event);
       return;
     }
@@ -270,10 +293,6 @@ document.addEventListener('keydown', function(event) {
       return;
     }
 
-    /*
-      Ctrl/Cmd + Shift + S
-      قد يستخدم للحفظ باسم أو بعض أدوات القص في بيئات معينة.
-    */
     if (event.shiftKey && key === 's') {
       activateScreenGuard(2200);
       blockEvent(event);
@@ -281,7 +300,6 @@ document.addEventListener('keydown', function(event) {
     }
   }
 }, true);
-
     document.addEventListener('keyup', function(event) {
   if (isProtectionAdmin()) return;
 
