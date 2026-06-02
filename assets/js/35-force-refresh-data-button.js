@@ -259,7 +259,7 @@
 
       rerenderCurrentVisiblePage(activeBefore, scrollBefore);
 
-      showToast('تم تحديث البيانات قسريًا.');
+      showToast('تم تحديث البيانات.');
     } catch (err) {
       showToast(err.message || 'تعذر تحديث البيانات.');
     } finally {
