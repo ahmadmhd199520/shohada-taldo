@@ -124,17 +124,53 @@
         modals.editMartyrModal.hide();
       }
 
-      patchLocalMartyrAfterSave(martyrId, payload);
+patchLocalMartyrAfterSave(martyrId, payload);
 
-      if (activePageId() === 'homePage' && typeof renderMartyrs === 'function') {
-        renderMartyrs();
-      }
+if (activePageId() === 'homePage' && typeof renderMartyrs === 'function') {
+  renderMartyrs();
+}
 
-      if (activePageId() === 'dashboardPage' && typeof renderDashboardTable === 'function') {
-        renderDashboardTable();
-      }
+if (activePageId() === 'dashboardPage' && typeof renderDashboardTable === 'function') {
+  renderDashboardTable();
+}
 
-      showToast(res.message || 'تم حفظ التعديلات.');
+/*
+  مهم:
+  إذا كنت ما زلت داخل صفحة الشهيد عند انتهاء الحفظ،
+  نعيد رسم الصفحة الداخلية نفسها من البيانات المحلية المعدلة.
+*/
+if (activePageId() === 'detailsPage' && typeof openMartyrDetails === 'function') {
+  const detailsScroll = {
+    x: window.scrollX || window.pageXOffset || 0,
+    y: window.scrollY || window.pageYOffset || 0
+  };
+
+  let fromPage = 'homePage';
+
+  try {
+    fromPage = lastPageBeforeDetails || 'homePage';
+  } catch (e) {}
+
+  openMartyrDetails(martyrId, fromPage, true);
+
+  /*
+    openMartyrDetails قد يستدعي showPage داخليًا،
+    لذلك نعيد موضع صفحة الشهيد نفسها بعد إعادة الرسم.
+  */
+  const restoreDetailsScroll = function() {
+    window.scrollTo({
+      left: Number(detailsScroll.x || 0),
+      top: Number(detailsScroll.y || 0),
+      behavior: 'auto'
+    });
+  };
+
+  restoreDetailsScroll();
+  requestAnimationFrame(restoreDetailsScroll);
+  setTimeout(restoreDetailsScroll, 80);
+}
+
+showToast(res.message || 'تم حفظ التعديلات.');
     } catch (err) {
       showToast(err.message || 'تعذر الحفظ.');
     } finally {
