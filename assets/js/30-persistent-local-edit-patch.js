@@ -3,42 +3,15 @@
 
   const PATCH_LIFETIME = 5 * 60 * 1000;
   const pendingEdits = window.__taldoPendingMartyrEdits || {};
+
   window.__taldoPendingMartyrEdits = pendingEdits;
 
   function now() {
     return Date.now();
   }
 
-  function getActivePagePatch() {
+  function activePageId() {
     return document.querySelector('.page-section.active')?.id || '';
-  }
-
-  function getScrollPatch() {
-    return {
-      x: window.scrollX || window.pageXOffset || 0,
-      y: window.scrollY || window.pageYOffset || 0
-    };
-  }
-
-  function restoreScrollOncePatch(pos) {
-    if (!pos) return;
-
-    const x = Number(pos.x || 0);
-    const y = Number(pos.y || 0);
-
-    window.scrollTo({
-      left: x,
-      top: y,
-      behavior: 'auto'
-    });
-
-    requestAnimationFrame(function() {
-      window.scrollTo({
-        left: x,
-        top: y,
-        behavior: 'auto'
-      });
-    });
   }
 
   function cleanOldPatches() {
@@ -68,9 +41,7 @@
   function rememberEditPatch(payload) {
     if (!payload || !payload.martyr_id) return;
 
-    const martyrId = String(payload.martyr_id);
-
-    pendingEdits[martyrId] = {
+    pendingEdits[String(payload.martyr_id)] = {
       savedAt: now(),
       fields: normalizePatchPayload(payload)
     };
@@ -127,13 +98,8 @@
   function applyPendingPatches() {
     cleanOldPatches();
 
-    try {
-      patchList(allMartyrs);
-    } catch (e) {}
-
-    try {
-      patchList(dashboardData);
-    } catch (e) {}
+    try { patchList(allMartyrs); } catch (e) {}
+    try { patchList(dashboardData); } catch (e) {}
 
     try {
       if (currentDetailsItem && currentDetailsItem.martyr_id) {
@@ -145,107 +111,47 @@
     } catch (e) {}
   }
 
-  function renderHomeWithoutJump() {
-    /*
-      مهم:
-      نأخذ مكان السكرول الحالي الآن من الصفحة الرئيسية نفسها،
-      وليس من لحظة بدء طلب الحفظ في صفحة الشهيد.
-    */
-    const currentHomeScroll = getScrollPatch();
-
+  function renderVisibleAfterPatch() {
     applyPendingPatches();
 
-    try {
-      if (typeof updateStatsCards === 'function') {
-        updateStatsCards();
-      }
-    } catch (e) {}
+    if (activePageId() === 'homePage') {
+      try {
+        if (typeof updateStatsCards === 'function') updateStatsCards();
+      } catch (e) {}
 
-    try {
-      if (typeof renderMartyrs === 'function') {
-        renderMartyrs();
-      }
-    } catch (e) {}
+      try {
+        if (typeof renderMartyrs === 'function') renderMartyrs();
+      } catch (e) {}
+    }
 
-    restoreScrollOncePatch(currentHomeScroll);
+    if (activePageId() === 'dashboardPage') {
+      try {
+        if (typeof renderDashboardTable === 'function') renderDashboardTable();
+      } catch (e) {}
+
+      try {
+        if (typeof updateDashboardStats === 'function') updateDashboardStats();
+      } catch (e) {}
+    }
   }
 
-  function renderDashboardSafely() {
-    applyPendingPatches();
-
-    try {
-      if (typeof renderDashboardTable === 'function') {
-        renderDashboardTable();
-      }
-    } catch (e) {}
-
-    try {
-      if (typeof updateDashboardStats === 'function') {
-        updateDashboardStats();
-      }
-    } catch (e) {}
-  }
-
-  function rerenderDetailsOnce(martyrId) {
-    if (!martyrId) return;
-
-    try {
-      if (typeof openMartyrDetails === 'function') {
-        const fromPage = typeof lastPageBeforeDetails !== 'undefined'
-          ? lastPageBeforeDetails
-          : 'homePage';
-
-        const currentDetailsScroll = getScrollPatch();
-
-        openMartyrDetails(martyrId, fromPage, true);
-
-        restoreScrollOncePatch(currentDetailsScroll);
-      }
-    } catch (e) {}
-  }
-
-  /*
-    نغلف apiRequest.
-    أي طلب updateMartyrFields ناجح سيتم حقن تعديله محليًا.
-  */
   const oldApiRequest =
     window.apiRequest ||
     (typeof apiRequest === 'function' ? apiRequest : null);
 
-  if (typeof oldApiRequest === 'function' && !oldApiRequest.__persistentLocalEditPatchStableScroll) {
+  if (typeof oldApiRequest === 'function' && !oldApiRequest.__taldoLocalPatchNoScroll) {
     window.apiRequest = function(action, data, options) {
       return oldApiRequest.apply(this, arguments).then(function(res) {
         if (action === 'updateMartyrFields' && res && res.success !== false) {
           rememberEditPatch(data || {});
-          applyPendingPatches();
-
-          let detailsRerendered = false;
+          renderVisibleAfterPatch();
 
           /*
-            نعيد حقن التعديل عدة مرات، لكن بدون استخدام سكرول قديم.
-            عند الرئيسية نأخذ المكان الحالي في نفس اللحظة، ثم نعيده مرة واحدة فقط.
+            إعادة حقن هادئة بدون أي scrollTo.
+            هذه لحماية التعديل من كاش قديم يعود بعد الحفظ.
           */
-          [0, 250, 900, 1600, 2800].forEach(function(delay) {
-            setTimeout(function() {
-              const activeNow = getActivePagePatch();
-
-              applyPendingPatches();
-
-              if (activeNow === 'homePage') {
-                renderHomeWithoutJump();
-                return;
-              }
-
-              if (activeNow === 'dashboardPage') {
-                renderDashboardSafely();
-                return;
-              }
-
-              if (activeNow === 'detailsPage' && !detailsRerendered) {
-                detailsRerendered = true;
-                rerenderDetailsOnce(data?.martyr_id);
-              }
-            }, delay);
+          [250, 900, 1800].forEach(function(delay) {
+            setTimeout(renderVisibleAfterPatch, delay);
           });
         }
 
@@ -253,53 +159,18 @@
       });
     };
 
-    window.apiRequest.__persistentLocalEditPatchStableScroll = true;
+    window.apiRequest.__taldoLocalPatchNoScroll = true;
 
     try {
       apiRequest = window.apiRequest;
     } catch (e) {}
   }
 
-  /*
-    إذا loadInitialData أعاد نسخة قديمة من الكاش، نعيد حقن التعديلات بعدها
-    لكن بدون إجبار السكرول على مكان قديم.
-  */
-  const oldLoadInitialData =
-    window.loadInitialData ||
-    (typeof loadInitialData === 'function' ? loadInitialData : null);
-
-  if (typeof oldLoadInitialData === 'function' && !oldLoadInitialData.__persistentLocalEditPatchStableScroll) {
-    window.loadInitialData = function() {
-      const result = oldLoadInitialData.apply(this, arguments);
-
-      [300, 1000].forEach(function(delay) {
-        setTimeout(function() {
-          applyPendingPatches();
-
-          if (getActivePagePatch() === 'homePage') {
-            renderHomeWithoutJump();
-          }
-        }, delay);
-      });
-
-      return result;
-    };
-
-    window.loadInitialData.__persistentLocalEditPatchStableScroll = true;
-
-    try {
-      loadInitialData = window.loadInitialData;
-    } catch (e) {}
-  }
-
-  /*
-    قبل أي رسم للرئيسية نحقن التعديل.
-  */
   const oldRenderMartyrs =
     window.renderMartyrs ||
     (typeof renderMartyrs === 'function' ? renderMartyrs : null);
 
-  if (typeof oldRenderMartyrs === 'function' && !oldRenderMartyrs.__persistentLocalEditPatchStableScroll) {
+  if (typeof oldRenderMartyrs === 'function' && !oldRenderMartyrs.__taldoLocalPatchNoScroll) {
     window.renderMartyrs = function(customList) {
       applyPendingPatches();
 
@@ -310,51 +181,37 @@
       return oldRenderMartyrs.apply(this, arguments);
     };
 
-    window.renderMartyrs.__persistentLocalEditPatchStableScroll = true;
+    window.renderMartyrs.__taldoLocalPatchNoScroll = true;
 
     try {
       renderMartyrs = window.renderMartyrs;
     } catch (e) {}
   }
 
-  /*
-    عند الرجوع للرئيسية نحقن التعديلات بعد استقرار الرجوع.
-    لا نستخدم مكان سكرول محفوظ من صفحة الشهيد.
-  */
-  const oldShowPage =
-    window.showPage ||
-    (typeof showPage === 'function' ? showPage : null);
+  const oldLoadInitialData =
+    window.loadInitialData ||
+    (typeof loadInitialData === 'function' ? loadInitialData : null);
 
-  if (typeof oldShowPage === 'function' && !oldShowPage.__persistentLocalEditPatchStableScroll) {
-    window.showPage = function(pageId) {
-      const result = oldShowPage.apply(this, arguments);
+  if (typeof oldLoadInitialData === 'function' && !oldLoadInitialData.__taldoLocalPatchNoScroll) {
+    window.loadInitialData = function() {
+      const result = oldLoadInitialData.apply(this, arguments);
 
-      if (pageId === 'homePage') {
-        setTimeout(function() {
-          if (getActivePagePatch() === 'homePage') {
-            renderHomeWithoutJump();
-          }
-        }, 260);
-      }
+      [300, 1200].forEach(function(delay) {
+        setTimeout(renderVisibleAfterPatch, delay);
+      });
 
       return result;
     };
 
-    window.showPage.__persistentLocalEditPatchStableScroll = true;
+    window.loadInitialData.__taldoLocalPatchNoScroll = true;
 
     try {
-      showPage = window.showPage;
+      loadInitialData = window.loadInitialData;
     } catch (e) {}
   }
 
   window.addEventListener('taldo:api-cache-updated', function() {
-    setTimeout(function() {
-      applyPendingPatches();
-
-      if (getActivePagePatch() === 'homePage') {
-        renderHomeWithoutJump();
-      }
-    }, 160);
+    setTimeout(renderVisibleAfterPatch, 180);
   });
 
 })();
