@@ -1,18 +1,18 @@
 (function() {
   'use strict';
 
-  function getActivePageAfterEditRefresh() {
+  function getActivePageAfterEditPatch() {
     return document.querySelector('.page-section.active')?.id || '';
   }
 
-  function getScrollAfterEditRefresh() {
+  function getScrollAfterEditPatch() {
     return {
       x: window.scrollX || window.pageXOffset || 0,
       y: window.scrollY || window.pageYOffset || 0
     };
   }
 
-  function restoreScrollAfterEditRefresh(pos) {
+  function restoreScrollAfterEditPatch(pos) {
     if (!pos) return;
 
     const restore = function() {
@@ -31,7 +31,7 @@
     setTimeout(restore, 1200);
   }
 
-  function getLastPageBeforeDetailsAfterEditRefresh() {
+  function getLastPageBeforeDetailsAfterEditPatch() {
     try {
       return lastPageBeforeDetails || 'homePage';
     } catch (e) {
@@ -39,95 +39,119 @@
     }
   }
 
-  function setLastPageBeforeDetailsAfterEditRefresh(value) {
+  function setLastPageBeforeDetailsAfterEditPatch(value) {
     try {
       lastPageBeforeDetails = value || 'homePage';
     } catch (e) {}
   }
 
-  function updateLocalMartyrAfterEditRefresh(martyrId, payload) {
-    const updateList = function(list) {
-      if (!Array.isArray(list)) return;
+  function forcePrepareMartyrAgain(item) {
+    if (!item) return;
 
-      const item = list.find(row => String(row.martyr_id || '') === String(martyrId || ''));
+    /*
+      مهم جدًا:
+      هذه الحقول هي سبب أن التعديلات لا تظهر مباشرة أحيانًا،
+      لأن renderMartyrs السريع يعتمد عليها.
+    */
+    item.__perfPrepared = false;
+    item.__dashboardPrepared = false;
 
-      if (item) {
-        Object.assign(item, payload || {});
-        item.updated_at = new Date().toISOString();
+    try {
+      delete item.__searchText;
+      delete item.__familyKey;
+      delete item.__createdSort;
+    } catch (e) {}
+
+    try {
+      if (typeof window.prepareMartyrRecord === 'function') {
+        window.prepareMartyrRecord(item);
+      } else if (typeof prepareMartyrRecord === 'function') {
+        prepareMartyrRecord(item);
       }
-    };
-
-    try {
-      updateList(allMartyrs);
     } catch (e) {}
 
     try {
-      updateList(dashboardData);
+      if (typeof prepareDashboardRecord === 'function') {
+        prepareDashboardRecord(item);
+      }
     } catch (e) {}
+  }
 
+  function patchOneListAfterEdit(list, martyrId, fields) {
+    if (!Array.isArray(list)) return false;
+
+    const item = list.find(row => String(row?.martyr_id || '') === String(martyrId || ''));
+
+    if (!item) return false;
+
+    Object.assign(item, fields || {});
+    item.updated_at = new Date().toISOString();
+
+    forcePrepareMartyrAgain(item);
+
+    return true;
+  }
+
+  function patchCurrentDetailsAfterEdit(martyrId, fields) {
     try {
       if (currentDetailsItem && String(currentDetailsItem.martyr_id || '') === String(martyrId || '')) {
-        Object.assign(currentDetailsItem, payload || {});
+        Object.assign(currentDetailsItem, fields || {});
         currentDetailsItem.updated_at = new Date().toISOString();
+        forcePrepareMartyrAgain(currentDetailsItem);
       }
     } catch (e) {}
   }
 
-  async function refreshHomeDataWithoutJump(scrollPos) {
+  function patchAllLocalDataAfterEdit(martyrId, fields) {
+    let patchedHome = false;
+
     try {
-      const res = await apiRequest('getInitialData');
+      patchedHome = patchOneListAfterEdit(allMartyrs, martyrId, fields) || patchedHome;
+    } catch (e) {}
 
-      if (!res || !res.success) {
-        return false;
-      }
+    try {
+      patchOneListAfterEdit(dashboardData, martyrId, fields);
+    } catch (e) {}
 
-      try {
-        allFamilies = res.families || allFamilies || [];
-      } catch (e) {}
+    patchCurrentDetailsAfterEdit(martyrId, fields);
 
-      try {
-        statsData = res.stats || statsData || {};
-      } catch (e) {}
-
-      try {
-        allMartyrs = res.martyrs || allMartyrs || [];
-      } catch (e) {}
-
-      try {
-        siteMessages = res.messages || siteMessages || [];
-      } catch (e) {}
-
-      try {
-        publicSettings = res.settings || publicSettings || {};
-      } catch (e) {}
-
-      try {
-        if (typeof fillFamiliesSelects === 'function') {
-          fillFamiliesSelects();
-        }
-      } catch (e) {}
-
-      try {
-        if (typeof updateStatsCards === 'function') {
-          updateStatsCards();
-        }
-      } catch (e) {}
-
-      try {
-        if (typeof renderMartyrs === 'function') {
-          renderMartyrs();
-        }
-      } catch (e) {}
-
-      restoreScrollAfterEditRefresh(scrollPos);
-      return true;
-
-    } catch (e) {
-      return false;
-    }
+    return patchedHome;
   }
 
-  function setEditSaveButtonLoadingAfterRefresh(btn, loading, normalHtml) {
+  function renderHomeAfterLocalEdit(scrollPos) {
+    /*
+      لا نستخدم loadInitialData هنا حتى لا نقفز للأعلى
+      ولا نعتمد على getInitialData لأنه قد يرجع نسخة كاش قديمة.
+    */
+    try {
+      if (typeof renderMartyrs === 'function') {
+        renderMartyrs();
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof updateStatsCards === 'function') {
+        updateStatsCards();
+      }
+    } catch (e) {}
+
+    restoreScrollAfterEditPatch(scrollPos);
+  }
+
+  function refreshAdminQuietlyAfterEdit() {
+    setTimeout(function() {
+      try {
+        if (typeof refreshDashboardData === 'function' && isAdminLoggedIn) {
+          refreshDashboardData(false, {
+            forceFresh: true,
+            useClientCache: false
+          });
+        }
+      } catch (e) {}
+    }, 400);
+  }
+
+  function setEditButtonLoadingPatch(btn, loading, normalHtml) {
     if (!btn) return;
 
     btn.disabled = !!loading;
@@ -136,12 +160,6 @@
       : normalHtml;
   }
 
-  /*
-    هذا الملف يتجاوز دالة saveMartyrEdits السابقة.
-    الفرق المهم:
-    إذا انتهى الحفظ وأنت في الصفحة الرئيسية، نجلب البيانات الجديدة بهدوء
-    ثم نرسم الصفحة الرئيسية بدون القفز لأعلى الصفحة.
-  */
   window.saveMartyrEdits = async function() {
     const form = document.getElementById('editMartyrForm');
 
@@ -150,10 +168,12 @@
       return;
     }
 
-    const fromPageBeforeSave = getLastPageBeforeDetailsAfterEditRefresh();
+    const fromPageBeforeSave = getLastPageBeforeDetailsAfterEditPatch();
+
+    const martyrId = document.getElementById('editMartyrId')?.value || '';
 
     const payload = {
-      martyr_id: document.getElementById('editMartyrId')?.value || ''
+      martyr_id: martyrId
     };
 
     const formData = Object.fromEntries(new FormData(form).entries());
@@ -195,64 +215,49 @@
     const btn = document.getElementById('editMartyrSaveBtn');
     const normalBtn = `<i class="fa-solid fa-floppy-disk ms-1"></i> حفظ التعديلات`;
 
-    setEditSaveButtonLoadingAfterRefresh(btn, true, normalBtn);
+    setEditButtonLoadingPatch(btn, true, normalBtn);
 
     try {
       const res = await apiRequest('updateMartyrFields', payload);
 
-      if (!res || !res.success) {
+      if (!res || res.success === false) {
         showToast(res?.message || 'تعذر الحفظ.');
         return;
       }
 
-      const activePageAtFinish = getActivePageAfterEditRefresh();
-      const scrollAtFinish = getScrollAfterEditRefresh();
+      const activePageAtFinish = getActivePageAfterEditPatch();
+      const scrollAtFinish = getScrollAfterEditPatch();
 
       if (modals.editMartyrModal) {
         modals.editMartyrModal.hide();
       }
 
-      updateLocalMartyrAfterEditRefresh(payload.martyr_id, payload);
+      /*
+        نحدّث البيانات محليًا مباشرة من الفورم نفسه،
+        ولا ننتظر getInitialData لأن الكاش قد يعيد نسخة قديمة.
+      */
+      patchAllLocalDataAfterEdit(martyrId, payload);
 
       showToast(res.message || 'تم حفظ التعديلات.');
 
-      /*
-        الحالة المهمة:
-        إذا رجعت للرئيسية قبل انتهاء الحفظ،
-        نحدّث بيانات الرئيسية من الخادم بدون loadInitialData وبدون قفز للأعلى.
-      */
       if (activePageAtFinish === 'homePage') {
-        const refreshed = await refreshHomeDataWithoutJump(scrollAtFinish);
-
-        if (!refreshed) {
-          try {
-            if (typeof renderMartyrs === 'function') renderMartyrs();
-            if (typeof updateStatsCards === 'function') updateStatsCards();
-          } catch (e) {}
-
-          restoreScrollAfterEditRefresh(scrollAtFinish);
-        }
-
-        setLastPageBeforeDetailsAfterEditRefresh(fromPageBeforeSave);
+        renderHomeAfterLocalEdit(scrollAtFinish);
+        setLastPageBeforeDetailsAfterEditPatch(fromPageBeforeSave);
+        refreshAdminQuietlyAfterEdit();
         return;
       }
 
-      /*
-        إذا بقيت داخل صفحة الشهيد، نحدث الصفحة نفسها.
-      */
       if (activePageAtFinish === 'detailsPage') {
         if (typeof openMartyrDetails === 'function') {
-          openMartyrDetails(payload.martyr_id, fromPageBeforeSave, true);
-          setLastPageBeforeDetailsAfterEditRefresh(fromPageBeforeSave);
-          restoreScrollAfterEditRefresh(scrollAtFinish);
+          openMartyrDetails(martyrId, fromPageBeforeSave, true);
+          setLastPageBeforeDetailsAfterEditPatch(fromPageBeforeSave);
+          restoreScrollAfterEditPatch(scrollAtFinish);
         }
 
+        refreshAdminQuietlyAfterEdit();
         return;
       }
 
-      /*
-        أي صفحة أخرى: نحدث الظاهر فقط ونحافظ على السكرول.
-      */
       try {
         if (typeof renderMartyrs === 'function') renderMartyrs();
         if (typeof renderDashboardTable === 'function') renderDashboardTable();
@@ -260,13 +265,14 @@
         if (typeof updateDashboardStats === 'function') updateDashboardStats();
       } catch (e) {}
 
-      restoreScrollAfterEditRefresh(scrollAtFinish);
-      setLastPageBeforeDetailsAfterEditRefresh(fromPageBeforeSave);
+      restoreScrollAfterEditPatch(scrollAtFinish);
+      setLastPageBeforeDetailsAfterEditPatch(fromPageBeforeSave);
+      refreshAdminQuietlyAfterEdit();
 
     } catch (err) {
       showToast(err.message || 'تعذر الحفظ.');
     } finally {
-      setEditSaveButtonLoadingAfterRefresh(btn, false, normalBtn);
+      setEditButtonLoadingPatch(btn, false, normalBtn);
     }
   };
 
