@@ -1,11 +1,14 @@
 (function() {
   'use strict';
 
-  const PROTECTION_CLASS = 'taldo-public-protection';
-  const ADMIN_CLASS = 'taldo-admin-mode';
+const PROTECTION_CLASS = 'taldo-public-protection';
+const ADMIN_CLASS = 'taldo-admin-mode';
+const SCREEN_GUARD_CLASS = 'taldo-screen-guard-active';
+const PROTECTION_MESSAGE = 'هذا الإجراء غير متاح';
 
-  let lastProtectionToastTime = 0;
-
+let lastProtectionToastTime = 0;
+let screenGuardTimer = null;
+  
   function isProtectionAdmin() {
     try {
       return typeof isAdminLoggedIn !== 'undefined' && !!isAdminLoggedIn;
@@ -40,32 +43,32 @@
     lockImagesForPublic();
   }
 
-  function notifyProtection(message) {
-    const now = Date.now();
+function notifyProtection() {
+  const now = Date.now();
 
-    if (now - lastProtectionToastTime < 1800) return;
+  if (now - lastProtectionToastTime < 1800) return;
 
-    lastProtectionToastTime = now;
+  lastProtectionToastTime = now;
 
-    try {
-      if (typeof showToast === 'function') {
-        showToast(message || 'هذا الإجراء غير متاح للزوار.');
-      }
-    } catch (e) {}
-  }
+  try {
+    if (typeof showToast === 'function') {
+      showToast(PROTECTION_MESSAGE);
+    }
+  } catch (e) {}
+}
 
-  function blockEvent(event, message) {
-    if (isProtectionAdmin()) return false;
+function blockEvent(event) {
+  if (isProtectionAdmin()) return false;
 
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
 
-    notifyProtection(message);
+  notifyProtection();
 
-    return true;
-  }
-
+  return true;
+}
+  
   function lockOneImage(img) {
     if (!img || img.dataset.taldoProtectedImage === '1') return;
 
@@ -97,8 +100,18 @@
   document.body.appendChild(overlay);
 }
 
+  function hasOpenBootstrapModal() {
+  return !!document.querySelector('.modal.show, .modal.fade.show, .modal[style*="display: block"]');
+}
+  
 function activateScreenGuard(duration = 1800) {
   if (isProtectionAdmin()) return;
+
+  /*
+    لا نشغّل طبقة حماية لقطة الشاشة أثناء فتح المودالات،
+    لأن Bootstrap يغيّر التركيز وقد يسبب blur كاذب.
+  */
+  if (hasOpenBootstrapModal()) return;
 
   ensureScreenGuardOverlay();
 
@@ -112,7 +125,7 @@ function activateScreenGuard(duration = 1800) {
     document.body?.classList.remove(SCREEN_GUARD_CLASS);
   }, duration);
 }
-
+  
 function clearClipboardIfPossible() {
   if (isProtectionAdmin()) return;
 
@@ -391,3 +404,13 @@ window.addEventListener('afterprint', function() {
     bootProtection();
   }
 })();
+
+document.addEventListener('hide.bs.modal', function(event) {
+  try {
+    const active = document.activeElement;
+
+    if (active && event.target && event.target.contains(active)) {
+      active.blur();
+    }
+  } catch (e) {}
+}, true);
