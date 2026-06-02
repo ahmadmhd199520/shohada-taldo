@@ -64,3 +64,9 @@
       border-radius: 18px;
     }
   }
+
+
+#aboutUsText{
+  height: 300px;
+  overflow-y: auto;
+}
