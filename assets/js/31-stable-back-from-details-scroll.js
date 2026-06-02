@@ -1,159 +1,142 @@
 (function() {
   'use strict';
 
-  const HOME_SCROLL_KEY = 'taldo_home_scroll_before_details';
+  const HOME_SCROLL_KEY = 'taldo_home_scroll_before_details_stable';
 
-  function getSavedHomeScrollStable() {
-    try {
-      const saved = sessionStorage.getItem(HOME_SCROLL_KEY);
-      return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      return null;
-    }
+  function activePageId() {
+    return document.querySelector('.page-section.active')?.id || '';
   }
 
-  function getLastPageBeforeDetailsStable() {
-    try {
-      return lastPageBeforeDetails || 'homePage';
-    } catch (e) {
-      return 'homePage';
-    }
+  function getScroll() {
+    return {
+      x: window.scrollX || window.pageXOffset || 0,
+      y: window.scrollY || window.pageYOffset || 0
+    };
   }
 
-  function setLastPageBeforeDetailsStable(value) {
+  function saveHomeScroll() {
+    if (activePageId() !== 'homePage') return;
+
     try {
-      lastPageBeforeDetails = value || 'homePage';
+      sessionStorage.setItem(HOME_SCROLL_KEY, JSON.stringify(getScroll()));
     } catch (e) {}
   }
 
-  function setActivePageWithoutScrollStable(pageId) {
+  function getSavedHomeScroll() {
+    try {
+      const saved = sessionStorage.getItem(HOME_SCROLL_KEY);
+      return saved ? JSON.parse(saved) : { x: 0, y: 0 };
+    } catch (e) {
+      return { x: 0, y: 0 };
+    }
+  }
+
+  function setActivePageNoScroll(pageId) {
     document.querySelectorAll('.page-section').forEach(function(section) {
       section.classList.remove('active');
     });
 
     const page = document.getElementById(pageId);
-    if (page) {
-      page.classList.add('active');
-    }
+    if (page) page.classList.add('active');
   }
 
-  function restoreHomeScrollStable(pos) {
-    if (!pos) return;
+  function nativeScrollTo(x, y) {
+    const fn = window.__taldoNativeScrollTo || window.scrollTo.bind(window);
 
-    const x = Number(pos.x || 0);
-    const y = Number(pos.y || 0);
-
-    const restore = function() {
-      window.__taldoAllowStableScrollRestore = true;
-
-      window.scrollTo({
-        left: x,
-        top: y,
-        behavior: 'auto'
-      });
-
-      window.__taldoAllowStableScrollRestore = false;
-    };
-
-    restore();
-    requestAnimationFrame(restore);
-    setTimeout(restore, 80);
-    setTimeout(restore, 180);
+    fn(Number(x || 0), Number(y || 0));
   }
 
-  function renderHomeWithoutJumpStable(pos) {
-    try {
-      if (typeof updateStatsCards === 'function') {
-        updateStatsCards();
-      }
-    } catch (e) {}
+  function suppressSmoothTopBriefly(ms) {
+    const until = Date.now() + (ms || 900);
 
-    try {
-      if (typeof renderMartyrs === 'function') {
-        renderMartyrs();
-      }
-    } catch (e) {}
+    window.__taldoSuppressSmoothTopUntil = until;
 
-    restoreHomeScrollStable(pos);
-  }
+    if (window.__taldoStableBackScrollPatchInstalled) return;
 
-  /*
-    نمنع أي كود قديم من إرسال الصفحة للأعلى أثناء لحظة الرجوع فقط.
-    المنع مؤقت، ولا يؤثر على باقي استخدام الموقع.
-  */
-  function suppressTopScrollTemporarilyStable(duration) {
-    if (window.__taldoScrollToAlreadyPatched) {
-      window.__taldoSuppressTopScrollUntil = Date.now() + duration;
-      return;
-    }
+    window.__taldoStableBackScrollPatchInstalled = true;
 
-    const originalScrollTo = window.scrollTo.bind(window);
-
-    window.__taldoOriginalScrollTo = originalScrollTo;
-    window.__taldoSuppressTopScrollUntil = Date.now() + duration;
-    window.__taldoScrollToAlreadyPatched = true;
-    window.__taldoAllowStableScrollRestore = false;
+    const previousScrollTo = window.scrollTo.bind(window);
 
     window.scrollTo = function(arg1, arg2) {
-      const suppressActive = Date.now() < (window.__taldoSuppressTopScrollUntil || 0);
+      const active = Date.now() < (window.__taldoSuppressSmoothTopUntil || 0);
 
       let topValue = null;
-      let behaviorValue = '';
+      let behavior = '';
 
-      if (typeof arg1 === 'object' && arg1 !== null) {
+      if (arg1 && typeof arg1 === 'object') {
         topValue = Number(arg1.top || 0);
-        behaviorValue = String(arg1.behavior || '');
+        behavior = String(arg1.behavior || '');
       } else {
         topValue = Number(arg2 || 0);
       }
 
       /*
-        نمنع فقط أوامر الصعود للأعلى أثناء الرجوع من صفحة الشهيد.
-        أما إرجاع السكرول للمكان المحفوظ فنسمح به.
+        نمنع فقط أمر الصعود الناعم للأعلى أثناء الرجوع من صفحة الشهيد.
+        لا نمنع أي سكرول آخر.
       */
-      if (
-        suppressActive &&
-        !window.__taldoAllowStableScrollRestore &&
-        topValue === 0 &&
-        behaviorValue === 'smooth'
-      ) {
+      if (active && topValue === 0 && behavior === 'smooth') {
         return;
       }
 
-      return originalScrollTo(arg1, arg2);
+      return previousScrollTo(arg1, arg2);
     };
   }
 
-  function stableBackFromDetailsToHome() {
-    const savedHomeScroll = getSavedHomeScrollStable() || { x: 0, y: 0 };
+  const oldOpenMartyrDetails =
+    window.openMartyrDetails ||
+    (typeof openMartyrDetails === 'function' ? openMartyrDetails : null);
 
-    suppressTopScrollTemporarilyStable(1800);
+  if (typeof oldOpenMartyrDetails === 'function' && !oldOpenMartyrDetails.__stableBackScrollSaveWrapped) {
+    window.openMartyrDetails = function(martyrId, fromPage, noRoute) {
+      if (fromPage === 'homePage' || activePageId() === 'homePage') {
+        saveHomeScroll();
+      }
 
-    /*
-      لا نستدعي showPage('homePage') هنا إطلاقًا،
-      لأنه هو سبب الصعود للأعلى.
-    */
-    setActivePageWithoutScrollStable('homePage');
+      return oldOpenMartyrDetails.apply(this, arguments);
+    };
 
-    setLastPageBeforeDetailsStable('homePage');
+    window.openMartyrDetails.__stableBackScrollSaveWrapped = true;
+
+    try {
+      openMartyrDetails = window.openMartyrDetails;
+    } catch (e) {}
+  }
+
+  function renderHomeOnce() {
+    try {
+      if (typeof updateStatsCards === 'function') updateStatsCards();
+    } catch (e) {}
+
+    try {
+      if (typeof renderMartyrs === 'function') renderMartyrs();
+    } catch (e) {}
+  }
+
+  function stableBackHome() {
+    const pos = getSavedHomeScroll();
+
+    suppressSmoothTopBriefly(900);
+
+    setActivePageNoScroll('homePage');
+
+    try {
+      lastPageBeforeDetails = 'homePage';
+    } catch (e) {}
 
     try {
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.pushState({ page: 'home' }, '', cleanUrl);
     } catch (e) {}
 
-    /*
-      نرسم الرئيسية بعد الرجوع، وملف 30 سيحقن التعديلات قبل renderMartyrs.
-    */
-    renderHomeWithoutJumpStable(savedHomeScroll);
+    renderHomeOnce();
 
     /*
-      إعادة واحدة بعد استقرار DOM فقط.
-      لا نكثر المحاولات حتى لا يحدث صعود وهبوط.
+      إرجاع واحد فقط، بدون تكرارات كثيرة.
+      هذا هو الفرق الأساسي لمنع الذبذبة.
     */
-    setTimeout(function() {
-      renderHomeWithoutJumpStable(savedHomeScroll);
-    }, 220);
+    requestAnimationFrame(function() {
+      nativeScrollTo(pos.x, pos.y);
+    });
   }
 
   const oldGoBackFromDetails =
@@ -161,10 +144,14 @@
     (typeof goBackFromDetails === 'function' ? goBackFromDetails : null);
 
   window.goBackFromDetails = function() {
-    const lastPage = getLastPageBeforeDetailsStable();
+    let last = 'homePage';
 
-    if (lastPage === 'homePage') {
-      stableBackFromDetailsToHome();
+    try {
+      last = lastPageBeforeDetails || 'homePage';
+    } catch (e) {}
+
+    if (last === 'homePage') {
+      stableBackHome();
       return;
     }
 
@@ -172,7 +159,7 @@
       return oldGoBackFromDetails.apply(this, arguments);
     }
 
-    setActivePageWithoutScrollStable('homePage');
+    setActivePageNoScroll('homePage');
   };
 
   try {
