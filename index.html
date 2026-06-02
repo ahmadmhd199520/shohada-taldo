@@ -14424,7 +14424,6 @@ window.renderMartyrCard = function(item) {
   html,
   body {
     min-height: 100% !important;
-    overflow-y: auto !important;
     overscroll-behavior-y: auto !important;
     touch-action: pan-y !important;
   }
@@ -14612,8 +14611,8 @@ window.renderMartyrCard = function(item) {
     document.body.classList.remove('modal-open');
     document.body.style.removeProperty('overflow');
     document.body.style.removeProperty('padding-right');
-    document.documentElement.style.overflowY = 'auto';
-    document.body.style.overflowY = 'auto';
+    document.documentElement.style.overflowY = '';
+    document.body.style.overflowY = '';
 
     document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
       if (!hasOpenModal()) backdrop.remove();
