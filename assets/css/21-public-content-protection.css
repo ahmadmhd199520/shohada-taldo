@@ -1,0 +1,43 @@
+/* ===== Public content protection layer ===== */
+/* تعمل فقط للزوار، وتتوقف عند وجود كلاس taldo-admin-mode */
+
+html.taldo-public-protection:not(.taldo-admin-mode) body,
+html.taldo-public-protection:not(.taldo-admin-mode) body *:not(input):not(textarea):not(select):not(option):not([contenteditable="true"]) {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+html.taldo-public-protection:not(.taldo-admin-mode) img,
+html.taldo-public-protection:not(.taldo-admin-mode) .martyr-image,
+html.taldo-public-protection:not(.taldo-admin-mode) .detail-image,
+html.taldo-public-protection:not(.taldo-admin-mode) .gallery-main-image,
+html.taldo-public-protection:not(.taldo-admin-mode) .gallery-thumb-item img {
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+html.taldo-public-protection:not(.taldo-admin-mode) ::selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+html.taldo-public-protection:not(.taldo-admin-mode) ::-moz-selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* إبقاء النماذج قابلة للكتابة والاستخدام للزوار */
+html.taldo-public-protection:not(.taldo-admin-mode) input,
+html.taldo-public-protection:not(.taldo-admin-mode) textarea,
+html.taldo-public-protection:not(.taldo-admin-mode) select,
+html.taldo-public-protection:not(.taldo-admin-mode) option,
+html.taldo-public-protection:not(.taldo-admin-mode) [contenteditable="true"] {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
