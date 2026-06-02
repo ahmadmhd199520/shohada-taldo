@@ -114,7 +114,7 @@
     document.addEventListener('contextmenu', function(event) {
       if (isProtectionAdmin()) return;
 
-      blockEvent(event, 'النقر بزر الفأرة الأيمن غير متاح للزوار.');
+      blockEvent(event, 'هذا الإجراء غير متاح للزوار.');
     }, true);
 
     /*
@@ -143,7 +143,7 @@
           target.closest?.('img, .martyr-card, .image-gallery, .detail-image, .gallery-main-image')
         )
       ) {
-        blockEvent(event, 'سحب الصور غير متاح للزوار.');
+        blockEvent(event, 'هذا الإجراء غير متاح للزوار.');
       }
     }, true);
 
