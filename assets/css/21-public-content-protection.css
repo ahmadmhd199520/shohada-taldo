@@ -142,3 +142,28 @@ html[data-theme="dark"] .admin-submit-switch-card {
 }
 
 
+
+
+.taldo-force-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.mobile-search-filter .taldo-force-refresh-btn {
+  width: 46px;
+  min-width: 46px;
+  padding: 8px 0;
+}
+
+.taldo-force-refresh-btn .spinner-border {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (max-width: 576px) {
+  .mobile-search-filter {
+    gap: 7px;
+  }
+}
