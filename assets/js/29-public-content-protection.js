@@ -75,6 +75,54 @@
     img.setAttribute('oncontextmenu', 'return false');
   }
 
+  function ensureScreenGuardOverlay() {
+  if (document.getElementById('taldoScreenGuardOverlay')) return;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'taldoScreenGuardOverlay';
+  overlay.className = 'taldo-screen-guard-overlay';
+  overlay.setAttribute('aria-hidden', 'true');
+
+  overlay.innerHTML = `
+    <div class="taldo-screen-guard-overlay-inner">
+      <div class="taldo-screen-guard-overlay-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div class="taldo-screen-guard-overlay-title">
+        ${PROTECTION_MESSAGE}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+}
+
+function activateScreenGuard(duration = 1800) {
+  if (isProtectionAdmin()) return;
+
+  ensureScreenGuardOverlay();
+
+  document.documentElement.classList.add(SCREEN_GUARD_CLASS);
+  document.body?.classList.add(SCREEN_GUARD_CLASS);
+
+  clearTimeout(screenGuardTimer);
+
+  screenGuardTimer = setTimeout(function() {
+    document.documentElement.classList.remove(SCREEN_GUARD_CLASS);
+    document.body?.classList.remove(SCREEN_GUARD_CLASS);
+  }, duration);
+}
+
+function clearClipboardIfPossible() {
+  if (isProtectionAdmin()) return;
+
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText('');
+    }
+  } catch (e) {}
+}
+  
   function lockImagesForPublic() {
     if (isProtectionAdmin()) return;
 
@@ -171,29 +219,108 @@
       Ctrl/Cmd + P طباعة
       Ctrl/Cmd + U عرض المصدر
     */
-    document.addEventListener('keydown', function(event) {
-      if (isProtectionAdmin()) return;
+document.addEventListener('keydown', function(event) {
+  if (isProtectionAdmin()) return;
 
-      const key = String(event.key || '').toLowerCase();
-      const ctrlOrMeta = event.ctrlKey || event.metaKey;
+  const keyRaw = String(event.key || '');
+  const key = keyRaw.toLowerCase();
+  const ctrlOrMeta = event.ctrlKey || event.metaKey;
 
-      if (!ctrlOrMeta) return;
+  /*
+    Print Screen في الكمبيوتر.
+    بعض المتصفحات ترسله كـ PrintScreen وبعضها لا يرسله إطلاقًا.
+  */
+  if (keyRaw === 'PrintScreen' || key === 'printscreen') {
+    activateScreenGuard(2600);
+    clearClipboardIfPossible();
+    blockEvent(event);
+    return;
+  }
 
-      if (key === 'c' || key === 'x') {
-        blockEvent(event, 'نسخ المحتوى غير متاح للزوار.');
-        return;
-      }
+  /*
+    محاولات شائعة للحفظ والطباعة والنسخ وتحديد الكل.
+  */
+  if (ctrlOrMeta) {
+    if (key === 'c' || key === 'x') {
+      blockEvent(event);
+      return;
+    }
 
-      if (key === 'a' && !isEditableTarget(event.target)) {
-        blockEvent(event, 'تحديد النصوص غير متاح للزوار.');
-        return;
-      }
+    if (key === 'a' && !isEditableTarget(event.target)) {
+      blockEvent(event);
+      return;
+    }
 
-      if (key === 's' || key === 'p' || key === 'u') {
-        blockEvent(event, 'هذا الإجراء غير متاح للزوار.');
-      }
-    }, true);
+    if (key === 's' || key === 'p' || key === 'u') {
+      activateScreenGuard(2200);
+      blockEvent(event);
+      return;
+    }
 
+    /*
+      Ctrl/Cmd + Shift + S
+      قد يستخدم للحفظ باسم أو بعض أدوات القص في بيئات معينة.
+    */
+    if (event.shiftKey && key === 's') {
+      activateScreenGuard(2200);
+      blockEvent(event);
+      return;
+    }
+  }
+}, true);
+
+    document.addEventListener('keyup', function(event) {
+  if (isProtectionAdmin()) return;
+
+  const keyRaw = String(event.key || '');
+  const key = keyRaw.toLowerCase();
+
+  if (keyRaw === 'PrintScreen' || key === 'printscreen') {
+    activateScreenGuard(2600);
+    clearClipboardIfPossible();
+    notifyProtection();
+  }
+}, true);
+
+/*
+  عند فتح أداة قص من النظام غالبًا تفقد الصفحة التركيز.
+  هذا ليس منعًا مضمونًا، لكنه طبقة ردع جيدة.
+*/
+window.addEventListener('blur', function() {
+  if (isProtectionAdmin()) return;
+  activateScreenGuard(1800);
+}, true);
+
+document.addEventListener('visibilitychange', function() {
+  if (isProtectionAdmin()) return;
+
+  if (document.hidden) {
+    activateScreenGuard(2200);
+  }
+}, true);
+
+/*
+  منع/إخفاء المحتوى عند الطباعة.
+*/
+window.addEventListener('beforeprint', function(event) {
+  if (isProtectionAdmin()) return;
+
+  activateScreenGuard(8000);
+
+  try {
+    event.preventDefault();
+  } catch (e) {}
+
+  notifyProtection();
+}, true);
+
+window.addEventListener('afterprint', function() {
+  if (isProtectionAdmin()) return;
+
+  document.documentElement.classList.remove(SCREEN_GUARD_CLASS);
+  document.body?.classList.remove(SCREEN_GUARD_CLASS);
+}, true);
+    
     /*
       منع الحفظ السريع للصور من بعض المتصفحات عند اللمس المطوّل.
     */
