@@ -299,19 +299,23 @@ document.addEventListener('keydown', function(event) {
   عند فتح أداة قص من النظام غالبًا تفقد الصفحة التركيز.
   هذا ليس منعًا مضمونًا، لكنه طبقة ردع جيدة.
 */
-window.addEventListener('blur', function() {
-  if (isProtectionAdmin()) return;
-  activateScreenGuard(1800);
-}, true);
+// window.addEventListener('blur', function() {
+//   if (isProtectionAdmin()) return;
+//   activateScreenGuard(1800);
+// }, true);
 
 document.addEventListener('visibilitychange', function() {
   if (isProtectionAdmin()) return;
 
-  if (document.hidden) {
+  /*
+    نفعّل الحماية فقط عند انتقال الصفحة فعلًا للخلفية،
+    وليس عند تغيّر التركيز داخل نفس الصفحة أو أدوات المطوّر.
+  */
+  if (document.visibilityState === 'hidden') {
     activateScreenGuard(2200);
   }
 }, true);
-
+    
 /*
   منع/إخفاء المحتوى عند الطباعة.
 */
