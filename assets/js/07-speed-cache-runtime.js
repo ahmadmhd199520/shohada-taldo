@@ -79,6 +79,12 @@
       });
     } catch (error) {}
   }
+  window.clearTaldoPublicClientCache = clearPublicClientCache;
+
+window.forceTaldoPublicFreshData = function() {
+  clearPublicClientCache();
+  window.__taldoBypassPublicCacheUntil = Date.now() + 90 * 1000;
+};
 
   function dispatchCacheUpdate(action, data, value) {
     try {
@@ -94,7 +100,13 @@
 
     window.apiRequest = function(action, data = {}, options = {}) {
       const ttl = PUBLIC_ACTION_TTL[action] || 0;
-      const forceNetwork = options && options.forceNetwork;
+      const forceNetwork =
+  options &&
+  (
+    options.forceNetwork ||
+    options.forceFresh ||
+    options.useClientCache === false
+  );
       const now = Date.now();
       const mustBypassPublicEdge = ttl && window.__taldoBypassPublicCacheUntil && now < window.__taldoBypassPublicCacheUntil;
       const requestData = (forceNetwork || mustBypassPublicEdge)
