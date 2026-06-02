@@ -167,3 +167,35 @@ html[data-theme="dark"] .admin-submit-switch-card {
     gap: 7px;
   }
 }
+/* ===== Mobile details page header compact ===== */
+@media (max-width: 576px) {
+  #detailsPage > .d-flex.justify-content-between.align-items-center.mb-3 {
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+  }
+
+  #detailsPage > .d-flex.justify-content-between.align-items-center.mb-3 h3 {
+    font-size: 0.98rem !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+  }
+
+  #detailsPage > .d-flex.justify-content-between.align-items-center.mb-3 h3 i {
+    font-size: 0.9rem !important;
+    margin-left: 4px !important;
+  }
+
+  #detailsPage > .d-flex.justify-content-between.align-items-center.mb-3 .btn {
+    padding: 5px 8px !important;
+    font-size: 0.76rem !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  #detailsPage > .d-flex.justify-content-between.align-items-center.mb-3 .btn i {
+    font-size: 0.72rem !important;
+    margin-left: 3px !important;
+  }
+}
