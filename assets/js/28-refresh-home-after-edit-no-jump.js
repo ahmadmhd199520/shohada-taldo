@@ -236,16 +236,74 @@
         نحدّث البيانات محليًا مباشرة من الفورم نفسه،
         ولا ننتظر getInitialData لأن الكاش قد يعيد نسخة قديمة.
       */
-      patchAllLocalDataAfterEdit(martyrId, payload);
+patchAllLocalDataAfterEdit(martyrId, payload);
 
-      showToast(res.message || 'تم حفظ التعديلات.');
+try {
+  if (typeof window.forceTaldoPublicFreshData === 'function') {
+    window.forceTaldoPublicFreshData();
+  }
+} catch (e) {}
 
+showToast(res.message || 'تم حفظ التعديلات.');
+      
       if (activePageAtFinish === 'homePage') {
-        renderHomeAfterLocalEdit(scrollAtFinish);
-        setLastPageBeforeDetailsAfterEditPatch(fromPageBeforeSave);
-        refreshAdminQuietlyAfterEdit();
-        return;
-      }
+  renderHomeAfterLocalEdit(scrollAtFinish);
+
+  setTimeout(function() {
+    const beforeRefreshScroll = getScrollAfterEditPatch();
+
+    apiRequest('getInitialData', {}, {
+      forceNetwork: true,
+      forceFresh: true,
+      useClientCache: false
+    })
+      .then(function(freshRes) {
+        if (!freshRes || !freshRes.success) return;
+
+        try {
+          allFamilies = freshRes.families || allFamilies || [];
+          statsData = freshRes.stats || statsData || {};
+          allMartyrs = freshRes.martyrs || allMartyrs || [];
+
+          if (typeof siteMessages !== 'undefined') {
+            siteMessages = freshRes.messages || siteMessages || [];
+          }
+
+          if (typeof publicSettings !== 'undefined') {
+            publicSettings = freshRes.settings || publicSettings || {};
+          }
+
+          allMartyrs.forEach(function(item) {
+            if (!item) return;
+
+            item.__perfPrepared = false;
+            item.__dashboardPrepared = false;
+
+            try {
+              delete item.__searchText;
+              delete item.__familyKey;
+              delete item.__createdSort;
+            } catch (e) {}
+          });
+
+          if (typeof fillFamiliesSelects === 'function') fillFamiliesSelects();
+          if (typeof updateStatsCards === 'function') updateStatsCards();
+          if (typeof renderMartyrs === 'function') renderMartyrs();
+
+          restoreScrollAfterEditPatch(beforeRefreshScroll);
+        } catch (e) {
+          restoreScrollAfterEditPatch(beforeRefreshScroll);
+        }
+      })
+      .catch(function() {
+        restoreScrollAfterEditPatch(beforeRefreshScroll);
+      });
+  }, 700);
+
+  setLastPageBeforeDetailsAfterEditPatch(fromPageBeforeSave);
+  refreshAdminQuietlyAfterEdit();
+  return;
+}
 
       if (activePageAtFinish === 'detailsPage') {
         if (typeof openMartyrDetails === 'function') {
