@@ -35,11 +35,17 @@ html.taldo-public-protection:not(.taldo-admin-mode) input,
 html.taldo-public-protection:not(.taldo-admin-mode) textarea,
 html.taldo-public-protection:not(.taldo-admin-mode) select,
 html.taldo-public-protection:not(.taldo-admin-mode) option,
-html.taldo-public-protection:not(.taldo-admin-mode) [contenteditable="true"] {
+html.taldo-public-protection:not(.taldo-admin-mode) .form-control,
+html.taldo-public-protection:not(.taldo-admin-mode) .form-select,
+html.taldo-public-protection:not(.taldo-admin-mode) [contenteditable="true"],
+html.taldo-public-protection:not(.taldo-admin-mode) [role="textbox"],
+html.taldo-public-protection:not(.taldo-admin-mode) [role="combobox"],
+html.taldo-public-protection:not(.taldo-admin-mode) [role="searchbox"] {
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
   -ms-user-select: text !important;
   user-select: text !important;
+  -webkit-touch-callout: default !important;
 }
 
 
