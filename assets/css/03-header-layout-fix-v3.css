@@ -1,0 +1,190 @@
+/* ===== Header layout fix: admin buttons are part of the header, not absolute ===== */
+.hero {
+  padding: 18px 20px !important;
+}
+
+.hero-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+}
+
+.hero-top-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.hero-title-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+  justify-content: space-between;
+}
+
+.hero-title {
+  min-width: 0;
+}
+
+.top-login-bar,
+.top-login-bar.header-admin-actions,
+.top-login-bar.header-inline-actions,
+.hero-admin-actions {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  transform: none !important;
+  z-index: auto !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+}
+
+.admin-icon-btn,
+.top-login-bar.header-admin-actions .btn,
+.top-login-bar.header-inline-actions .btn {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.75) !important;
+  background: rgba(255,255,255,.10) !important;
+  font-size: 0 !important;
+}
+
+.admin-icon-btn:hover,
+.top-login-bar.header-admin-actions .btn:hover,
+.top-login-bar.header-inline-actions .btn:hover {
+  background: rgba(255,255,255,.22) !important;
+}
+
+.admin-icon-btn i,
+.top-login-bar.header-admin-actions .btn i,
+.top-login-bar.header-inline-actions .btn i {
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+.admin-btn-text {
+  display: none !important;
+}
+
+.top-actions {
+  flex: 0 0 auto;
+}
+
+@media (min-width: 577px) {
+  .top-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero {
+    padding: 12px !important;
+  }
+
+  .hero-layout {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .hero-top-row {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  .hero-title-actions {
+    gap: 7px !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .hero-title {
+    font-size: clamp(.88rem, 4.1vw, 1.08rem) !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .hero-title-actions .btn-warning {
+    flex: 0 0 auto !important;
+    padding: 5px 7px !important;
+    font-size: .72rem !important;
+    white-space: nowrap !important;
+  }
+
+  .top-login-bar.header-inline-actions {
+    flex: 0 0 auto !important;
+    gap: 5px !important;
+  }
+
+  .admin-icon-btn,
+  .top-login-bar.header-admin-actions .btn,
+  .top-login-bar.header-inline-actions .btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 12px !important;
+  }
+
+  .top-actions {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .top-actions .btn {
+    width: 100% !important;
+    padding: 8px 10px !important;
+    font-size: .86rem !important;
+  }
+}
+
+  /* إصلاح تعارض CSS الذي يمنع تحريك الصورة في الصفحة الرئيسية */
+.martyr-image-wrap {
+  display: block !important;
+  position: relative !important;
+}
+
+.martyr-image {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.martyr-placeholder {
+  /* position: absolute !important; */
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}

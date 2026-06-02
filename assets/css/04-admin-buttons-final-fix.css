@@ -1,0 +1,21 @@
+/* إظهار زر الدخول أو الخروج فقط حسب الحالة، وعدم كسر d-none بسبب display!important */
+#loginBtn.d-none,
+#dashboardBtn.d-none,
+#logoutBtn.d-none {
+  display: none !important;
+}
+
+#loginBtn.admin-icon-btn,
+#dashboardBtn.admin-icon-btn,
+#logoutBtn.admin-icon-btn {
+  color: #fff !important;
+  border-color: rgba(255,255,255,.85) !important;
+  background: rgba(255,255,255,.12) !important;
+}
+
+#loginBtn.admin-icon-btn:hover,
+#dashboardBtn.admin-icon-btn:hover,
+#logoutBtn.admin-icon-btn:hover {
+  color: #fff !important;
+  background: rgba(255,255,255,.25) !important;
+}

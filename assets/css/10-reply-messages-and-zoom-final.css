@@ -1,0 +1,59 @@
+  .dynamic-reply-box {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 18px;
+    padding: 12px;
+    text-align: right;
+  }
+
+  .message-reply-card {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    padding: 12px;
+    margin-top: 10px;
+  }
+
+  .message-linked-badge {
+    background: rgba(13, 110, 253, .10);
+    color: #0d6efd;
+    border: 1px solid rgba(13, 110, 253, .18);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: .78rem;
+    font-weight: 800;
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .user-reply-source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #fff3cd;
+    border: 1px solid rgba(255, 193, 7, .55);
+    color: #8a6500;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-weight: 800;
+    font-size: .78rem;
+    margin-bottom: 6px;
+  }
+
+  .image-zoom-preview-note {
+    font-size: .82rem;
+    color: #6c757d;
+  }
+
+  #imagePositionPreview,
+  .martyr-image,
+  .gallery-main-image,
+  .gallery-thumb-item img {
+    transform-origin: center center;
+    will-change: transform, object-position;
+  }
+
+  .image-position-preview-wrap {
+    overflow: hidden;
+  }

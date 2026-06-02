@@ -1,0 +1,110 @@
+  /* كروت الإحصائيات: شريط قابل للتمرير في كل المقاسات مع بقاء النص ظاهرًا */
+  .home-stats-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    gap: 12px !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding: 4px 2px 12px !important;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-stats-row > [class*="col-"] {
+    flex: 0 0 265px !important;
+    width: 265px !important;
+    max-width: 265px !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    scroll-snap-align: start;
+  }
+
+  .home-stats-row .stat-card {
+    min-height: 100%;
+  }
+
+  .home-stats-row .stat-card .card-body {
+    min-height: 94px;
+  }
+
+  .home-stats-row .stat-card-label,
+  .home-stats-row .text-muted.stat-card-label {
+    display: block !important;
+    color: #6c757d !important;
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  .home-stats-row .stat-action-arrow {
+    flex: 0 0 auto;
+  }
+
+  .home-stats-row::-webkit-scrollbar,
+  .houla-filter-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .home-stats-row::-webkit-scrollbar-thumb,
+  .houla-filter-scroll::-webkit-scrollbar-thumb {
+    background: rgba(13, 110, 253, .35);
+    border-radius: 999px;
+  }
+
+  .houla-page-header {
+    background: linear-gradient(135deg, #fff7e6, #ffffff);
+    border: 1px solid rgba(255, 193, 7, .35);
+    border-radius: 22px;
+    padding: 16px;
+    box-shadow: var(--soft-shadow);
+  }
+
+  .houla-admin-box {
+    background: #fff7e6;
+    border: 1px solid rgba(255, 193, 7, .45);
+    border-radius: 20px;
+    padding: 14px;
+  }
+
+  .join-request-controls {
+    background: #f8f9fa;
+    border-radius: 18px;
+    padding: 12px;
+    border: 1px solid #edf0f3;
+  }
+
+  @media (max-width: 576px) {
+    .home-stats-row {
+      gap: 10px !important;
+      padding-bottom: 10px !important;
+    }
+
+    .home-stats-row > [class*="col-"] {
+      flex-basis: 218px !important;
+      width: 218px !important;
+      max-width: 218px !important;
+    }
+
+    .home-stats-row .stat-card .card-body {
+      padding: 10px !important;
+      text-align: start !important;
+      justify-content: flex-start !important;
+    }
+
+    .home-stats-row .stat-icon {
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+      border-radius: 14px !important;
+    }
+
+    .home-stats-row h3,
+    .home-stats-row h5 {
+      font-size: .98rem !important;
+    }
+
+    .home-stats-row .stat-card-label {
+      font-size: .82rem !important;
+    }
+  }

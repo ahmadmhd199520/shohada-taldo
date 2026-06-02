@@ -1,0 +1,198 @@
+  html {
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+body {
+    overflow-x: clip; /* يقص الزوائد دون كسر خاصية الالتصاق والـ sticky */
+  }
+
+  .app-shell {
+    width: min(100%, 1200px);
+  }
+
+  .martyrs-grid {
+    align-items: start;
+  }
+
+  .martyr-card,
+  .list-item,
+  .stat-card,
+  .filter-card {
+    will-change: auto;
+  }
+
+  @supports (content-visibility: auto) {
+    .martyr-card,
+    .list-item {
+      content-visibility: auto;
+      contain-intrinsic-size: 260px;
+    }
+  }
+
+  .martyr-image-wrap {
+    aspect-ratio: 4 / 3;
+    height: auto;
+    min-height: 150px;
+  }
+
+  .martyr-image,
+  .gallery-main-image {
+    background-color: #eef2f7;
+  }
+
+  .mobile-search-filter {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding-block: 6px;
+    background: linear-gradient(180deg, rgba(245,247,251,.98), rgba(245,247,251,.86));
+    backdrop-filter: blur(10px);
+  }
+
+  .perf-cache-note {
+    font-size: .78rem;
+    color: #64748b;
+    text-align: center;
+    margin: -8px 0 12px;
+  }
+
+  @media (max-width: 576px) {
+    .app-shell {
+      padding: 10px;
+    }
+
+    .hero {
+      border-radius: 20px;
+      padding: 18px 13px;
+      margin-bottom: 12px !important;
+    }
+
+    .hero-title {
+      font-size: clamp(1.05rem, 4.5vw, 1.28rem) !important;
+      white-space: normal !important;
+      line-height: 1.45;
+    }
+
+    .hero-subtitle {
+      font-size: .88rem;
+      line-height: 1.7;
+      margin-top: 6px;
+    }
+
+    .top-actions,
+    .hero-top-row,
+    .hero-layout {
+      gap: 8px !important;
+    }
+
+    .stat-card .card-body {
+      padding: 12px !important;
+    }
+
+    .stat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      font-size: 1.05rem;
+    }
+
+    .martyrs-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .martyr-card {
+      border-radius: 18px;
+      box-shadow: 0 8px 22px rgba(15,23,42,.07);
+    }
+
+    .martyr-image-wrap {
+      min-height: 124px;
+      aspect-ratio: 1 / 1;
+    }
+
+    .martyr-body {
+      padding: 9px 7px 10px;
+    }
+
+    .martyr-name {
+      font-size: .9rem;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 2.62em;
+    }
+
+    .martyr-family {
+      font-size: .78rem;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .badge {
+      font-size: .68rem;
+    }
+
+    .verified-corner {
+      border-top-width: 46px;
+      border-right-width: 46px;
+    }
+
+    .verified-corner i {
+      top: -41px;
+      left: 7px;
+      font-size: .8rem;
+    }
+
+    .needs-completion-corner,
+    .pending-corner {
+      font-size: .62rem;
+      padding: 4px 7px;
+      border-radius: 0 0 10px 0;
+    }
+
+    .martyrs-pagination {
+      gap: 5px;
+      margin-top: 14px;
+    }
+
+    .martyrs-pagination .page-btn {
+      min-width: 32px;
+      padding: 6px 8px;
+      font-size: .8rem;
+      border-radius: 10px;
+    }
+
+    .modal-dialog {
+      margin: .5rem;
+    }
+
+    .modal-content {
+      border-radius: 20px;
+    }
+
+    .detail-image-placeholder,
+    .gallery-main-image {
+      max-height: 72vh;
+      border-radius: 18px;
+    }
+  }
+
+  @media (max-width: 370px) {
+    .martyrs-grid {
+      gap: 8px;
+    }
+
+    .martyr-image-wrap {
+      min-height: 112px;
+    }
+
+    .martyr-name {
+      font-size: .84rem;
+    }
+  }

@@ -1,0 +1,107 @@
+  .top-login-bar.header-admin-actions {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    z-index: 5;
+    margin: 0;
+  }
+
+  .top-login-bar.header-admin-actions .btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    font-size: 0;
+  }
+
+  .top-login-bar.header-admin-actions .btn i {
+    font-size: 1rem;
+    margin: 0 !important;
+  }
+
+  .martyr-card.pending-card {
+    opacity: .62;
+    filter: grayscale(.45);
+  }
+
+  .pending-corner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #6c757d;
+    color: white;
+    padding: 6px 10px;
+    border-bottom-right-radius: 14px;
+    font-size: .72rem;
+    font-weight: 800;
+    z-index: 4;
+  }
+
+  .edit-field-btn {
+    border: 0;
+    background: transparent;
+    color: #0d6efd;
+    padding: 0 4px;
+  }
+
+  .image-gallery {
+    position: relative;
+  }
+
+  .gallery-main-image {
+    width: 100%;
+    max-height: 390px;
+    object-fit: cover;
+    border-radius: 22px;
+    background: #f1f3f5;
+  }
+
+  .gallery-controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .global-loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,.55);
+    backdrop-filter: blur(2px);
+    z-index: 20000;
+    display: none;
+    place-items: center;
+  }
+
+  .global-loading-overlay.show {
+    display: grid;
+  }
+
+  .settings-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: var(--soft-shadow);
+    margin-top: 18px;
+  }
+
+  .dashboard-controls-row {
+    background: #f8f9fa;
+    border-radius: 18px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 576px) {
+    .top-login-bar.header-admin-actions {
+      left: 8px;
+      top: 8px;
+    }
+
+    .top-login-bar.header-admin-actions .btn {
+      width: 34px;
+      height: 34px;
+    }
+  }

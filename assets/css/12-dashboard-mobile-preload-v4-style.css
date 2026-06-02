@@ -1,0 +1,98 @@
+  .dashboard-mobile-controls {
+    display: none;
+    background: rgba(255, 255, 255, 0.90);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    padding: 9px;
+    margin-bottom: 12px;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    backdrop-filter: blur(10px);
+  }
+
+  .dashboard-mobile-controls .form-control {
+    min-width: 0;
+    padding: 9px 11px;
+  }
+
+  .dashboard-mobile-controls .btn {
+    width: 44px;
+    min-width: 44px;
+    padding: 8px 0;
+    border-radius: 12px;
+  }
+
+  .dashboard-pagination-row td {
+    background: #fff !important;
+  }
+
+  @media (max-width: 768px) {
+    #dashboardPage > .row.g-3.mb-4 {
+      margin-bottom: 12px !important;
+    }
+
+    #dashboardPage > .row.g-3.mb-4 > [class*="col-"] {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    #dashboardPage .dashboard-card {
+      justify-content: center;
+      text-align: center;
+      min-height: 74px;
+      padding: 10px 6px !important;
+      flex-direction: column;
+      gap: 5px !important;
+    }
+
+    #dashboardPage .dashboard-card .text-muted {
+      display: none !important;
+    }
+
+    #dashboardPage .dashboard-card h3 {
+      font-size: 1.12rem !important;
+      line-height: 1;
+    }
+
+    #dashboardPage .dashboard-card .stat-icon {
+      margin: 0 auto;
+    }
+
+    #dashboardMartyrsTab > .filter-card,
+    #dataUpdatesControls {
+      display: none !important;
+    }
+
+    .dashboard-mobile-controls {
+      display: flex;
+      align-items: center;
+    }
+
+    #dashboardPage .dashboard-section-header {
+      gap: 8px;
+      align-items: center;
+    }
+
+    #dashboardPage .dashboard-section-header h5 {
+      font-size: .98rem;
+      line-height: 1.5;
+    }
+
+    .dashboard-pagination {
+      gap: 4px;
+      padding: 9px 0 5px;
+    }
+
+    .dashboard-pagination .btn {
+      min-width: 31px;
+      padding: 4px 7px;
+      font-size: .78rem;
+    }
+
+    .dash-pagination-row .text-muted {
+      font-size: .76rem;
+    }
+  }

@@ -1,0 +1,55 @@
+  /*
+    تطبيق قانون الجوال على التابليت لأشرطة البحث والفلترة:
+    يبقى البحث المختصر ظاهرًا وتنتقل باقي الخيارات إلى زر الفلترة.
+  */
+  @media (min-width: 577px) and (max-width: 1024px) {
+    .desktop-filter-card {
+      display: none !important;
+    }
+
+    .mobile-search-filter {
+      display: flex !important;
+      align-items: center;
+      gap: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding-block: 7px;
+      background: linear-gradient(180deg, rgba(245,247,251,.98), rgba(245,247,251,.88));
+      backdrop-filter: blur(10px);
+    }
+
+    .mobile-search-filter .form-control {
+      min-width: 0;
+      padding: 10px 12px;
+    }
+
+    .mobile-search-filter .btn {
+      width: 46px;
+      min-width: 46px;
+      padding: 9px 0;
+      border-radius: 13px;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    #dashboardMartyrsTab > .filter-card,
+    #dataUpdatesControls {
+      display: none !important;
+    }
+
+    .dashboard-mobile-controls {
+      display: flex !important;
+      align-items: center;
+    }
+
+    .dashboard-mobile-controls .form-control {
+      min-width: 0;
+    }
+
+    .dashboard-table-card table,
+    #dashboardDataUpdatesTab table,
+    #dashboardJoinRequestsTab table {
+      min-width: 720px;
+    }
+  }

@@ -1,0 +1,16 @@
+  .image-position-tabs .nav-link {
+    border-radius: 14px;
+    font-weight: 800;
+  }
+
+  .image-position-preview-wrap.image-position-card-preview {
+    width: min(290px, 100%);
+    /* height: 290px; */
+    margin-inline: auto;
+  }
+
+  .image-position-preview-wrap.image-position-detail-preview {
+    width: min(290px, 100%);
+    /* height: 290px; */
+    margin-inline: auto;
+  }

@@ -1,0 +1,62 @@
+/* ===== Public hotfix: header admin icons placement and non-blocking loader ===== */
+.hero {
+  padding-left: 74px !important;
+}
+
+.top-login-bar.header-admin-actions {
+  position: absolute !important;
+  left: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 20 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+.top-login-bar.header-admin-actions .btn {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  border-radius: 14px !important;
+  padding: 0 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+}
+
+.top-login-bar.header-admin-actions .btn i {
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+.global-loading-overlay {
+  display: none !important;
+}
+
+.global-loading-overlay.show {
+  display: grid !important;
+}
+
+@media (max-width: 576px) {
+  .hero {
+    padding-left: 50px !important;
+  }
+
+  .top-login-bar.header-admin-actions {
+    left: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    gap: 4px !important;
+  }
+
+  .top-login-bar.header-admin-actions .btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 11px !important;
+  }
+}

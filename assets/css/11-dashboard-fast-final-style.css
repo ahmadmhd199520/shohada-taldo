@@ -1,0 +1,114 @@
+  .dashboard-table-card .table {
+    margin-bottom: 0;
+  }
+
+  .dashboard-table-card tbody tr {
+    content-visibility: auto;
+    contain-intrinsic-size: 74px;
+  }
+
+  .dashboard-mini-note {
+    border: 1px solid rgba(13, 110, 253, .14);
+    background: rgba(13, 110, 253, .06);
+    color: #0d47a1;
+    border-radius: 14px;
+    padding: 8px 12px;
+    font-size: .86rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .dashboard-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 8px 0;
+  }
+
+  .dashboard-pagination .btn {
+    border-radius: 10px;
+    min-width: 34px;
+    padding: 5px 9px;
+    font-size: .82rem;
+  }
+
+  .dashboard-action-cell .btn {
+    white-space: nowrap;
+  }
+
+  .dashboard-thumb {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    object-fit: cover;
+    background: #f1f3f5;
+  }
+
+  @media (max-width: 768px) {
+    #dashboardPage .row.g-3.mb-4 > [class*="col-"] {
+      flex: 0 0 33.333%;
+      max-width: 33.333%;
+    }
+
+    #dashboardPage .dashboard-card {
+      padding: 11px;
+      border-radius: 16px;
+      gap: 8px !important;
+    }
+
+    #dashboardPage .dashboard-card .stat-icon {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      border-radius: 12px;
+      font-size: .95rem;
+    }
+
+    #dashboardPage .dashboard-card .text-muted {
+      font-size: .72rem;
+      line-height: 1.25;
+    }
+
+    #dashboardPage .dashboard-card h3 {
+      font-size: 1.1rem;
+    }
+
+    .dashboard-tabs {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 4px;
+    }
+
+    .dashboard-tabs .nav-link {
+      white-space: nowrap;
+      font-size: .84rem;
+      padding: 8px 10px;
+    }
+
+    #dashboardMartyrsTab .filter-card,
+    #dataUpdatesControls {
+      padding: 12px;
+      border-radius: 18px;
+    }
+
+    .dashboard-table-card table,
+    #dashboardDataUpdatesTab table,
+    #dashboardJoinRequestsTab table {
+      min-width: 720px;
+      font-size: .86rem;
+    }
+
+    .dashboard-action-cell .btn {
+      padding: 5px 8px;
+      font-size: .78rem;
+      border-radius: 9px;
+    }
+
+    .dashboard-thumb {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+    }
+  }
