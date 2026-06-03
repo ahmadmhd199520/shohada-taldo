@@ -1,16 +1,15 @@
 (function() {
   'use strict';
 
-  let activeStatsFilter = '';
-  const originalFilterButtons = new WeakMap();
+  let activeStatsQuickFilter = '';
+  const originalFilterButtonsHtml = new WeakMap();
+
+  const VERIFIED_STATUS = 'موثق';
+  const PENDING_STATUS = 'بانتظار التوثيق';
 
   const verifiedMessage = 'يتم الآن عرض أسماء الشهداء الذين تم التوثق من بياناتهم';
 
   const pendingMessage = 'يتم عرض أسماء الشهداء الذين يتم تدقيق بياناتهم، ستتمكن من فتح الصفحة الخاصة للشهيد بعد التوثق من صحة البيانات من فريق العمل.';
-
-  function activePageId() {
-    return document.querySelector('.page-section.active')?.id || '';
-  }
 
   function normalizeText(value) {
     return String(value || '')
@@ -18,362 +17,252 @@
       .trim();
   }
 
-  function getStatusValue(item) {
-    return normalizeText(
-      item?.verification_status ||
-      item?.status ||
-      item?.verificationStatus ||
-      ''
-    );
+  function activePageId() {
+    return document.querySelector('.page-section.active')?.id || '';
   }
 
-  function isVerifiedItem(item) {
-    const status = getStatusValue(item);
-
-    return (
-      status === 'موثق' ||
-      status === 'تم التوثيق' ||
-      status === 'verified'
-    );
-  }
-
-  function isRejectedItem(item) {
-    const status = getStatusValue(item);
-
-    return (
-      status === 'مرفوض' ||
-      status === 'rejected'
-    );
-  }
-
-  function isPendingItem(item) {
-  const status = getStatusValue(item);
-
-  return status === 'بانتظار التوثيق';
-}
-
-  function isFilterActive() {
-    return activeStatsFilter === 'verified' || activeStatsFilter === 'pending';
-  }
-
-  function resetMartyrsPageSafe() {
+  function resetPageCounters() {
     try { currentPage = 1; } catch (e) {}
+    try { currentMartyrsPage = 1; } catch (e) {}
     try { martyrsCurrentPage = 1; } catch (e) {}
+
     try { window.currentPage = 1; } catch (e) {}
+    try { window.currentMartyrsPage = 1; } catch (e) {}
     try { window.martyrsCurrentPage = 1; } catch (e) {}
   }
 
-  function getMainSourceListForFilter() {
-  try {
-    if (isAdminLoggedIn && Array.isArray(dashboardData) && dashboardData.length) {
-      return dashboardData;
-    }
-  } catch (e) {}
-
-  try {
-    return Array.isArray(allMartyrs) ? allMartyrs : [];
-  } catch (e) {
-    return [];
+  function setSelectValueIfExists(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
   }
-}
 
-  function applyStatsFilter(type) {
-    activeStatsFilter = type;
+  function setExistingStatusFilter(status) {
+    /*
+      هذه هي النقطة الأساسية:
+      نستخدم فلتر المشروع الأصلي بدل فلتر جديد.
+    */
+    setSelectValueIfExists('statusFilter', status);
+    setSelectValueIfExists('mobileStatusFilter', status);
 
-    resetMartyrsPageSafe();
+    try {
+      currentStatusFilter = status;
+    } catch (e) {}
 
-    if (typeof showPage === 'function' && activePageId() !== 'homePage') {
+    resetPageCounters();
+
+    if (typeof changeStatusFilter === 'function') {
+      changeStatusFilter();
+    } else if (typeof resetMartyrsPageAndRender === 'function') {
+      resetMartyrsPageAndRender();
+    } else if (typeof renderMartyrs === 'function') {
+      renderMartyrs();
+    }
+  }
+
+  function applyQuickStatusFilter(status) {
+    activeStatsQuickFilter = status;
+
+    if (activePageId() !== 'homePage' && typeof showPage === 'function') {
       showPage('homePage');
     }
 
-    if (typeof renderMartyrs === 'function') {
-      renderMartyrs();
-    }
+    setExistingStatusFilter(status);
 
-    updateFilterButtonsState();
-    updateStatsCardsState();
+    updateFilterButtonIcon();
+    markActiveStatsCard();
 
-    if (type === 'verified') {
+    if (status === VERIFIED_STATUS) {
       showToast(verifiedMessage);
     }
 
-    if (type === 'pending') {
+    if (status === PENDING_STATUS) {
       showToast(pendingMessage);
     }
   }
 
-  function clearStatsFilter() {
-    activeStatsFilter = '';
+  function clearQuickStatusFilter() {
+    activeStatsQuickFilter = '';
 
-    resetMartyrsPageSafe();
+    setExistingStatusFilter('');
 
-    if (typeof renderMartyrs === 'function') {
-      renderMartyrs();
-    }
-
-    updateFilterButtonsState();
-    updateStatsCardsState();
+    updateFilterButtonIcon();
+    markActiveStatsCard();
 
     showToast('تم إلغاء الفلترة، يتم الآن عرض جميع الأسماء.');
   }
 
-  function filterListByActiveStats(list) {
-    if (!Array.isArray(list)) return list;
+  function findVerifiedStatsCard() {
+    const countEl = document.getElementById('verifiedCount');
 
-    if (activeStatsFilter === 'verified') {
-      return list.filter(isVerifiedItem);
+    if (countEl) {
+      return countEl.closest('.stat-card, .stats-card, .home-stat-card, .dashboard-stat-card, .stat-item, .card') || countEl.parentElement;
     }
 
-    if (activeStatsFilter === 'pending') {
-      return list.filter(isPendingItem);
+    return Array.from(document.querySelectorAll('.stat-card, .stats-card, .home-stat-card, .stat-item, .card')).find(function(card) {
+      const text = normalizeText(card.textContent);
+      return (
+        (
+          text.includes('الموثق') ||
+          text.includes('تم التوثق') ||
+          text.includes('موثق')
+        ) &&
+        !text.includes('بانتظار') &&
+        !text.includes('قيد')
+      );
+    }) || null;
+  }
+
+  function findPendingStatsCard() {
+    const countEl = document.getElementById('pendingCount');
+
+    if (countEl) {
+      return countEl.closest('.stat-card, .stats-card, .home-stat-card, .dashboard-stat-card, .stat-item, .card') || countEl.parentElement;
     }
 
-    return list;
+    return Array.from(document.querySelectorAll('.stat-card, .stats-card, .home-stat-card, .stat-item, .card')).find(function(card) {
+      const text = normalizeText(card.textContent);
+      return (
+        text.includes('بانتظار التوثيق') ||
+        text.includes('بانتظار التوثق') ||
+        text.includes('قيد التدقيق') ||
+        text.includes('يتم تدقيقها') ||
+        text.includes('أسماء يتم تدقيقها')
+      );
+    }) || null;
   }
 
-  const oldRenderMartyrs =
-    window.renderMartyrs ||
-    (typeof renderMartyrs === 'function' ? renderMartyrs : null);
+  function installStatsCard(card, status) {
+    if (!card || card.dataset.quickStatusFilterInstalled === '1') return;
 
-  if (typeof oldRenderMartyrs === 'function' && !oldRenderMartyrs.__homeStatsClickFilterWrappedV2) {
-    window.renderMartyrs = function(customList) {
-      if (!isFilterActive()) {
-        return oldRenderMartyrs.apply(this, arguments);
-      }
+    card.dataset.quickStatusFilterInstalled = '1';
+    card.dataset.quickStatusValue = status;
+    card.classList.add('home-stats-filter-card');
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
 
-      if (Array.isArray(customList)) {
-        const filteredCustom = filterListByActiveStats(customList);
-        return oldRenderMartyrs.call(this, filteredCustom);
-      }
+    card.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
 
-      let originalAllMartyrs = null;
+      applyQuickStatusFilter(status);
+    }, true);
 
-      try {
-        originalAllMartyrs = allMartyrs;
+    card.addEventListener('keydown', function(event) {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
 
-        const source = getMainSourceListForFilter();
-        allMartyrs = filterListByActiveStats(source);
-
-        return oldRenderMartyrs.apply(this, arguments);
-      } finally {
-        try {
-          if (originalAllMartyrs) {
-            allMartyrs = originalAllMartyrs;
-          }
-        } catch (e) {}
-      }
-    };
-
-    window.renderMartyrs.__homeStatsClickFilterWrappedV2 = true;
-
-    try {
-      renderMartyrs = window.renderMartyrs;
-    } catch (e) {}
-  }
-
-  function isVerifiedStatsCard(el) {
-    const text = normalizeText(el.textContent);
-
-    return (
-      (
-        text.includes('الموثق') ||
-        text.includes('موثقين') ||
-        text.includes('تم التوثق') ||
-        text.includes('تم التحقق')
-      ) &&
-      !text.includes('بانتظار') &&
-      !text.includes('قيد')
-    );
-  }
-
-  function isPendingStatsCard(el) {
-    const text = normalizeText(el.textContent);
-
-    return (
-      text.includes('بانتظار التوثيق') ||
-      text.includes('بانتظار التوثق') ||
-      text.includes('قيد التدقيق') ||
-      text.includes('قيد التحقق') ||
-      text.includes('يتم تدقيقها') ||
-      text.includes('أسماء يتم تدقيقها') ||
-      text.includes('تحتاج للتوثيق') ||
-      text.includes('غير موثقة')
-    );
-  }
-
-  function getPossibleStatsCards() {
-    return Array.from(document.querySelectorAll(`
-      .stat-card,
-      .stats-card,
-      .home-stat-card,
-      .dashboard-stat-card,
-      .stats-grid > *,
-      .stats-row > *,
-      .hero-stats > *,
-      .quick-stats > *,
-      .stat-item
-    `));
-  }
-
-  function installStatsCardsClickHandlers() {
-    getPossibleStatsCards().forEach(function(card) {
-      if (card.dataset.homeStatsFilterInstalled === '1') return;
-
-      if (!isVerifiedStatsCard(card) && !isPendingStatsCard(card)) return;
-
-      card.dataset.homeStatsFilterInstalled = '1';
-      card.classList.add('home-stats-filter-card');
-      card.setAttribute('role', 'button');
-      card.setAttribute('tabindex', '0');
-      card.title = 'اضغط لتطبيق الفلتر';
-
-      card.addEventListener('click', function(event) {
-        if (isVerifiedStatsCard(card)) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-          applyStatsFilter('verified');
-          return;
-        }
-
-        if (isPendingStatsCard(card)) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-          applyStatsFilter('pending');
-        }
-      }, true);
-
-      card.addEventListener('keydown', function(event) {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-
-        event.preventDefault();
-
-        if (isVerifiedStatsCard(card)) {
-          applyStatsFilter('verified');
-          return;
-        }
-
-        if (isPendingStatsCard(card)) {
-          applyStatsFilter('pending');
-        }
-      });
-    });
-
-    updateStatsCardsState();
-  }
-
-  function updateStatsCardsState() {
-    getPossibleStatsCards().forEach(function(card) {
-      card.classList.remove('home-stats-filter-active');
-
-      if (activeStatsFilter === 'verified' && isVerifiedStatsCard(card)) {
-        card.classList.add('home-stats-filter-active');
-      }
-
-      if (activeStatsFilter === 'pending' && isPendingStatsCard(card)) {
-        card.classList.add('home-stats-filter-active');
-      }
+      event.preventDefault();
+      applyQuickStatusFilter(status);
     });
   }
 
-  function isHomeFilterButton(btn) {
+  function installStatsCards() {
+    installStatsCard(findVerifiedStatsCard(), VERIFIED_STATUS);
+    installStatsCard(findPendingStatsCard(), PENDING_STATUS);
+    markActiveStatsCard();
+  }
+
+  function markActiveStatsCard() {
+    document.querySelectorAll('.home-stats-filter-card').forEach(function(card) {
+      card.classList.toggle(
+        'home-stats-filter-active',
+        activeStatsQuickFilter && card.dataset.quickStatusValue === activeStatsQuickFilter
+      );
+    });
+  }
+
+  function isFilterButton(btn) {
     if (!btn) return false;
 
-    /*
-      مهم:
-      عندما يتحول الزر إلى X نضع عليه data attribute،
-      لذلك يجب التعرف عليه من هذا الوسم وليس من الأيقونة فقط.
-    */
-    if (btn.dataset.statsFilterCancelButton === '1') return true;
+    if (btn.dataset.quickStatsCancelFilter === '1') return true;
 
     const text = normalizeText(btn.textContent);
     const html = String(btn.innerHTML || '');
 
-    const looksLikeFilter =
+    return (
       text.includes('فلترة') ||
       text.includes('إجراءات الفلترة') ||
-      html.includes('fa-filter');
-
-    if (!looksLikeFilter) return false;
-
-    return !!btn.closest('#homePage, .mobile-search-filter, .desktop-filter-card, .compact-search-bar, .search-filter-bar');
+      html.includes('fa-filter')
+    );
   }
 
   function getFilterButtons() {
-    return Array.from(document.querySelectorAll('button')).filter(isHomeFilterButton);
+    return Array.from(document.querySelectorAll('button')).filter(function(btn) {
+      if (!isFilterButton(btn)) return false;
+
+      return !!btn.closest('#homePage, .mobile-search-filter, .desktop-filter-card, .compact-search-bar, .search-filter-bar');
+    });
   }
 
-  function updateFilterButtonsState() {
+  function updateFilterButtonIcon() {
     getFilterButtons().forEach(function(btn) {
-      if (!originalFilterButtons.has(btn)) {
-        originalFilterButtons.set(btn, btn.innerHTML);
+      if (!originalFilterButtonsHtml.has(btn)) {
+        originalFilterButtonsHtml.set(btn, btn.innerHTML);
       }
 
-      if (isFilterActive()) {
+      if (activeStatsQuickFilter) {
+        btn.dataset.quickStatsCancelFilter = '1';
         btn.classList.add('stats-filter-cancel-mode');
-        btn.dataset.statsFilterCancelButton = '1';
         btn.title = 'إلغاء الفلترة';
+        btn.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
 
         /*
-          المطلوب: يتحول الرمز إلى X فقط.
-          لا نكتب عبارة "إلغاء الفلترة" كي يبقى شكله مثل زر الفلترة.
+          مهم جدًا:
+          نلغي onclick القديم مؤقتًا حتى لا يفتح مودال الفلترة.
         */
-        btn.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+        btn.dataset.oldOnclickQuickStats = btn.getAttribute('onclick') || '';
+        btn.setAttribute('onclick', 'return false;');
       } else {
+        delete btn.dataset.quickStatsCancelFilter;
         btn.classList.remove('stats-filter-cancel-mode');
-        delete btn.dataset.statsFilterCancelButton;
         btn.title = 'إجراءات الفلترة';
 
-        const original = originalFilterButtons.get(btn);
-        if (original) btn.innerHTML = original;
+        const originalHtml = originalFilterButtonsHtml.get(btn);
+        if (originalHtml) btn.innerHTML = originalHtml;
+
+        const oldOnclick = btn.dataset.oldOnclickQuickStats || '';
+
+        if (oldOnclick) {
+          btn.setAttribute('onclick', oldOnclick);
+        } else {
+          btn.removeAttribute('onclick');
+        }
+
+        delete btn.dataset.oldOnclickQuickStats;
       }
     });
   }
 
   /*
-    التقاط الضغط على X قبل وصوله إلى onclick القديم الذي يفتح مودال الفلترة.
+    نلتقط زر X قبل أي onclick قديم أو Bootstrap modal.
   */
   document.addEventListener('click', function(event) {
-    const btn = event.target.closest?.('button');
+    const btn = event.target.closest?.('button[data-quick-stats-cancel-filter="1"]');
 
     if (!btn) return;
-
-    if (btn.dataset.statsFilterCancelButton === '1') {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      clearStatsFilter();
-      return;
-    }
-
-    if (!isFilterActive()) return;
-
-    if (!isHomeFilterButton(btn)) return;
 
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
 
-    clearStatsFilter();
+    clearQuickStatusFilter();
   }, true);
 
   const oldUpdateStatsCards =
     window.updateStatsCards ||
     (typeof updateStatsCards === 'function' ? updateStatsCards : null);
 
-  if (typeof oldUpdateStatsCards === 'function' && !oldUpdateStatsCards.__homeStatsClickFilterWrappedV2) {
+  if (typeof oldUpdateStatsCards === 'function' && !oldUpdateStatsCards.__quickStatusFilterUsingNativeFilter) {
     window.updateStatsCards = function() {
       const result = oldUpdateStatsCards.apply(this, arguments);
 
-      setTimeout(installStatsCardsClickHandlers, 0);
-      requestAnimationFrame(installStatsCardsClickHandlers);
+      setTimeout(installStatsCards, 0);
+      requestAnimationFrame(installStatsCards);
 
       return result;
     };
 
-    window.updateStatsCards.__homeStatsClickFilterWrappedV2 = true;
+    window.updateStatsCards.__quickStatusFilterUsingNativeFilter = true;
 
     try {
       updateStatsCards = window.updateStatsCards;
@@ -384,38 +273,38 @@
     window.showPage ||
     (typeof showPage === 'function' ? showPage : null);
 
-  if (typeof oldShowPage === 'function' && !oldShowPage.__homeStatsClickFilterWrappedV2) {
+  if (typeof oldShowPage === 'function' && !oldShowPage.__quickStatusFilterUsingNativeFilter) {
     window.showPage = function(pageId) {
       const result = oldShowPage.apply(this, arguments);
 
       if (pageId === 'homePage') {
         setTimeout(function() {
-          installStatsCardsClickHandlers();
-          updateFilterButtonsState();
-        }, 120);
+          installStatsCards();
+          updateFilterButtonIcon();
+        }, 150);
       }
 
       return result;
     };
 
-    window.showPage.__homeStatsClickFilterWrappedV2 = true;
+    window.showPage.__quickStatusFilterUsingNativeFilter = true;
 
     try {
       showPage = window.showPage;
     } catch (e) {}
   }
 
-  window.clearHomeStatsStatusFilter = clearStatsFilter;
+  window.clearHomeStatsStatusFilter = clearQuickStatusFilter;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(installStatsCardsClickHandlers, 500);
-      setTimeout(updateFilterButtonsState, 600);
+      setTimeout(installStatsCards, 500);
+      setTimeout(updateFilterButtonIcon, 700);
     });
   } else {
-    setTimeout(installStatsCardsClickHandlers, 500);
-    setTimeout(updateFilterButtonsState, 600);
+    setTimeout(installStatsCards, 500);
+    setTimeout(updateFilterButtonIcon, 700);
   }
 
-  setTimeout(installStatsCardsClickHandlers, 1200);
+  setTimeout(installStatsCards, 1200);
 })();
