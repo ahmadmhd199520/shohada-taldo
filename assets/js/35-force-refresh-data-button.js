@@ -259,7 +259,13 @@ function clearAllTaldoCaches() {
     btn.className = `btn btn-success taldo-force-refresh-btn ${extraClass || ''}`;
     btn.title = 'تحديث قسري للبيانات';
     btn.setAttribute('aria-label', 'تحديث قسري للبيانات');
-    btn.onclick = forceRefreshData;
+    btn.onclick = function() {
+  if (typeof window.forceRefreshTaldoData === 'function') {
+    return window.forceRefreshTaldoData();
+  }
+
+  return forceRefreshData();
+};
     btn.innerHTML = `<i class="fa-solid fa-rotate"></i>`;
     return btn;
   }
