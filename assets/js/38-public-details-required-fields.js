@@ -155,12 +155,14 @@
     const actionsBar = detailBox.querySelector('.details-action-bar');
 
     const extraHtml = `
-      <hr class="public-extra-info-separator">
-      <div class="public-extra-info-missing">
-        <h6 class="fw-bold">معلومات إضافية</h6>
-        <p class="lh-lg mb-0">${missingValueHtml()}</p>
-      </div>
-    `;
+  <hr class="public-extra-info-separator">
+  <div class="public-extra-info-missing">
+    <h6 class="fw-bold">معلومات إضافية</h6>
+    <p class="lh-lg mb-0">
+      <span class="public-no-extra-info">لا يوجد</span>
+    </p>
+  </div>
+`;
 
     if (actionsBar) {
       actionsBar.insertAdjacentHTML('beforebegin', extraHtml);
