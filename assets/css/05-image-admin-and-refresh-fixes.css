@@ -54,6 +54,7 @@
 .section-refresh-btn {
   border-radius: 12px;
   white-space: nowrap;
+  display: none;
 }
 
   .text-bg-light {
