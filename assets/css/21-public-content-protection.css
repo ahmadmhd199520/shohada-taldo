@@ -319,3 +319,20 @@ body.dark-mode .public-missing-field {
     padding-block: 9px;
   }
 }
+.public-no-extra-info {
+  color: #6c757d !important;
+  background: rgba(108, 117, 125, 0.12);
+  border: 1px solid rgba(108, 117, 125, 0.25);
+  border-radius: 999px;
+  padding: 3px 10px;
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+html[data-theme="dark"] .public-no-extra-info,
+body.dark-mode .public-no-extra-info {
+  color: #d0d0d0 !important;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
