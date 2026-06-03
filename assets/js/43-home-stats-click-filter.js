@@ -64,22 +64,18 @@
   }
 
   function getMainSourceListForFilter() {
-    /*
-      إذا كان الأدمن مسجلًا، dashboardData قد تحتوي أسماء قيد التدقيق أكثر من allMartyrs.
-      أما للزوار نعتمد على allMartyrs.
-    */
-    try {
-      if (isAdminLoggedIn && Array.isArray(dashboardData) && dashboardData.length) {
-        return dashboardData;
-      }
-    } catch (e) {}
-
-    try {
-      return Array.isArray(allMartyrs) ? allMartyrs : [];
-    } catch (e) {
-      return [];
+  try {
+    if (isAdminLoggedIn && Array.isArray(dashboardData) && dashboardData.length) {
+      return dashboardData;
     }
+  } catch (e) {}
+
+  try {
+    return Array.isArray(allMartyrs) ? allMartyrs : [];
+  } catch (e) {
+    return [];
   }
+}
 
   function applyStatsFilter(type) {
     activeStatsFilter = type;
