@@ -226,3 +226,36 @@ html.taldo-public-protection:not(.taldo-admin-mode) [role="searchbox"]::-moz-sel
   background: #428177 !important;
   color: #ffffff !important;
 }
+
+
+
+.public-missing-field {
+  color: #b77900 !important;
+  background: rgba(255, 193, 7, 0.18);
+  border: 1px solid rgba(255, 193, 7, 0.45);
+  border-radius: 999px;
+  padding: 3px 10px;
+  display: inline-block;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.public-extra-info-missing {
+  background: #fff8e1;
+  border: 1px solid rgba(255, 193, 7, 0.45);
+  border-radius: 18px;
+  padding: 14px;
+  margin-top: 14px;
+}
+
+html[data-theme="dark"] .public-extra-info-missing,
+body.dark-mode .public-extra-info-missing {
+  background: rgba(255, 193, 7, 0.10);
+  border-color: rgba(255, 193, 7, 0.35);
+}
+
+html[data-theme="dark"] .public-missing-field,
+body.dark-mode .public-missing-field {
+  color: #ffd666 !important;
+  background: rgba(255, 193, 7, 0.14);
+}
