@@ -15,7 +15,7 @@
     display: flex;
     gap: 19px;
     overflow-x: auto;
-    padding-bottom: 2px;
+    padding-bottom: 12px;
     justify-content: flex-start;
     padding-top: 10px;
     /* align-content: center; */
