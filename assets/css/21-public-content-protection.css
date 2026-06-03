@@ -481,3 +481,77 @@ body.dark-mode .taldo-admin-rejected-card::before {
       rgba(220, 53, 69, 0.12) 20px
     );
 }
+
+/* جدول التوثيقات في الجوال */
+/* ===== Mobile verification table: fit 4 columns without horizontal scroll ===== */
+@media (max-width: 576px) {
+  #dashboardPage table {
+    max-width: 100% !important;
+  }
+
+  #dashboardPage .table-responsive {
+    overflow-x: hidden !important;
+  }
+
+  /*
+    نطبقها فقط على جدول التوثيقات إذا أضفنا له الكلاس verification-mobile-fit-table
+  */
+  #dashboardPage table.verification-mobile-fit-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
+  }
+
+  #dashboardPage table.verification-mobile-fit-table th,
+  #dashboardPage table.verification-mobile-fit-table td {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    vertical-align: middle !important;
+    padding: 6px 4px !important;
+    font-size: 0.7rem !important;
+    line-height: 1.45 !important;
+  }
+
+  #dashboardPage table.verification-mobile-fit-table th {
+    font-size: 0.66rem !important;
+    font-weight: 800 !important;
+  }
+
+  #dashboardPage table.verification-mobile-fit-table th:nth-child(1),
+  #dashboardPage table.verification-mobile-fit-table td:nth-child(1) {
+    width: 40% !important;
+  }
+
+  #dashboardPage table.verification-mobile-fit-table th:nth-child(2),
+  #dashboardPage table.verification-mobile-fit-table td:nth-child(2) {
+    width: 24% !important;
+  }
+
+  #dashboardPage table.verification-mobile-fit-table th:nth-child(3),
+  #dashboardPage table.verification-mobile-fit-table td:nth-child(3) {
+    width: 18% !important;
+  }
+
+  #dashboardPage table.verification-mobile-fit-table th:nth-child(4),
+  #dashboardPage table.verification-mobile-fit-table td:nth-child(4) {
+    width: 18% !important;
+  }
+
+  #dashboardPage table.verification-mobile-fit-table .btn,
+  #dashboardPage table.verification-mobile-fit-table button {
+    white-space: normal !important;
+    font-size: 0.62rem !important;
+    line-height: 1.25 !important;
+    padding: 4px 5px !important;
+    border-radius: 8px !important;
+    max-width: 100% !important;
+  }
+
+  #dashboardPage table.verification-mobile-fit-table .badge {
+    white-space: normal !important;
+    font-size: 0.6rem !important;
+    line-height: 1.25 !important;
+    padding: 4px 5px !important;
+  }
+}
