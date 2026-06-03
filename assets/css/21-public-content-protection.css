@@ -579,7 +579,7 @@ body.dark-mode .taldo-admin-rejected-card::before {
   #dashboardDataUpdatesTab table td,
   #dashboardJoinRequestsTab table th,
   #dashboardJoinRequestsTab table td {
-    white-space: nowrap !important;
+    /* white-space: nowrap !important; */
   }
 
   /* نبقي منع التمرير فقط على جدول التوثيقات */
