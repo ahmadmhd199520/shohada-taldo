@@ -555,3 +555,42 @@ body.dark-mode .taldo-admin-rejected-card::before {
     padding: 4px 5px !important;
   }
 }
+
+
+/* إصلاح تمرير جداول الاستكمال وطلبات الانضمام في الجوال */
+@media (max-width: 576px) {
+  #dashboardDataUpdatesTab .table-responsive,
+  #dashboardJoinRequestsTab .table-responsive {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
+  }
+
+  #dashboardDataUpdatesTab table,
+  #dashboardJoinRequestsTab table {
+    width: max-content !important;
+    min-width: 760px !important;
+    max-width: none !important;
+    table-layout: auto !important;
+  }
+
+  #dashboardDataUpdatesTab table th,
+  #dashboardDataUpdatesTab table td,
+  #dashboardJoinRequestsTab table th,
+  #dashboardJoinRequestsTab table td {
+    white-space: nowrap !important;
+  }
+
+  /* نبقي منع التمرير فقط على جدول التوثيقات */
+  #dashboardMartyrsTab .table-responsive {
+    overflow-x: hidden !important;
+  }
+
+  #dashboardMartyrsTab table.verification-mobile-fit-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
+  }
+}
