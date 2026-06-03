@@ -259,3 +259,63 @@ body.dark-mode .public-missing-field {
   color: #ffd666 !important;
   background: rgba(255, 193, 7, 0.14);
 }
+
+
+
+/* ===== Photo upload button in martyr details ===== */
+
+.details-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.details-photo-upload-btn {
+  position: relative;
+  overflow: hidden;
+  border: 0 !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7a1020, #c6283d, #f04b5f) !important;
+  box-shadow: 0 0 0 rgba(198, 40, 61, 0.42);
+  animation: taldoPhotoUploadPulse 1.85s ease-in-out infinite;
+}
+
+.details-photo-upload-btn:hover,
+.details-photo-upload-btn:focus {
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px rgba(198, 40, 61, 0.48) !important;
+}
+
+.details-photo-upload-btn i {
+  font-size: 1rem;
+}
+
+@keyframes taldoPhotoUploadPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(198, 40, 61, 0.55);
+  }
+
+  65% {
+    box-shadow: 0 0 0 11px rgba(198, 40, 61, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(198, 40, 61, 0);
+  }
+}
+
+@media (max-width: 576px) {
+  .details-action-bar {
+    gap: 8px;
+  }
+
+  .details-photo-upload-btn {
+    flex: 1 0 100%;
+    width: 100%;
+    justify-content: center;
+    padding-block: 9px;
+  }
+}
