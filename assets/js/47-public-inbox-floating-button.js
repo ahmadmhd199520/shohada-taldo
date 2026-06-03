@@ -133,7 +133,7 @@
                 class="form-control"
                 id="taldoInboxMessageText"
                 rows="5"
-                placeholder="اكتب رسالتك هنا"
+                placeholder="اكتب رسالتك لفريق العمل هنا"
               ></textarea>
             </div>
 
