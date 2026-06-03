@@ -336,3 +336,21 @@ body.dark-mode .public-no-extra-info {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.16);
 }
+
+
+
+.data-update-direct-approve-btn {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+  #dataUpdateModal .modal-footer {
+    gap: 8px;
+  }
+
+  #dataUpdateModal .modal-footer .btn {
+    flex: 1 0 100%;
+    width: 100%;
+  }
+}
