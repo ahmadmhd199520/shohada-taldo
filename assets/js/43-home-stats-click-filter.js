@@ -47,27 +47,10 @@
   }
 
   function isPendingItem(item) {
-    const status = getStatusValue(item);
+  const status = getStatusValue(item);
 
-    /*
-      الأهم هنا:
-      أي اسم ليس موثقًا وليس مرفوضًا نعتبره قيد التدقيق.
-      هذا يحل مشكلة اختلاف تسمية الحالة في الشيت:
-      بانتظار التوثيق / بانتظار التوثق / قيد التدقيق / فارغة...
-    */
-    if (!isVerifiedItem(item) && !isRejectedItem(item)) {
-      return true;
-    }
-
-    return (
-      status === 'بانتظار التوثيق' ||
-      status === 'بانتظار التوثق' ||
-      status === 'قيد التدقيق' ||
-      status === 'قيد المراجعة' ||
-      status === 'بانتظار المراجعة' ||
-      status === 'pending'
-    );
-  }
+  return status === 'بانتظار التوثيق';
+}
 
   function isFilterActive() {
     return activeStatsFilter === 'verified' || activeStatsFilter === 'pending';
