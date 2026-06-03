@@ -392,3 +392,13 @@ body.dark-mode .public-no-extra-info {
 .gallery-primary-btn i {
   font-size: 0.75rem;
 }
+.martyrdom-date-help {
+  font-size: 0.78rem;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+html[data-theme="dark"] .martyrdom-date-help,
+body.dark-mode .martyrdom-date-help {
+  color: #c9c9c9;
+}
