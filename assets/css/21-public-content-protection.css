@@ -354,3 +354,41 @@ body.dark-mode .public-no-extra-info {
     width: 100%;
   }
 }
+
+
+.gallery-primary-btn {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px !important;
+  padding: 0 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  font-size: 0.78rem !important;
+  box-shadow: 0 6px 16px rgba(255, 193, 7, 0.45);
+  z-index: 4;
+}
+
+.gallery-primary-badge {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #ffc107;
+  color: #212529;
+  border-radius: 999px;
+  padding: 4px 7px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  box-shadow: 0 6px 16px rgba(255, 193, 7, 0.45);
+  z-index: 4;
+}
+
+.gallery-primary-badge i,
+.gallery-primary-btn i {
+  font-size: 0.75rem;
+}
