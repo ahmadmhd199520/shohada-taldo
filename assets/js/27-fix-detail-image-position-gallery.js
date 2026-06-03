@@ -193,35 +193,66 @@
             </div>
 
             <div class="gallery-thumb-row">
-              ${images.map((img, index) => {
-                const thumbStyle = getDetailImageStyleForFix(img);
-                const isActive = index === activeIndex;
+${images.map((img, index) => {
+  const thumbStyle = getDetailImageStyleForFix(img);
+  const isActive = index === activeIndex;
 
-                return `
-                  <div class="gallery-thumb-item">
-                    <button
-                      type="button"
-                      class="gallery-thumb-crop ${isActive ? 'is-active' : ''}"
-                      onclick="setGalleryImageIndex(${index})"
-                      aria-label="عرض الصورة ${index + 1}"
-                    >
-                      <img src="${escapeAttr(img.src)}" alt="" style="${thumbStyle}">
-                    </button>
+  let isPrimary = false;
 
-                    ${typeof deleteMartyrImageFromDetails === 'function' ? `
-                      <button
-                        type="button"
-                        class="btn btn-danger gallery-delete-btn"
-                        title="حذف الصورة"
-                        onclick="event.stopPropagation(); deleteMartyrImageFromDetails(${index})"
-                      >
-                        <i class="fa-solid fa-xmark"></i>
-                      </button>
-                    ` : ''}
-                  </div>
-                `;
-              }).join('')}
-            </div>
+  try {
+    if (typeof featureIsPrimaryImage === 'function') {
+      isPrimary = featureIsPrimaryImage(img, source);
+    } else {
+      isPrimary =
+        String(img.is_primary || '').trim() === 'نعم' ||
+        String(img.isPrimary || '').trim() === 'true';
+    }
+  } catch (e) {
+    isPrimary =
+      String(img.is_primary || '').trim() === 'نعم' ||
+      String(img.isPrimary || '').trim() === 'true';
+  }
+
+  return `
+    <div class="gallery-thumb-item">
+      <button
+        type="button"
+        class="gallery-thumb-crop ${isActive ? 'is-active' : ''}"
+        onclick="setGalleryImageIndex(${index})"
+        aria-label="عرض الصورة ${index + 1}"
+      >
+        <img src="${escapeAttr(img.src)}" alt="" style="${thumbStyle}">
+      </button>
+
+      ${typeof deleteMartyrImageFromDetails === 'function' ? `
+        <button
+          type="button"
+          class="btn btn-danger gallery-delete-btn"
+          title="حذف الصورة"
+          onclick="event.stopPropagation(); deleteMartyrImageFromDetails(${index})"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      ` : ''}
+
+      ${isPrimary ? `
+        <span class="gallery-primary-badge" title="الصورة الرئيسية">
+          <i class="fa-solid fa-star"></i>
+          رئيسية
+        </span>
+      ` : `
+        <button
+          type="button"
+          class="btn btn-warning gallery-primary-btn"
+          title="تعيين كصورة رئيسية"
+          onclick="event.stopPropagation(); setPrimaryMartyrImageFromDetails(${index})"
+        >
+          <i class="fa-solid fa-star"></i>
+        </button>
+      `}
+    </div>
+  `;
+}).join('')}            </div>
           </div>
         ` : ''}
 
