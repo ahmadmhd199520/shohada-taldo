@@ -72,13 +72,12 @@
     return `<span class="badge text-bg-light">${html(status || 'بانتظار التوثيق')}</span>`;
   }
 
-  function dashboardStatusClass(status) {
-    const text = String(status || '').trim();
-    if (text === 'موثق') return 'is-approved';
-    if (text === 'مرفوض') return 'is-rejected';
-    return 'is-pending';
-  }
-
+function dashboardStatusClass(status) {
+  const text = String(status || '').trim();
+  if (text === 'موثق') return 'verified';
+  if (text === 'مرفوض') return 'rejected';
+  return 'pending';
+}
   function driveFileId(url) {
     if (typeof extractDriveFileId === 'function') return extractDriveFileId(url || '');
     const text = String(url || '');
