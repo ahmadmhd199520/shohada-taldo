@@ -515,38 +515,60 @@
     window.showDashboardTab ||
     (typeof showDashboardTab === 'function' ? showDashboardTab : null);
 
-  window.showDashboardTab = function(tabName) {
-    if (tabName === 'inbox') {
+function deactivateInboxDashboardTab() {
+  const inboxPane = document.getElementById('dashboardInboxTab');
+  const inboxBtn = document.getElementById('dashInboxTabBtn');
+
+  if (inboxPane) {
+    inboxPane.classList.add('d-none');
+    inboxPane.classList.remove('active');
+  }
+
+  if (inboxBtn) {
+    inboxBtn.classList.remove('active');
+  }
+}
+
+window.showDashboardTab = function(tabName) {
+  if (tabName === 'inbox') {
+    ensureDashboardInboxTab();
+
+    document.querySelectorAll('.dashboard-tab-pane').forEach(function(pane) {
+      pane.classList.add('d-none');
+      pane.classList.remove('active');
+    });
+
+    document.querySelectorAll('#dashboardPage .nav-link, .dashboard-tabs .nav-link').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+
+    document.getElementById('dashboardInboxTab')?.classList.remove('d-none');
+    document.getElementById('dashboardInboxTab')?.classList.add('active');
+    document.getElementById('dashInboxTabBtn')?.classList.add('active');
+
+    renderInboxTable();
+    return;
+  }
+
+  /*
+    مهم:
+    عند فتح أي تبويب آخر، نخفي تبويب صندوق الوارد ونزيل عنه active
+    حتى لا يبقى أزرق مع التبويب الجديد.
+  */
+  deactivateInboxDashboardTab();
+
+  if (typeof oldShowDashboardTab === 'function') {
+    const result = oldShowDashboardTab.apply(this, arguments);
+
+    setTimeout(function() {
+      deactivateInboxDashboardTab();
       ensureDashboardInboxTab();
-
-      document.querySelectorAll('.dashboard-tab-pane').forEach(function(pane) {
-        pane.classList.add('d-none');
-        pane.classList.remove('active');
-      });
-
-      document.querySelectorAll('#dashboardPage .nav-link, .dashboard-tabs .nav-link').forEach(function(btn) {
-        btn.classList.remove('active');
-      });
-
-      document.getElementById('dashboardInboxTab')?.classList.remove('d-none');
-      document.getElementById('dashboardInboxTab')?.classList.add('active');
-      document.getElementById('dashInboxTabBtn')?.classList.add('active');
-
       renderInboxTable();
-      return;
-    }
+    }, 120);
 
-    if (typeof oldShowDashboardTab === 'function') {
-      const result = oldShowDashboardTab.apply(this, arguments);
-
-      setTimeout(function() {
-        ensureDashboardInboxTab();
-        renderInboxTable();
-      }, 120);
-
-      return result;
-    }
-  };
+    return result;
+  }
+};
 
   try {
     showDashboardTab = window.showDashboardTab;
