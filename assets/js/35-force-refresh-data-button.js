@@ -38,48 +38,31 @@
     setTimeout(restore, 150);
   }
 
-  function clearAllTaldoCaches() {
-    try {
-      if (typeof window.clearTaldoAllClientCaches === 'function') {
-        window.clearTaldoAllClientCaches();
+function clearAllTaldoCaches() {
+  /*
+    مهم جدًا:
+    لا نمسح sessionStorage هنا إطلاقًا
+    ولا نمسح كل مفاتيح taldo_
+    لأن جلسة الأدمن قد تكون محفوظة هناك.
+    نمسح فقط كاش بيانات API.
+  */
+
+  try {
+    Object.keys(localStorage).forEach(function(key) {
+      if (
+        key.startsWith('taldo_api_cache') ||
+        key.startsWith('taldo_api_cache_v5:')
+      ) {
+        localStorage.removeItem(key);
       }
-    } catch (e) {}
+    });
+  } catch (e) {}
 
-    try {
-      Object.keys(localStorage).forEach(function(key) {
-        if (
-          key.startsWith('taldo_api_cache') ||
-          key.includes('taldo_api') ||
-          key.includes('martyrs') ||
-          key.includes('dashboard') ||
-          key.includes('taldo_public')
-        ) {
-          localStorage.removeItem(key);
-        }
-      });
-    } catch (e) {}
-
-    try {
-      Object.keys(sessionStorage).forEach(function(key) {
-        if (
-          key.startsWith('taldo_api_cache') ||
-          key.includes('taldo_api') ||
-          key.includes('martyrs') ||
-          key.includes('dashboard') ||
-          key.includes('taldo_public')
-        ) {
-          sessionStorage.removeItem(key);
-        }
-      });
-    } catch (e) {}
-
-    try {
-      if (typeof window.forceTaldoPublicFreshData === 'function') {
-        window.forceTaldoPublicFreshData();
-      }
-    } catch (e) {}
-  }
-
+  try {
+    window.__taldoBypassPublicCacheUntil = Date.now() + 120 * 1000;
+  } catch (e) {}
+}
+  
   function invalidatePreparedRows(list) {
     if (!Array.isArray(list)) return;
 
