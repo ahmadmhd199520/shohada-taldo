@@ -19,22 +19,53 @@
   }
 
   function getStatusValue(item) {
-    return normalizeText(item?.verification_status || item?.status || '');
+    return normalizeText(
+      item?.verification_status ||
+      item?.status ||
+      item?.verificationStatus ||
+      ''
+    );
   }
 
   function isVerifiedItem(item) {
-    return getStatusValue(item) === 'موثق';
+    const status = getStatusValue(item);
+
+    return (
+      status === 'موثق' ||
+      status === 'تم التوثيق' ||
+      status === 'verified'
+    );
+  }
+
+  function isRejectedItem(item) {
+    const status = getStatusValue(item);
+
+    return (
+      status === 'مرفوض' ||
+      status === 'rejected'
+    );
   }
 
   function isPendingItem(item) {
     const status = getStatusValue(item);
+
+    /*
+      الأهم هنا:
+      أي اسم ليس موثقًا وليس مرفوضًا نعتبره قيد التدقيق.
+      هذا يحل مشكلة اختلاف تسمية الحالة في الشيت:
+      بانتظار التوثيق / بانتظار التوثق / قيد التدقيق / فارغة...
+    */
+    if (!isVerifiedItem(item) && !isRejectedItem(item)) {
+      return true;
+    }
 
     return (
       status === 'بانتظار التوثيق' ||
       status === 'بانتظار التوثق' ||
       status === 'قيد التدقيق' ||
       status === 'قيد المراجعة' ||
-      status === 'بانتظار المراجعة'
+      status === 'بانتظار المراجعة' ||
+      status === 'pending'
     );
   }
 
@@ -47,6 +78,24 @@
     try { martyrsCurrentPage = 1; } catch (e) {}
     try { window.currentPage = 1; } catch (e) {}
     try { window.martyrsCurrentPage = 1; } catch (e) {}
+  }
+
+  function getMainSourceListForFilter() {
+    /*
+      إذا كان الأدمن مسجلًا، dashboardData قد تحتوي أسماء قيد التدقيق أكثر من allMartyrs.
+      أما للزوار نعتمد على allMartyrs.
+    */
+    try {
+      if (isAdminLoggedIn && Array.isArray(dashboardData) && dashboardData.length) {
+        return dashboardData;
+      }
+    } catch (e) {}
+
+    try {
+      return Array.isArray(allMartyrs) ? allMartyrs : [];
+    } catch (e) {
+      return [];
+    }
   }
 
   function applyStatsFilter(type) {
@@ -103,15 +152,11 @@
     return list;
   }
 
-  /*
-    نغلف renderMartyrs:
-    إذا كان فلتر الإحصائيات مفعلًا، نجعل renderMartyrs يرى قائمة مفلترة مؤقتًا.
-  */
   const oldRenderMartyrs =
     window.renderMartyrs ||
     (typeof renderMartyrs === 'function' ? renderMartyrs : null);
 
-  if (typeof oldRenderMartyrs === 'function' && !oldRenderMartyrs.__homeStatsClickFilterWrapped) {
+  if (typeof oldRenderMartyrs === 'function' && !oldRenderMartyrs.__homeStatsClickFilterWrappedV2) {
     window.renderMartyrs = function(customList) {
       if (!isFilterActive()) {
         return oldRenderMartyrs.apply(this, arguments);
@@ -127,9 +172,8 @@
       try {
         originalAllMartyrs = allMartyrs;
 
-        if (Array.isArray(allMartyrs)) {
-          allMartyrs = filterListByActiveStats(allMartyrs);
-        }
+        const source = getMainSourceListForFilter();
+        allMartyrs = filterListByActiveStats(source);
 
         return oldRenderMartyrs.apply(this, arguments);
       } finally {
@@ -141,7 +185,7 @@
       }
     };
 
-    window.renderMartyrs.__homeStatsClickFilterWrapped = true;
+    window.renderMartyrs.__homeStatsClickFilterWrappedV2 = true;
 
     try {
       renderMartyrs = window.renderMartyrs;
@@ -152,11 +196,15 @@
     const text = normalizeText(el.textContent);
 
     return (
-      text.includes('الموثق') ||
-      text.includes('موثقين') ||
-      text.includes('تم التوثق') ||
-      text.includes('تم التحقق')
-    ) && !text.includes('بانتظار');
+      (
+        text.includes('الموثق') ||
+        text.includes('موثقين') ||
+        text.includes('تم التوثق') ||
+        text.includes('تم التحقق')
+      ) &&
+      !text.includes('بانتظار') &&
+      !text.includes('قيد')
+    );
   }
 
   function isPendingStatsCard(el) {
@@ -166,8 +214,11 @@
       text.includes('بانتظار التوثيق') ||
       text.includes('بانتظار التوثق') ||
       text.includes('قيد التدقيق') ||
+      text.includes('قيد التحقق') ||
       text.includes('يتم تدقيقها') ||
-      text.includes('أسماء يتم تدقيقها')
+      text.includes('أسماء يتم تدقيقها') ||
+      text.includes('تحتاج للتوثيق') ||
+      text.includes('غير موثقة')
     );
   }
 
@@ -250,6 +301,13 @@
   function isHomeFilterButton(btn) {
     if (!btn) return false;
 
+    /*
+      مهم:
+      عندما يتحول الزر إلى X نضع عليه data attribute،
+      لذلك يجب التعرف عليه من هذا الوسم وليس من الأيقونة فقط.
+    */
+    if (btn.dataset.statsFilterCancelButton === '1') return true;
+
     const text = normalizeText(btn.textContent);
     const html = String(btn.innerHTML || '');
 
@@ -275,15 +333,17 @@
 
       if (isFilterActive()) {
         btn.classList.add('stats-filter-cancel-mode');
+        btn.dataset.statsFilterCancelButton = '1';
         btn.title = 'إلغاء الفلترة';
 
-        const isIconOnly = normalizeText(btn.textContent).length <= 2;
-
-        btn.innerHTML = isIconOnly
-          ? `<i class="fa-solid fa-xmark"></i>`
-          : `<i class="fa-solid fa-xmark ms-1"></i> إلغاء الفلترة`;
+        /*
+          المطلوب: يتحول الرمز إلى X فقط.
+          لا نكتب عبارة "إلغاء الفلترة" كي يبقى شكله مثل زر الفلترة.
+        */
+        btn.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
       } else {
         btn.classList.remove('stats-filter-cancel-mode');
+        delete btn.dataset.statsFilterCancelButton;
         btn.title = 'إجراءات الفلترة';
 
         const original = originalFilterButtons.get(btn);
@@ -293,15 +353,25 @@
   }
 
   /*
-    عند تفعيل فلتر الإحصائيات، زر الفلترة يتحول إلى إلغاء.
-    نلتقط الضغط عليه قبل أن يفتح مودال الفلترة القديم.
+    التقاط الضغط على X قبل وصوله إلى onclick القديم الذي يفتح مودال الفلترة.
   */
   document.addEventListener('click', function(event) {
-    if (!isFilterActive()) return;
-
     const btn = event.target.closest?.('button');
 
-    if (!btn || !isHomeFilterButton(btn)) return;
+    if (!btn) return;
+
+    if (btn.dataset.statsFilterCancelButton === '1') {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      clearStatsFilter();
+      return;
+    }
+
+    if (!isFilterActive()) return;
+
+    if (!isHomeFilterButton(btn)) return;
 
     event.preventDefault();
     event.stopPropagation();
@@ -310,14 +380,11 @@
     clearStatsFilter();
   }, true);
 
-  /*
-    إذا تم فتح الصفحة أو أعيد رسم الإحصائيات، نعيد تثبيت الأحداث.
-  */
   const oldUpdateStatsCards =
     window.updateStatsCards ||
     (typeof updateStatsCards === 'function' ? updateStatsCards : null);
 
-  if (typeof oldUpdateStatsCards === 'function' && !oldUpdateStatsCards.__homeStatsClickFilterWrapped) {
+  if (typeof oldUpdateStatsCards === 'function' && !oldUpdateStatsCards.__homeStatsClickFilterWrappedV2) {
     window.updateStatsCards = function() {
       const result = oldUpdateStatsCards.apply(this, arguments);
 
@@ -327,7 +394,7 @@
       return result;
     };
 
-    window.updateStatsCards.__homeStatsClickFilterWrapped = true;
+    window.updateStatsCards.__homeStatsClickFilterWrappedV2 = true;
 
     try {
       updateStatsCards = window.updateStatsCards;
@@ -338,7 +405,7 @@
     window.showPage ||
     (typeof showPage === 'function' ? showPage : null);
 
-  if (typeof oldShowPage === 'function' && !oldShowPage.__homeStatsClickFilterWrapped) {
+  if (typeof oldShowPage === 'function' && !oldShowPage.__homeStatsClickFilterWrappedV2) {
     window.showPage = function(pageId) {
       const result = oldShowPage.apply(this, arguments);
 
@@ -352,7 +419,7 @@
       return result;
     };
 
-    window.showPage.__homeStatsClickFilterWrapped = true;
+    window.showPage.__homeStatsClickFilterWrappedV2 = true;
 
     try {
       showPage = window.showPage;
