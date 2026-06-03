@@ -4,10 +4,10 @@
   const PUBLIC_MISSING_TEXT = 'بيانات تحتاج لاستكمال';
 
   const REQUIRED_PUBLIC_FIELDS = [
-    {
-      label: 'اللقب',
-      field: 'nickname'
-    },
+    // {
+    //   label: 'اللقب',
+    //   field: 'nickname'
+    // },
     {
       label: 'استشهد بـ',
       field: 'martyrdom_type'
