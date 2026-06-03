@@ -402,3 +402,29 @@ html[data-theme="dark"] .martyrdom-date-help,
 body.dark-mode .martyrdom-date-help {
   color: #c9c9c9;
 }
+.home-stats-filter-card {
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.home-stats-filter-card:hover {
+  transform: translateY(-2px);
+}
+
+.home-stats-filter-active {
+  border: 2px solid #ffc107 !important;
+  box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.18), 0 14px 34px rgba(0, 0, 0, 0.12) !important;
+}
+
+.stats-filter-cancel-mode {
+  background: #6b1f2a !important;
+  border-color: #6b1f2a !important;
+  color: #ffffff !important;
+}
+
+.stats-filter-cancel-mode:hover,
+.stats-filter-cancel-mode:focus {
+  background: #4a151e !important;
+  border-color: #4a151e !important;
+  color: #ffffff !important;
+}
