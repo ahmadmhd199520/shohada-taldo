@@ -194,44 +194,42 @@
     });
   }
 
-  function updateFilterButtonIcon() {
-    getFilterButtons().forEach(function(btn) {
-      if (!originalFilterButtonsHtml.has(btn)) {
-        originalFilterButtonsHtml.set(btn, btn.innerHTML);
+function updateFilterButtonIcon() {
+  getFilterButtons().forEach(function(btn) {
+    if (!originalFilterButtonsHtml.has(btn)) {
+      originalFilterButtonsHtml.set(btn, btn.innerHTML);
+    }
+
+    if (activeStatsQuickFilter) {
+      btn.dataset.quickStatsCancelFilter = '1';
+      btn.classList.add('stats-filter-cancel-mode');
+      btn.title = 'إلغاء الفلترة';
+      btn.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+
+      /*
+        مهم:
+        لا نغيّر onclick هنا.
+        سنمنع فتح المودال من event listener فقط عندما يكون الزر X.
+      */
+    } else {
+      delete btn.dataset.quickStatsCancelFilter;
+      btn.classList.remove('stats-filter-cancel-mode');
+      btn.title = 'إجراءات الفلترة';
+
+      const originalHtml = originalFilterButtonsHtml.get(btn);
+      if (originalHtml) btn.innerHTML = originalHtml;
+
+      /*
+        تنظيف أي أثر قديم من النسخة السابقة التي كانت تضع onclick="return false;"
+      */
+      const onclickValue = String(btn.getAttribute('onclick') || '').trim();
+
+      if (onclickValue === 'return false;' || onclickValue === 'return false') {
+        btn.removeAttribute('onclick');
       }
-
-      if (activeStatsQuickFilter) {
-        btn.dataset.quickStatsCancelFilter = '1';
-        btn.classList.add('stats-filter-cancel-mode');
-        btn.title = 'إلغاء الفلترة';
-        btn.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
-
-        /*
-          مهم جدًا:
-          نلغي onclick القديم مؤقتًا حتى لا يفتح مودال الفلترة.
-        */
-        btn.dataset.oldOnclickQuickStats = btn.getAttribute('onclick') || '';
-        btn.setAttribute('onclick', 'return false;');
-      } else {
-        delete btn.dataset.quickStatsCancelFilter;
-        btn.classList.remove('stats-filter-cancel-mode');
-        btn.title = 'إجراءات الفلترة';
-
-        const originalHtml = originalFilterButtonsHtml.get(btn);
-        if (originalHtml) btn.innerHTML = originalHtml;
-
-        const oldOnclick = btn.dataset.oldOnclickQuickStats || '';
-
-        if (oldOnclick) {
-          btn.setAttribute('onclick', oldOnclick);
-        } else {
-          btn.removeAttribute('onclick');
-        }
-
-        delete btn.dataset.oldOnclickQuickStats;
-      }
-    });
-  }
+    }
+  });
+}
 
   /*
     نلتقط زر X قبل أي onclick قديم أو Bootstrap modal.
