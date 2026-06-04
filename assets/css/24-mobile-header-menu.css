@@ -279,3 +279,16 @@ body.dark-mode .taldo-mobile-menu-item:focus {
 body.dark-mode .taldo-mobile-menu-divider {
   background: rgba(255,255,255,.12) !important;
 }
+
+
+
+/* لون خلفية صورة الشهيد البديلة في الوضع الليلي */
+body.dark-mode .martyr-placeholder,
+html[data-theme="dark"] .martyr-placeholder {
+  background: #313437 !important;
+}
+
+body.dark-mode .martyr-placeholder i,
+html[data-theme="dark"] .martyr-placeholder i {
+  color: #9ca3af !important;
+}
