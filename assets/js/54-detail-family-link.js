@@ -58,12 +58,17 @@
 
 
       .taldo-simple-search-box {
-        background: rgba(255,255,255,.92) !important;
+        position: sticky !important;
+        top: 10px !important;
+        z-index: 1050 !important;
+        background: linear-gradient(180deg, rgba(255,255,255,.99), rgba(255,255,255,.93)) !important;
         border: 1px solid rgba(13, 110, 253, .12) !important;
         border-radius: 18px !important;
         padding: 10px 12px !important;
         margin: 0 0 16px 0 !important;
-        box-shadow: 0 10px 26px rgba(15, 35, 65, .08) !important;
+        box-shadow: 0 10px 24px rgba(15, 35, 65, .08) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
       }
 
       .taldo-simple-search-inner {
@@ -108,7 +113,7 @@
       [data-bs-theme="dark"] .taldo-simple-search-box,
       body.dark-mode .taldo-simple-search-box,
       body.dark .taldo-simple-search-box {
-        background: rgba(10, 28, 27, .94) !important;
+        background: linear-gradient(180deg, rgba(10, 28, 27, .98), rgba(10, 28, 27, .92)) !important;
         border-color: rgba(185, 167, 121, .22) !important;
         box-shadow: 0 12px 28px rgba(0, 0, 0, .28) !important;
       }
