@@ -1,10 +1,10 @@
 (function () {
   const ABOUT_SETTING_KEY = 'about_us_text';
   const ABOUT_FORMAT = 'about_sections_v1';
-  const ABOUT_HERO_IMAGE = './assets/site-preview.png';
   const ABOUT_LOGO_IMAGE = './assets/favicon-512.png';
 
   let aboutRenderTimer = null;
+  let isRenderingAbout = false;
 
   function escapeHtml(value) {
     return String(value || '')
@@ -19,10 +19,18 @@
     return escapeHtml(value).replace(/`/g, '&#096;');
   }
 
+  function decodeHtmlEntities(value) {
+    const text = String(value || '');
+    if (!/[&][a-zA-Z#0-9]+;/.test(text)) return text;
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+  }
+
   function getDefaultSections() {
     return [
       {
-        title: 'هدف المشروع',
+        title: 'من نحن',
         body: 'أرشيف شهداء تلدو هو مشروع توثيقي إنساني يهدف إلى حفظ أسماء شهداء مدينة تلدو وجمع ما يتيسر من بياناتهم وصورهم ومعلوماتهم في أرشيف رقمي منظم.'
       },
       {
@@ -32,10 +40,6 @@
       {
         title: 'كيف يمكن المساهمة',
         body: 'يمكنكم المساهمة بإرسال معلومة ناقصة، أو تصحيح خطأ، أو تزويدنا بصورة أو تفاصيل إضافية تساعد في استكمال بيانات الشهداء.'
-      },
-      {
-        title: 'تنبيه حول الصور والبيانات',
-        body: 'الصور والبيانات المنشورة في هذا الأرشيف مخصصة لغرض التوثيق الإنساني وحفظ الذاكرة، ونرجو التعامل معها باحترام ومسؤولية.'
       }
     ];
   }
@@ -43,44 +47,164 @@
   function cleanSection(section) {
     section = section || {};
     return {
-      title: String(section.title || '').trim(),
-      body: String(section.body || '').trim()
+      title: String(section.title || section.heading || '').trim(),
+      body: String(section.body || section.text || section.content || '').trim()
     };
   }
 
   function normalizeSections(sections) {
-    return (Array.isArray(sections) ? sections : [])
+    const normalized = (Array.isArray(sections) ? sections : [])
       .map(cleanSection)
       .filter(section => section.title || section.body)
       .map(section => ({
         title: section.title || 'قسم بدون عنوان',
         body: section.body || ''
       }));
+
+    // لو حُفظ كل المحتوى داخل قسم واحد بالغلط، نحاول تقسيم النص الداخلي.
+    if (normalized.length === 1) {
+      const inner = parseSectionsFromTextPatterns(normalized[0].body);
+      if (inner.length > 1) return inner;
+
+      const fromJson = parseJsonSectionsLoose(normalized[0].body);
+      if (fromJson.length > 1) return fromJson;
+    }
+
+    return normalized;
   }
 
-  function parseAboutSections(rawValue) {
-    const raw = String(rawValue || '').trim();
+  function extractSectionsFromParsed(parsed) {
+    if (!parsed) return [];
 
-    if (!raw) return getDefaultSections();
+    if (typeof parsed === 'string') {
+      return parseAboutSections(parsed, true);
+    }
 
+    if (Array.isArray(parsed)) {
+      return normalizeSections(parsed);
+    }
+
+    if (parsed.type === ABOUT_FORMAT && Array.isArray(parsed.sections)) {
+      return normalizeSections(parsed.sections);
+    }
+
+    if (Array.isArray(parsed.sections)) {
+      return normalizeSections(parsed.sections);
+    }
+
+    if (parsed.title || parsed.body || parsed.text || parsed.content) {
+      return normalizeSections([parsed]);
+    }
+
+    return [];
+  }
+
+  function tryJsonParse(text) {
     try {
-      const parsed = JSON.parse(raw);
+      return JSON.parse(text);
+    } catch (error) {
+      return null;
+    }
+  }
 
-      if (parsed && parsed.type === ABOUT_FORMAT) {
-        const sections = normalizeSections(parsed.sections);
-        return sections.length ? sections : getDefaultSections();
+  function parseJsonSectionsLoose(rawValue) {
+    let raw = decodeHtmlEntities(String(rawValue || '').trim());
+    if (!raw) return [];
+
+    // أحيانًا تكون القيمة محفوظة بين علامتي اقتباس كـ JSON داخل JSON.
+    for (let i = 0; i < 3; i++) {
+      const parsed = tryJsonParse(raw);
+      const sections = extractSectionsFromParsed(parsed);
+      if (sections.length) return sections;
+      if (typeof parsed === 'string' && parsed !== raw) {
+        raw = parsed.trim();
+        continue;
+      }
+      break;
+    }
+
+    // إذا كان النص عبارة عن أجزاء كائنات بلا أقواس مصفوفة: {..},{..}
+    if (/\{\s*["']title["']\s*:/.test(raw) && !raw.startsWith('[')) {
+      const wrapped = '[' + raw.replace(/^,|,$/g, '') + ']';
+      const sections = extractSectionsFromParsed(tryJsonParse(wrapped));
+      if (sections.length) return sections;
+    }
+
+    // إذا كان هناك مصفوفة داخل نص أكبر، نستخرجها.
+    const firstBracket = raw.indexOf('[');
+    const lastBracket = raw.lastIndexOf(']');
+    if (firstBracket !== -1 && lastBracket > firstBracket) {
+      const candidate = raw.slice(firstBracket, lastBracket + 1);
+      const sections = extractSectionsFromParsed(tryJsonParse(candidate));
+      if (sections.length) return sections;
+    }
+
+    return [];
+  }
+
+  function parseSectionsFromTextPatterns(rawValue) {
+    const raw = String(rawValue || '').replace(/\r/g, '').trim();
+    if (!raw) return [];
+
+    // الصيغة التي أعطيناها سابقًا: العنوان: ... النص: ...
+    const labelRegex = /(?:^|\n)\s*العنوان\s*:\s*([\s\S]*?)\n\s*النص\s*:\s*([\s\S]*?)(?=\n\s*العنوان\s*:|$)/g;
+    const labeled = [];
+    let match;
+    while ((match = labelRegex.exec(raw)) !== null) {
+      labeled.push({
+        title: String(match[1] || '').trim(),
+        body: String(match[2] || '').trim()
+      });
+    }
+    if (labeled.length > 1) return normalizeSections(labeled);
+
+    // تقسيم احتياطي عند وجود عناوين معروفة كسطور مستقلة.
+    const knownTitles = [
+      'من نحن',
+      'هدف المشروع',
+      'آلية التوثيق',
+      'من يراجع البيانات',
+      'كيف يمكن المساهمة',
+      'فريق العمل',
+      'تنبيه حول الصور والبيانات',
+      'ملاحظات مهمة',
+      'شكر وتقدير'
+    ];
+
+    const lines = raw.split('\n').map(line => line.trim());
+    const sections = [];
+    let current = null;
+
+    lines.forEach(line => {
+      if (!line) {
+        if (current) current.bodyLines.push('');
+        return;
       }
 
-      if (Array.isArray(parsed)) {
-        const sections = normalizeSections(parsed);
-        return sections.length ? sections : getDefaultSections();
+      const normalizedLine = line.replace(/^#+\s*/, '').replace(/[:：]$/, '').trim();
+      if (knownTitles.includes(normalizedLine)) {
+        if (current) sections.push({ title: current.title, body: current.bodyLines.join('\n').trim() });
+        current = { title: normalizedLine, bodyLines: [] };
+      } else if (current) {
+        current.bodyLines.push(line);
       }
-    } catch (error) {}
+    });
 
-    return [{
-      title: 'من نحن',
-      body: raw
-    }];
+    if (current) sections.push({ title: current.title, body: current.bodyLines.join('\n').trim() });
+    return sections.length > 1 ? normalizeSections(sections) : [];
+  }
+
+  function parseAboutSections(rawValue, nested) {
+    const raw = String(rawValue || '').trim();
+    if (!raw) return nested ? [] : getDefaultSections();
+
+    const jsonSections = parseJsonSectionsLoose(raw);
+    if (jsonSections.length) return jsonSections;
+
+    const textSections = parseSectionsFromTextPatterns(raw);
+    if (textSections.length) return textSections;
+
+    return nested ? [] : [{ title: 'من نحن', body: raw }];
   }
 
   function stringifyAboutSections(sections) {
@@ -91,9 +215,19 @@
   }
 
   function getAboutRawValue() {
-    if (window.publicSettings && typeof publicSettings.about_us_text === 'string' && publicSettings.about_us_text.trim()) {
-      return publicSettings.about_us_text;
+    if (typeof window.__taldoAboutRawValue === 'string' && window.__taldoAboutRawValue.trim()) {
+      return window.__taldoAboutRawValue;
     }
+
+    if (window.publicSettings && typeof window.publicSettings.about_us_text === 'string' && window.publicSettings.about_us_text.trim()) {
+      return window.publicSettings.about_us_text;
+    }
+
+    try {
+      if (typeof publicSettings !== 'undefined' && publicSettings && typeof publicSettings.about_us_text === 'string' && publicSettings.about_us_text.trim()) {
+        return publicSettings.about_us_text;
+      }
+    } catch (error) {}
 
     const hidden = document.getElementById('aboutUsAdminText');
     if (hidden && String(hidden.value || '').trim()) return hidden.value;
@@ -101,7 +235,7 @@
     const current = document.getElementById('aboutUsText');
     if (current) {
       const text = String(current.textContent || '').trim();
-      if (text) return text;
+      if (text && !current.querySelector('.taldo-about-accordion')) return text;
     }
 
     return '';
@@ -125,53 +259,58 @@
   }
 
   function renderAboutSectionsPublic() {
-    const container = ensureAboutContainer();
-    if (!container) return;
+    if (isRenderingAbout) return;
+    isRenderingAbout = true;
 
-    const rawValue = getAboutRawValue();
-    const sections = parseAboutSections(rawValue);
+    try {
+      const container = ensureAboutContainer();
+      if (!container) return;
 
-    // مهم: نخزن القيمة المقروءة في publicSettings حتى لا تعود الدالة الأصلية وتعرض JSON كنص عادي.
-    if (window.publicSettings && rawValue) {
-      publicSettings.about_us_text = rawValue;
-    }
+      const rawValue = getAboutRawValue();
+      const sections = parseAboutSections(rawValue);
 
-    container.innerHTML = `
-      <div class="taldo-about-hero">
-        <img src="${escapeAttr(ABOUT_HERO_IMAGE)}" alt="" aria-hidden="true">
-        <div class="taldo-about-hero-content">
-          <img class="taldo-about-hero-logo" src="${escapeAttr(ABOUT_LOGO_IMAGE)}" alt="أرشيف شهداء تلدو">
-          <h5 class="taldo-about-hero-title">أرشيف شهداء تلدو</h5>
-          <p class="taldo-about-hero-subtitle">منصة توثيقية إنسانية لحفظ الذاكرة</p>
+      // نحفظ الخام للمرات القادمة كي لا نقرأ النص بعد تحويله إلى أكورديون.
+      if (rawValue) window.__taldoAboutRawValue = rawValue;
+
+      container.innerHTML = `
+        <div class="taldo-about-hero">
+          <div class="taldo-about-hero-content">
+            <img class="taldo-about-hero-logo" src="${escapeAttr(ABOUT_LOGO_IMAGE)}" alt="أرشيف شهداء تلدو">
+            <h5 class="taldo-about-hero-title">أرشيف شهداء تلدو</h5>
+            <p class="taldo-about-hero-subtitle">منصة توثيقية إنسانية لحفظ الذاكرة</p>
+          </div>
         </div>
-      </div>
 
-      <div class="accordion taldo-about-accordion" id="taldoAboutAccordion">
-        ${sections.map((section, index) => {
-          const collapseId = 'taldoAboutSection_' + index;
-          const show = index === 0 ? 'show' : '';
-          const collapsed = index === 0 ? '' : 'collapsed';
-          return `
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="${collapseId}_heading">
-                <button class="accordion-button ${collapsed}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="${collapseId}">
-                  <i class="fa-solid fa-circle-info"></i>
-                  <span>${escapeHtml(section.title)}</span>
-                </button>
-              </h2>
-              <div id="${collapseId}" class="accordion-collapse collapse ${show}" aria-labelledby="${collapseId}_heading" data-bs-parent="#taldoAboutAccordion">
-                <div class="accordion-body">${escapeHtml(section.body).replace(/\n/g, '<br>')}</div>
-              </div>
-            </div>`;
-        }).join('')}
-      </div>`;
+        <div class="accordion taldo-about-accordion" id="taldoAboutAccordion">
+          ${sections.map((section, index) => {
+            const collapseId = 'taldoAboutSection_' + index;
+            const show = index === 0 ? 'show' : '';
+            const collapsed = index === 0 ? '' : 'collapsed';
+            return `
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="${collapseId}_heading">
+                  <button class="accordion-button ${collapsed}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="${collapseId}">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>${escapeHtml(section.title)}</span>
+                  </button>
+                </h2>
+                <div id="${collapseId}" class="accordion-collapse collapse ${show}" aria-labelledby="${collapseId}_heading" data-bs-parent="#taldoAboutAccordion">
+                  <div class="accordion-body">${escapeHtml(section.body).replace(/\n/g, '<br>')}</div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>`;
+    } finally {
+      isRenderingAbout = false;
+    }
   }
 
   function renderAboutSectionsSoon() {
     clearTimeout(aboutRenderTimer);
     renderAboutSectionsPublic();
-    aboutRenderTimer = setTimeout(renderAboutSectionsPublic, 80);
-    setTimeout(renderAboutSectionsPublic, 250);
+    aboutRenderTimer = setTimeout(renderAboutSectionsPublic, 60);
+    setTimeout(renderAboutSectionsPublic, 180);
+    setTimeout(renderAboutSectionsPublic, 420);
   }
 
   function readSectionsFromBuilder() {
@@ -187,7 +326,6 @@
     rows.forEach((row, index) => {
       const num = row.querySelector('.taldo-about-section-number');
       if (num) num.textContent = String(index + 1);
-
       const removeBtn = row.querySelector('.taldo-about-remove-section-btn');
       if (removeBtn) removeBtn.classList.toggle('d-none', rows.length <= 1);
     });
@@ -249,8 +387,9 @@
     if (!card) return;
     if (card.dataset.aboutSectionsEnhanced === '1') return;
 
-    const sections = parseAboutSections(getAboutRawValue());
-    const hiddenValue = String(getAboutRawValue() || '');
+    const raw = String(textarea.value || getAboutRawValue() || '');
+    if (raw) window.__taldoAboutRawValue = raw;
+    const sections = parseAboutSections(raw);
 
     card.dataset.aboutSectionsEnhanced = '1';
     card.innerHTML = `
@@ -260,8 +399,7 @@
         أضف الأقسام التي تريد ظهورها في نافذة <strong>من نحن</strong>. كل قسم يحتوي على عنوان ونص، وسيظهر للزائر بشكل أكورديون منسق.
       </div>
 
-      <input type="hidden" id="aboutUsAdminText" value="${escapeAttr(hiddenValue)}">
-
+      <input type="hidden" id="aboutUsAdminText" value="${escapeAttr(raw)}">
       <div id="aboutSectionsBuilder" class="taldo-about-sections-admin"></div>
 
       <div class="d-flex gap-2 flex-wrap mt-3">
@@ -290,6 +428,13 @@
 
     const wrapped = function () {
       const result = current.apply(this, arguments);
+
+      const el = document.getElementById('aboutUsText');
+      if (el) {
+        const raw = String(el.textContent || '').trim();
+        if (raw) window.__taldoAboutRawValue = raw;
+      }
+
       renderAboutSectionsSoon();
       return result;
     };
@@ -318,6 +463,8 @@
     }
 
     const value = stringifyAboutSections(sections);
+    window.__taldoAboutRawValue = value;
+
     const hidden = document.getElementById('aboutUsAdminText');
     if (hidden) hidden.value = value;
 
@@ -333,19 +480,42 @@
         }
 
         if (!window.publicSettings) window.publicSettings = {};
-        publicSettings.about_us_text = value;
+        window.publicSettings.about_us_text = value;
+        try {
+          if (typeof publicSettings !== 'undefined' && publicSettings) publicSettings.about_us_text = value;
+        } catch (error) {}
+
         showToast(res.message || 'تم حفظ قسم من نحن.');
         renderAboutSectionsPublic();
-        if (typeof loadInitialData === 'function') loadInitialData();
       })
       .catch(err => {
         showToast(err.message || 'تعذر حفظ قسم من نحن.');
       });
   };
 
+  function installAboutMutationGuard() {
+    const el = document.getElementById('aboutUsText');
+    if (!el || el.dataset.aboutMutationGuard === '1') return;
+    el.dataset.aboutMutationGuard = '1';
+
+    const observer = new MutationObserver(() => {
+      if (isRenderingAbout) return;
+      const text = String(el.textContent || '').trim();
+      const hasAccordion = !!el.querySelector('.taldo-about-accordion');
+      const looksRaw = text.includes('"title"') || text.includes('العنوان:') || text.includes('about_sections_v1');
+      if (!hasAccordion && (looksRaw || text.length > 0)) {
+        window.__taldoAboutRawValue = text;
+        setTimeout(renderAboutSectionsPublic, 40);
+      }
+    });
+
+    observer.observe(el, { childList: true, subtree: true, characterData: true });
+  }
+
   function bootAboutSections() {
     try { patchOpenAboutUsModal(); } catch (error) {}
     try { enhanceAboutAdminCard(); } catch (error) {}
+    try { installAboutMutationGuard(); } catch (error) {}
 
     const aboutModal = document.getElementById('aboutUsModal');
     if (aboutModal && aboutModal.dataset.aboutSectionsListener !== '1') {
@@ -355,6 +525,9 @@
     }
   }
 
+  window.taldoRenderAboutSectionsPublic = renderAboutSectionsPublic;
+  window.taldoParseAboutSections = parseAboutSections;
+
   document.addEventListener('DOMContentLoaded', () => {
     bootAboutSections();
     setTimeout(bootAboutSections, 500);
@@ -362,7 +535,6 @@
     setTimeout(bootAboutSections, 3000);
   });
 
-  // في حال حُمّل هذا الملف بعد اكتمال الصفحة أو قبل اكتمال تعريف دوال المشروع.
   bootAboutSections();
   setTimeout(bootAboutSections, 500);
   setTimeout(bootAboutSections, 1500);
