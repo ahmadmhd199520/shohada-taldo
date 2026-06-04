@@ -219,72 +219,105 @@
   }
 }
 
-
-/* إخفاء الهيدر القديم في نافذة من نحن: الأيقونة + عنوان من نحن */
-#aboutUsModal .modal-body > .intro-icon,
-#aboutUsModal .modal-body > h4.fw-bold {
-  display: none !important;
-}
-
-/* إزالة الفراغ العلوي بعد إخفاء الهيدر القديم */
-#aboutUsModal .modal-body {
-  padding-top: 8px !important;
-}
-
-
-/* تكبير نافذة من نحن وإلغاء القصر القديم */
-#aboutUsModal .modal-dialog {
-  max-width: min(94vw, 620px) !important;
-}
-
-#aboutUsModal .modal-content {
-  max-height: 88vh !important;
+/* v6: ترتيب صفحة الإعدادات نفسها كأكورديون حتى لا تصبح طويلة */
+#dashboardSettingsTab > .settings-card.taldo-settings-accordion-card {
+  padding: 0 !important;
   overflow: hidden !important;
-  border-radius: 24px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(5, 66, 57, 0.10) !important;
+  background: #fff !important;
+  box-shadow: 0 10px 24px rgba(22, 22, 22, 0.055) !important;
 }
 
-#aboutUsModal .modal-body {
-  max-height: 88vh !important;
-  overflow: hidden !important;
+.taldo-settings-accordion-toggle {
+  width: 100% !important;
+  border: 0 !important;
+  background: linear-gradient(135deg, rgba(5, 66, 57, 0.075), rgba(185, 167, 121, 0.10)) !important;
+  color: #054239 !important;
+  padding: 16px 18px !important;
   display: flex !important;
-  flex-direction: column !important;
-  padding-bottom: 14px !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  text-align: right !important;
+  direction: rtl !important;
+  font-weight: 800 !important;
 }
 
-/* هذا هو الأهم: إلغاء max-height: 280px القديم */
-#aboutUsText {
-  max-height: 70vh !important;
-  min-height: 58vh !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  padding-inline-end: 8px !important;
-  padding-bottom: 16px !important;
+.taldo-settings-accordion-toggle > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
 }
 
-/* إبقاء زر موافق واضحًا أسفل النافذة */
-#aboutUsModal .modal-body > .btn,
-#aboutUsModal .modal-body > button[data-bs-dismiss="modal"] {
-  flex: 0 0 auto !important;
-  margin-top: 10px !important;
+.taldo-settings-accordion-toggle i.fa-chevron-down {
+  transition: transform .2s ease !important;
 }
 
-/* ضبط الجوال */
+.taldo-settings-accordion-toggle:not(.collapsed) i.fa-chevron-down {
+  transform: rotate(180deg) !important;
+}
+
+.taldo-settings-accordion-body {
+  padding: 18px !important;
+}
+
+/* v6: صفوف قسم من نحن داخل لوحة التحكم كأكورديون مستقل */
+.taldo-about-sections-admin .taldo-about-section-admin-item {
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-color: rgba(5, 66, 57, 0.13) !important;
+  background: #fff !important;
+}
+
+.taldo-about-section-admin-head {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  padding: 10px !important;
+  background: rgba(5, 66, 57, 0.045) !important;
+}
+
+.taldo-about-section-admin-toggle {
+  flex: 1 1 auto !important;
+  border: 0 !important;
+  background: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-align: right !important;
+  direction: rtl !important;
+  padding: 0 !important;
+  color: #054239 !important;
+  font-weight: 800 !important;
+}
+
+.taldo-about-section-title-preview {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.taldo-about-section-chevron {
+  color: #6b1f2a !important;
+  transition: transform .2s ease !important;
+}
+
+.taldo-about-section-admin-toggle:not(.collapsed) .taldo-about-section-chevron {
+  transform: rotate(180deg) !important;
+}
+
+.taldo-about-section-admin-collapse {
+  padding: 0 14px 14px !important;
+}
+
 @media (max-width: 576px) {
-  #aboutUsModal .modal-dialog {
-    max-width: 94vw !important;
-    margin: 12px auto !important;
+  .taldo-settings-accordion-toggle {
+    padding: 14px !important;
   }
 
-  #aboutUsModal .modal-content {
-    max-height: 90vh !important;
-  }
-
-  #aboutUsModal .modal-body {
-    max-height: 90vh !important;
-  }
-
-  #aboutUsText {
-    max-height: 72vh !important;
-    min-height: 60vh !important;
+  .taldo-settings-accordion-body {
+    padding: 14px !important;
   }
 }
