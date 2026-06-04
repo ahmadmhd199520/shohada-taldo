@@ -1664,3 +1664,41 @@ html[data-theme="dark"] .site-footer .btn {
   border-color: rgba(255,255,255,.45) !important;
   background: rgba(255,255,255,.08) !important;
 }
+
+
+/* تطبيق الوضع الليلي على أدوات إدارة معرض الصور */
+body.dark-mode .gallery-admin-tools,
+html[data-theme="dark"] .gallery-admin-tools {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* النصوص والعناوين داخل أدوات المعرض */
+body.dark-mode .gallery-admin-tools *,
+html[data-theme="dark"] .gallery-admin-tools * {
+  color: inherit;
+}
+
+/* الحقول والقوائم داخل أدوات المعرض */
+body.dark-mode .gallery-admin-tools .form-control,
+body.dark-mode .gallery-admin-tools .form-select,
+body.dark-mode .gallery-admin-tools input,
+body.dark-mode .gallery-admin-tools textarea,
+html[data-theme="dark"] .gallery-admin-tools .form-control,
+html[data-theme="dark"] .gallery-admin-tools .form-select,
+html[data-theme="dark"] .gallery-admin-tools input,
+html[data-theme="dark"] .gallery-admin-tools textarea {
+  background-color: #071612 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* النصوص الثانوية داخل أدوات المعرض */
+body.dark-mode .gallery-admin-tools .text-muted,
+body.dark-mode .gallery-admin-tools .form-text,
+html[data-theme="dark"] .gallery-admin-tools .text-muted,
+html[data-theme="dark"] .gallery-admin-tools .form-text {
+  color: #b8c8c3 !important;
+}
