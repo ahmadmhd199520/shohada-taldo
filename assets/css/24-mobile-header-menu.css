@@ -663,6 +663,13 @@ body.modal-open .taldo-simple-search-inner {
   z-index: 1 !important;
 }
 
+/* منع انزياح الصفحة الرئيسية عند فتح أي مودال */
+body.modal-open {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  overflow-y: hidden !important; /* لمنع التمرير الخلفي إن وجد */
+}
+
 .modal-backdrop { z-index: 1050 !important; }
 .modal { z-index: 1055 !important; }
 
