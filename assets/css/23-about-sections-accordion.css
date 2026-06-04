@@ -220,19 +220,13 @@
 }
 
 
-/* إخفاء رأس من نحن القديم: الأيقونة + العنوان */
-#aboutUsModal .modal-body > .modal-icon,
+/* إخفاء الهيدر القديم في نافذة من نحن: الأيقونة + عنوان من نحن */
 #aboutUsModal .modal-body > .intro-icon,
-#aboutUsModal .modal-body > .about-icon,
-#aboutUsModal .modal-body > .section-icon,
-#aboutUsModal .modal-body > .rounded-circle,
-#aboutUsModal .modal-body > h5.fw-bold,
-#aboutUsModal .modal-body > h5.modal-title,
-#aboutUsModal .modal-body > h5 {
+#aboutUsModal .modal-body > h4.fw-bold {
   display: none !important;
 }
 
-/* تقليل الفراغ العلوي بعد إخفاء الرأس القديم */
+/* إزالة الفراغ العلوي بعد إخفاء الهيدر القديم */
 #aboutUsModal .modal-body {
   padding-top: 8px !important;
 }
