@@ -1,0 +1,206 @@
+/* ===== Mobile header 3-dots menu ===== */
+.taldo-mobile-header-menu-btn,
+.taldo-mobile-header-menu-panel {
+  display: none;
+}
+
+@media (max-width: 576px) {
+  .hero-top-row {
+    position: relative !important;
+  }
+
+  /* إخفاء زر عن المشروع القديم من السطر الأول في الجوال */
+  .hero-title-actions > .btn-warning {
+    display: none !important;
+  }
+
+  /* إبقاء السطر الأول نظيفًا: العنوان + أيقونات صغيرة فقط */
+  .hero-title-actions {
+    justify-content: center !important;
+    flex: 1 1 auto !important;
+  }
+
+  .hero-title {
+    width: 100% !important;
+    text-align: center !important;
+    padding-inline: 4px !important;
+  }
+
+  .top-login-bar.header-inline-actions {
+    position: relative !important;
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+  }
+
+  /* في الجوال: تسجيل الدخول والخروج داخل القائمة، ولوحة التحكم تبقى ظاهرة عند تسجيل الدخول */
+  .top-login-bar.header-inline-actions #loginBtn,
+  .top-login-bar.header-inline-actions #logoutBtn {
+    display: none !important;
+  }
+
+  .top-login-bar.header-inline-actions #dashboardBtn:not(.d-none) {
+    display: inline-flex !important;
+    order: 2 !important;
+  }
+
+  .taldo-mobile-header-menu-btn {
+    order: 1 !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.75) !important;
+    background: rgba(255,255,255,.10) !important;
+    box-shadow: none !important;
+  }
+
+  .taldo-mobile-header-menu-btn:hover,
+  .taldo-mobile-header-menu-btn:focus {
+    background: rgba(255,255,255,.22) !important;
+    color: #fff !important;
+  }
+
+  .taldo-mobile-header-menu-btn i {
+    font-size: 1rem !important;
+    margin: 0 !important;
+  }
+
+  .taldo-mobile-header-menu-panel {
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    inset-inline-start: 0 !important;
+    min-width: 190px !important;
+    z-index: 9999 !important;
+    background: rgba(255,255,255,.98) !important;
+    color: #172033 !important;
+    border: 1px solid rgba(15, 23, 42, .10) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, .22) !important;
+    padding: 8px !important;
+    backdrop-filter: blur(14px) !important;
+  }
+
+  .taldo-mobile-header-menu-panel.show {
+    display: block !important;
+  }
+
+  .taldo-mobile-menu-item {
+    width: 100% !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: #172033 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+    padding: 10px 11px !important;
+    border-radius: 13px !important;
+    font-weight: 800 !important;
+    text-align: start !important;
+    white-space: nowrap !important;
+  }
+
+  .taldo-mobile-menu-item:hover,
+  .taldo-mobile-menu-item:focus {
+    background: rgba(13,110,253,.09) !important;
+  }
+
+  .taldo-mobile-menu-item i {
+    width: 20px !important;
+    text-align: center !important;
+    color: #0d6efd !important;
+  }
+
+  .taldo-mobile-menu-divider {
+    height: 1px !important;
+    background: rgba(15,23,42,.10) !important;
+    margin: 6px 4px !important;
+  }
+}
+
+/* ===== Lightweight dark mode used by the mobile menu ===== */
+html[data-theme="dark"],
+body.dark-mode {
+  color-scheme: dark;
+}
+
+body.dark-mode {
+  --main-bg: #071612;
+  --dark: #f4faf8;
+  --muted: #b8c8c3;
+  background:
+    radial-gradient(circle at top right, rgba(5, 66, 57, 0.40), transparent 38%),
+    radial-gradient(circle at bottom left, rgba(107, 31, 42, 0.22), transparent 30%),
+    linear-gradient(135deg, #050807, #071612 55%, #03110e) !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode .hero {
+  background: linear-gradient(135deg, #021f1b, #054239) !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .stat-card,
+body.dark-mode .martyr-card,
+body.dark-mode .filter-card,
+body.dark-mode .empty-state,
+body.dark-mode .modal-content,
+body.dark-mode .offcanvas,
+body.dark-mode .dropdown-menu {
+  background-color: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.10) !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode .martyr-family,
+body.dark-mode .form-text {
+  color: #b8c8c3 !important;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select,
+body.dark-mode textarea,
+body.dark-mode input {
+  background-color: #081714 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+
+body.dark-mode .form-control::placeholder,
+body.dark-mode input::placeholder {
+  color: rgba(244,250,248,.58) !important;
+}
+
+body.dark-mode .modal-content .btn-primary,
+body.dark-mode .btn-primary {
+  border-color: #428177 !important;
+  background-color: #054239 !important;
+}
+
+body.dark-mode .taldo-mobile-header-menu-panel {
+  background: rgba(7, 22, 18, .98) !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode .taldo-mobile-menu-item {
+  color: #f4faf8 !important;
+}
+
+body.dark-mode .taldo-mobile-menu-item:hover,
+body.dark-mode .taldo-mobile-menu-item:focus {
+  background: rgba(255,255,255,.09) !important;
+}
+
+body.dark-mode .taldo-mobile-menu-divider {
+  background: rgba(255,255,255,.12) !important;
+}
