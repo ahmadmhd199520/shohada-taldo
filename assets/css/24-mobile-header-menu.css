@@ -1,207 +1,224 @@
-/* ===== Compact/mobile header 3-dots menu ===== */
-
-/*
-  هذا الملف خاص بالهيدر المضغوط للجوال/العرض الضيق.
-  السبب في النسخة السابقة:
-  - الزر كان يُنشأ دائمًا بالـ JS، لكن تنسيق القائمة كان محصورًا بـ 576px.
-  - بعض تنسيقات الهيدر القديمة كانت تجعل الزر يظهر في عرض أوسع من 576 بدون أن تعمل القائمة.
-  - overflow: visible على .hero كان يسبب انزياحًا/سكرولًا عرضيًا في الجوال.
-*/
-
-.taldo-mobile-header-menu-btn,
+/* ===== Header 3-dots menu: desktop + mobile ===== */
 .taldo-mobile-header-menu-panel {
   display: none !important;
 }
 
-/* منع الانزياح العرضي الناتج عن أي عنصر ثابت أو زخرفة خارج الهيدر */
+/* منع أي انزياح عرضي في الجوال بسبب الهيدر أو القائمة */
 html,
 body {
   max-width: 100% !important;
   overflow-x: hidden !important;
 }
 
-/* في العرض الواسع: لا تظهر قائمة الثلاث نقاط إطلاقًا */
-@media (min-width: 769px) {
-  .taldo-mobile-header-menu-btn,
-  .taldo-mobile-header-menu-panel,
-  .taldo-mobile-header-menu-panel.show {
-    display: none !important;
-  }
-
-  .hero-title-actions > .btn-warning {
-    display: inline-flex !important;
-  }
-
-  .top-login-bar.header-inline-actions #loginBtn:not(.d-none),
-  .top-login-bar.header-inline-actions #logoutBtn:not(.d-none),
-  .top-login-bar.header-inline-actions #dashboardBtn:not(.d-none) {
-    display: inline-flex !important;
-  }
+.app-shell,
+.hero,
+.hero-layout,
+.hero-top-row {
+  max-width: 100% !important;
 }
 
-/* الجوال والعرض الضيق */
-@media (max-width: 768px) {
-  .hero {
-    overflow: hidden !important;
-    max-width: 100% !important;
-  }
+/* نخفي زر عن المشروع القديم من الهيدر لأنه صار داخل قائمة الثلاث نقاط */
+.hero-title-actions > .btn-warning {
+  display: none !important;
+}
 
-  .hero-layout,
-  .hero-top-row,
-  .hero-title-actions,
-  .top-actions {
-    max-width: 100% !important;
-    min-width: 0 !important;
-  }
+.hero-top-row {
+  position: relative !important;
+}
 
+.hero-title-actions {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+.hero-title {
+  min-width: 0 !important;
+}
+
+.top-login-bar.header-inline-actions,
+.top-login-bar {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 6px !important;
+  z-index: 50 !important;
+}
+
+/* تسجيل الدخول/الخروج داخل القائمة فقط */
+.top-login-bar.header-inline-actions #loginBtn,
+.top-login-bar.header-inline-actions #logoutBtn,
+.top-login-bar #loginBtn,
+.top-login-bar #logoutBtn {
+  display: none !important;
+}
+
+/* لوحة التحكم تبقى ظاهرة في الهيدر عند تسجيل الدخول */
+.top-login-bar.header-inline-actions #dashboardBtn:not(.d-none),
+.top-login-bar #dashboardBtn:not(.d-none) {
+  display: inline-flex !important;
+  order: 2 !important;
+}
+
+/* زر الثلاث نقاط: أقصى اليسار، ولوحة التحكم على يمينه */
+.taldo-mobile-header-menu-btn {
+  order: 3 !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.75) !important;
+  background: rgba(255,255,255,.10) !important;
+  box-shadow: none !important;
+  position: relative !important;
+  z-index: 2147482600 !important;
+}
+
+.taldo-mobile-header-menu-btn:hover,
+.taldo-mobile-header-menu-btn:focus {
+  background: rgba(255,255,255,.22) !important;
+  color: #fff !important;
+}
+
+.taldo-mobile-header-menu-btn i {
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+/* القائمة مثبتة على الشاشة لا داخل الهيدر حتى لا تُقصّ */
+.taldo-mobile-header-menu-panel {
+  position: fixed !important;
+  top: 64px !important;
+  left: 10px !important;
+  right: auto !important;
+  min-width: 210px !important;
+  max-width: calc(100vw - 20px) !important;
+  z-index: 2147482700 !important;
+  background: rgba(255,255,255,.98) !important;
+  color: #172033 !important;
+  border: 1px solid rgba(15, 23, 42, .10) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, .22) !important;
+  padding: 8px !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+.taldo-mobile-header-menu-panel.show {
+  display: block !important;
+}
+
+.taldo-mobile-menu-item {
+  width: 100% !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #172033 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 9px !important;
+  padding: 10px 11px !important;
+  border-radius: 13px !important;
+  font-weight: 800 !important;
+  text-align: start !important;
+  white-space: nowrap !important;
+}
+
+.taldo-mobile-menu-item:hover,
+.taldo-mobile-menu-item:focus {
+  background: rgba(13,110,253,.09) !important;
+}
+
+.taldo-mobile-menu-item i {
+  width: 20px !important;
+  text-align: center !important;
+  color: #0d6efd !important;
+}
+
+.taldo-mobile-menu-divider {
+  height: 1px !important;
+  background: rgba(15,23,42,.10) !important;
+  margin: 6px 4px !important;
+}
+
+/* الجوال: تصغير الأيقونات مع الحفاظ على ترتيبها */
+@media (max-width: 576px) {
   .hero-top-row {
-    position: relative !important;
     width: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     gap: 8px !important;
-    overflow: hidden !important;
-  }
-
-  /* إخفاء زر عن المشروع القديم من السطر الأول في الجوال */
-  .hero-title-actions > .btn-warning {
-    display: none !important;
   }
 
   .hero-title-actions {
+    justify-content: center !important;
     flex: 1 1 auto !important;
     min-width: 0 !important;
-    justify-content: flex-start !important;
   }
 
   .hero-title {
-    min-width: 0 !important;
-    max-width: 100% !important;
-    text-align: right !important;
-    padding-inline: 0 !important;
+    width: 100% !important;
+    text-align: center !important;
+    padding-inline: 4px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
 
-  .top-login-bar.header-inline-actions {
-    direction: ltr !important;
-    flex: 0 0 auto !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 6px !important;
-    max-width: 92px !important;
-    min-width: 0 !important;
-    overflow: visible !important;
-    z-index: 2147482500 !important;
+  .top-login-bar.header-inline-actions,
+  .top-login-bar {
+    gap: 5px !important;
   }
 
-  /* تسجيل الدخول والخروج داخل القائمة فقط */
-  .top-login-bar.header-inline-actions #loginBtn,
-  .top-login-bar.header-inline-actions #logoutBtn {
-    display: none !important;
-  }
-
-  /* لوحة التحكم تبقى بجانب الثلاث نقاط عند تسجيل الدخول */
-  .top-login-bar.header-inline-actions #dashboardBtn:not(.d-none) {
-    display: inline-flex !important;
-    order: 2 !important;
-    flex: 0 0 34px !important;
+  .taldo-mobile-header-menu-btn,
+  .top-login-bar.header-inline-actions #dashboardBtn:not(.d-none),
+  .top-login-bar #dashboardBtn:not(.d-none) {
     width: 34px !important;
     height: 34px !important;
     min-width: 34px !important;
-  }
-
-  /* زر الثلاث نقاط أقصى اليسار، ولوحة التحكم على يمينه */
-  .taldo-mobile-header-menu-btn {
-    order: 1 !important;
-    flex: 0 0 34px !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    padding: 0 !important;
     border-radius: 12px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #fff !important;
-    border: 1px solid rgba(255,255,255,.75) !important;
-    background: rgba(255,255,255,.10) !important;
-    box-shadow: none !important;
-    position: relative !important;
-    z-index: 2147482600 !important;
   }
 
-  .taldo-mobile-header-menu-btn:hover,
-  .taldo-mobile-header-menu-btn:focus {
-    background: rgba(255,255,255,.22) !important;
-    color: #fff !important;
-  }
-
-  .taldo-mobile-header-menu-btn i {
-    font-size: 1rem !important;
-    margin: 0 !important;
-  }
-
-  /* القائمة خارج الهيدر position: fixed حتى لا تُقصّ من حدود الهيدر */
   .taldo-mobile-header-menu-panel {
-    position: fixed !important;
-    top: 64px !important;
-    left: 10px !important;
-    right: auto !important;
-    min-width: 205px !important;
-    max-width: calc(100vw - 20px) !important;
-    z-index: 2147482700 !important;
-    background: rgba(255,255,255,.98) !important;
-    color: #172033 !important;
-    border: 1px solid rgba(15, 23, 42, .10) !important;
-    border-radius: 18px !important;
-    box-shadow: 0 18px 42px rgba(15, 23, 42, .22) !important;
-    padding: 8px !important;
-    backdrop-filter: blur(14px) !important;
-  }
-
-  .taldo-mobile-header-menu-panel.show {
-    display: block !important;
-  }
-
-  .taldo-mobile-menu-item {
-    width: 100% !important;
-    border: 0 !important;
-    background: transparent !important;
-    color: #172033 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 9px !important;
-    padding: 10px 11px !important;
-    border-radius: 13px !important;
-    font-weight: 800 !important;
-    text-align: start !important;
-    white-space: nowrap !important;
-  }
-
-  .taldo-mobile-menu-item:hover,
-  .taldo-mobile-menu-item:focus {
-    background: rgba(13,110,253,.09) !important;
-  }
-
-  .taldo-mobile-menu-item i {
-    width: 20px !important;
-    text-align: center !important;
-    color: #0d6efd !important;
-  }
-
-  .taldo-mobile-menu-divider {
-    height: 1px !important;
-    background: rgba(15,23,42,.10) !important;
-    margin: 6px 4px !important;
+    min-width: 190px !important;
   }
 }
 
-/* ===== Lightweight dark mode used by the mobile menu ===== */
+/* إعادة تثبيت شريط البحث في الصفحة الرئيسية كما كان */
+.mobile-search-filter {
+  position: sticky !important;
+  top: 10px !important;
+  z-index: 1050 !important;
+  background: linear-gradient(180deg, rgba(245,247,251,.99), rgba(245,247,251,.93)) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 10px 24px rgba(15,23,42,.08) !important;
+}
+
+#homePage,
+.page-section.active {
+  overflow: visible !important;
+}
+
+/* لون خلفية صورة الشهيد البديلة في الوضع الليلي */
+body.dark-mode .martyr-placeholder,
+html[data-theme="dark"] .martyr-placeholder {
+  background: #313437 !important;
+}
+
+body.dark-mode .martyr-placeholder i,
+html[data-theme="dark"] .martyr-placeholder i {
+  color: #9ca3af !important;
+}
+
+/* ===== Lightweight dark mode used by the header menu ===== */
 html[data-theme="dark"],
 body.dark-mode {
   color-scheme: dark;
@@ -278,17 +295,4 @@ body.dark-mode .taldo-mobile-menu-item:focus {
 
 body.dark-mode .taldo-mobile-menu-divider {
   background: rgba(255,255,255,.12) !important;
-}
-
-
-
-/* لون خلفية صورة الشهيد البديلة في الوضع الليلي */
-body.dark-mode .martyr-placeholder,
-html[data-theme="dark"] .martyr-placeholder {
-  background: #313437 !important;
-}
-
-body.dark-mode .martyr-placeholder i,
-html[data-theme="dark"] .martyr-placeholder i {
-  color: #9ca3af !important;
 }
