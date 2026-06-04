@@ -1,5 +1,9 @@
 (function() {
   const STYLE_ID = 'taldoDetailFamilyLinkStyles';
+  const RETURN_SESSION_KEY = 'taldo_return_from_family_to_detail';
+
+  let openingFamilyFromDetailLink = false;
+  let familyReturnToDetailState = null;
 
   function safeText(value) {
     return String(value || '').trim();
@@ -55,12 +59,35 @@
     document.head.appendChild(style);
   }
 
-  function getCurrentDetailFamilyName() {
+  function getLastPageBeforeDetailsSafe() {
     try {
-      if (typeof currentDetailsItem !== 'undefined' && currentDetailsItem && currentDetailsItem.family_name) {
-        return safeText(currentDetailsItem.family_name);
-      }
+      return safeText(lastPageBeforeDetails || 'homePage') || 'homePage';
+    } catch (error) {
+      return safeText(window.lastPageBeforeDetails || 'homePage') || 'homePage';
+    }
+  }
+
+  function setLastPageBeforeDetailsSafe(value) {
+    const finalValue = safeText(value) || 'homePage';
+    try {
+      lastPageBeforeDetails = finalValue;
+    } catch (error) {
+      window.lastPageBeforeDetails = finalValue;
+    }
+  }
+
+  function getCurrentDetailItemSafe() {
+    try {
+      if (typeof currentDetailsItem !== 'undefined' && currentDetailsItem) return currentDetailsItem;
     } catch (error) {}
+
+    if (window.currentDetailsItem) return window.currentDetailsItem;
+    return null;
+  }
+
+  function getCurrentDetailFamilyName() {
+    const item = getCurrentDetailItemSafe();
+    if (item && item.family_name) return safeText(item.family_name);
 
     const familyNode = document.querySelector('#detailsContainer .detail-box .taldo-detail-family-link') ||
       Array.from(document.querySelectorAll('#detailsContainer .detail-box .text-muted'))
@@ -68,22 +95,204 @@
 
     if (!familyNode) return '';
 
-    return safeText((familyNode.textContent || '').replace(/^\s*عائلة\s+/, ''));
+    return safeText((familyNode.textContent || '').replace(/^\s*عائلة\s+/, '').replace(/\s*←\s*$/, ''));
+  }
+
+  function getCurrentDetailMartyrId() {
+    const item = getCurrentDetailItemSafe();
+    if (item && item.martyr_id) return safeText(item.martyr_id);
+
+    const params = new URLSearchParams(window.location.search || '');
+    return safeText(params.get('m') || '');
+  }
+
+  function saveReturnToDetailState(familyName) {
+    const martyrId = getCurrentDetailMartyrId();
+    if (!martyrId) return null;
+
+    const state = {
+      martyrId: martyrId,
+      familyName: safeText(familyName),
+      previousFromPage: getLastPageBeforeDetailsSafe(),
+      savedAt: Date.now()
+    };
+
+    familyReturnToDetailState = state;
+
+    try {
+      sessionStorage.setItem(RETURN_SESSION_KEY, JSON.stringify(state));
+    } catch (error) {}
+
+    return state;
+  }
+
+  function readReturnToDetailState() {
+    if (familyReturnToDetailState && familyReturnToDetailState.martyrId) return familyReturnToDetailState;
+
+    try {
+      const raw = sessionStorage.getItem(RETURN_SESSION_KEY);
+      if (!raw) return null;
+      const state = JSON.parse(raw);
+      if (state && state.martyrId) {
+        familyReturnToDetailState = state;
+        return state;
+      }
+    } catch (error) {}
+
+    return null;
+  }
+
+  function clearReturnToDetailState() {
+    familyReturnToDetailState = null;
+    try {
+      sessionStorage.removeItem(RETURN_SESSION_KEY);
+    } catch (error) {}
+  }
+
+  function openMartyrDetailsById(martyrId, fromPage) {
+    martyrId = safeText(martyrId);
+    if (!martyrId) return false;
+
+    const fn = window.openMartyrDetails || (typeof openMartyrDetails === 'function' ? openMartyrDetails : null);
+    if (typeof fn !== 'function') return false;
+
+    fn(martyrId, fromPage || 'homePage');
+    return true;
+  }
+
+  function returnFromFamilyToDetail(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const state = readReturnToDetailState();
+    if (!state || !state.martyrId) {
+      openFamiliesPageFallback();
+      return;
+    }
+
+    const previousFromPage = safeText(state.previousFromPage) || 'homePage';
+    const opened = openMartyrDetailsById(state.martyrId, previousFromPage);
+
+    if (opened) {
+      setLastPageBeforeDetailsSafe(previousFromPage);
+      clearReturnToDetailState();
+      setTimeout(patchDetailFamilyLink, 80);
+      return;
+    }
+
+    openFamiliesPageFallback();
+  }
+
+  function openFamiliesPageFallback() {
+    if (typeof window.openFamiliesStatsPage === 'function') {
+      window.openFamiliesStatsPage();
+      return;
+    }
+
+    try {
+      if (typeof openFamiliesStatsPage === 'function') {
+        openFamiliesStatsPage();
+        return;
+      }
+    } catch (error) {}
+
+    if (typeof showPage === 'function') {
+      showPage('familiesPage');
+    }
+  }
+
+  function getFamilyBackButton() {
+    const direct = document.querySelector('#familyMartyrsPage button[onclick*="familiesPage"], #familyMartyrsPage button[onclick*="openFamiliesStatsPage"]');
+    if (direct) return direct;
+
+    return Array.from(document.querySelectorAll('#familyMartyrsPage button'))
+      .find(btn => /رجوع/.test(btn.textContent || '')) || null;
+  }
+
+  function patchFamilyBackButtonToDetail() {
+    const state = readReturnToDetailState();
+    if (!state || !state.martyrId) return;
+
+    const btn = getFamilyBackButton();
+    if (!btn) return;
+
+    if (btn.dataset.familyBackToDetailReady !== '1') {
+      btn.dataset.familyBackToDetailReady = '1';
+      btn.removeAttribute('onclick');
+      btn.onclick = null;
+      btn.addEventListener('click', returnFromFamilyToDetail, true);
+    }
+
+    btn.title = 'الرجوع إلى صفحة الشهيد';
+    btn.setAttribute('aria-label', 'الرجوع إلى صفحة الشهيد');
+  }
+
+  function restoreNormalFamilyBackButtonIfNeeded() {
+    const btn = getFamilyBackButton();
+    if (!btn) return;
+
+    if (btn.dataset.familyBackToDetailReady === '1') {
+      const fresh = btn.cloneNode(true);
+      fresh.dataset.familyBackFixed = '1';
+      fresh.setAttribute('onclick', 'openFamiliesStatsPage()');
+      fresh.title = 'الرجوع إلى صفحة العائلات';
+      fresh.setAttribute('aria-label', 'الرجوع إلى صفحة العائلات');
+      btn.parentNode.replaceChild(fresh, btn);
+    }
   }
 
   function goToFamilyPage(familyName) {
     familyName = safeText(familyName);
     if (!familyName) return;
 
-    if (typeof window.openFamilyMartyrs === 'function') {
-      window.openFamilyMartyrs(familyName);
-      return;
-    }
+    saveReturnToDetailState(familyName);
 
+    openingFamilyFromDetailLink = true;
     try {
-      if (typeof openFamilyMartyrs === 'function') {
+      if (typeof window.openFamilyMartyrs === 'function') {
+        window.openFamilyMartyrs(familyName);
+      } else if (typeof openFamilyMartyrs === 'function') {
         openFamilyMartyrs(familyName);
       }
+    } catch (error) {
+    } finally {
+      openingFamilyFromDetailLink = false;
+    }
+
+    setTimeout(patchFamilyBackButtonToDetail, 0);
+    requestAnimationFrame(patchFamilyBackButtonToDetail);
+    setTimeout(patchFamilyBackButtonToDetail, 180);
+  }
+
+  function wrapOpenFamilyMartyrs() {
+    const oldOpenFamily = window.openFamilyMartyrs || (typeof openFamilyMartyrs === 'function' ? openFamilyMartyrs : null);
+    if (typeof oldOpenFamily !== 'function') return;
+    if (oldOpenFamily.__detailFamilyBackWrapped === true) return;
+
+    const wrapped = function(familyName, noRoute) {
+      const fromDetailLink = openingFamilyFromDetailLink === true;
+      const result = oldOpenFamily.apply(this, arguments);
+
+      setTimeout(function() {
+        if (fromDetailLink) {
+          patchFamilyBackButtonToDetail();
+        } else {
+          clearReturnToDetailState();
+          restoreNormalFamilyBackButtonIfNeeded();
+        }
+      }, 0);
+
+      return result;
+    };
+
+    wrapped.__detailFamilyBackWrapped = true;
+    wrapped.__previousOpenFamilyMartyrs = oldOpenFamily;
+    window.openFamilyMartyrs = wrapped;
+
+    try {
+      openFamilyMartyrs = window.openFamilyMartyrs;
     } catch (error) {}
   }
 
@@ -159,13 +368,17 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     injectFamilyLinkStyles();
+    wrapOpenFamilyMartyrs();
     wrapOpenMartyrDetails();
     setTimeout(function() {
+      wrapOpenFamilyMartyrs();
       wrapOpenMartyrDetails();
       patchDetailFamilyLink();
+      patchFamilyBackButtonToDetail();
     }, 1200);
   });
 
   injectFamilyLinkStyles();
+  wrapOpenFamilyMartyrs();
   wrapOpenMartyrDetails();
 })();
