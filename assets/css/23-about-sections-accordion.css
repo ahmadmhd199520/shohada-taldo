@@ -230,3 +230,61 @@
 #aboutUsModal .modal-body {
   padding-top: 8px !important;
 }
+
+
+/* تكبير نافذة من نحن وإلغاء القصر القديم */
+#aboutUsModal .modal-dialog {
+  max-width: min(94vw, 620px) !important;
+}
+
+#aboutUsModal .modal-content {
+  max-height: 88vh !important;
+  overflow: hidden !important;
+  border-radius: 24px !important;
+}
+
+#aboutUsModal .modal-body {
+  max-height: 88vh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: 14px !important;
+}
+
+/* هذا هو الأهم: إلغاء max-height: 280px القديم */
+#aboutUsText {
+  max-height: 70vh !important;
+  min-height: 58vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-inline-end: 8px !important;
+  padding-bottom: 16px !important;
+}
+
+/* إبقاء زر موافق واضحًا أسفل النافذة */
+#aboutUsModal .modal-body > .btn,
+#aboutUsModal .modal-body > button[data-bs-dismiss="modal"] {
+  flex: 0 0 auto !important;
+  margin-top: 10px !important;
+}
+
+/* ضبط الجوال */
+@media (max-width: 576px) {
+  #aboutUsModal .modal-dialog {
+    max-width: 94vw !important;
+    margin: 12px auto !important;
+  }
+
+  #aboutUsModal .modal-content {
+    max-height: 90vh !important;
+  }
+
+  #aboutUsModal .modal-body {
+    max-height: 90vh !important;
+  }
+
+  #aboutUsText {
+    max-height: 72vh !important;
+    min-height: 60vh !important;
+  }
+}
