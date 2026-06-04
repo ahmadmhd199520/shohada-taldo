@@ -192,13 +192,15 @@ window.acceptDynamicMessage = function() {
       }
 
       showToast(res.message || 'تم إرسال الرد بنجاح.');
-      modals.dynamicMessageModal.hide();
+rememberDynamicMessageIfChecked();
 
-      const list = window.__dynamicMessageList || [];
-      currentDynamicMessageIndex++;
-      if (list[currentDynamicMessageIndex]) {
-        setTimeout(() => showDynamicMessage(list[currentDynamicMessageIndex], list), 450);
-      }
+modals.dynamicMessageModal.hide();
+
+const list = window.__dynamicMessageList || [];
+currentDynamicMessageIndex++;
+if (list[currentDynamicMessageIndex]) {
+  setTimeout(() => showDynamicMessage(list[currentDynamicMessageIndex], list), 450);
+}
     } catch (error) {
       showToast(error.message || 'تعذر إرسال الرد.');
     } finally {
