@@ -234,5 +234,5 @@
 
 /* تقليل الفراغ العلوي بعد إخفاء الرأس القديم */
 #aboutModal .modal-body {
-  padding-top: 18px !important;
+  padding-top: 8px !important;
 }
