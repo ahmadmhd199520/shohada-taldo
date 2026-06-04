@@ -995,3 +995,125 @@ html[data-theme="dark"] .dashboard-section-header .accordion-body {
   background-color: #071612 !important; /* خلفية داكنة متباينة عن الهيدر */
   color: #f4faf8 !important;
 }
+
+
+
+/* تتمة تغطية كل المشروع في الوضع الليلي */
+/* =========================================================
+   التغطية الشاملة للوضع الداكن لجميع المكونات (Catch-All Dark Mode)
+   ========================================================= */
+
+/* 1. الكروت الإضافية، ملخصات العوائل، وصناديق الردود */
+body.dark-mode .family-needs-summary,
+html[data-theme="dark"] .family-needs-summary,
+body.dark-mode .houla-page-header,
+html[data-theme="dark"] .houla-page-header,
+body.dark-mode .houla-admin-box,
+html[data-theme="dark"] .houla-admin-box,
+body.dark-mode .join-request-controls,
+html[data-theme="dark"] .join-request-controls,
+body.dark-mode .message-reply-card,
+html[data-theme="dark"] .message-reply-card,
+body.dark-mode .dynamic-reply-box,
+html[data-theme="dark"] .dynamic-reply-box {
+  background: #0e211d !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f4faf8 !important;
+}
+
+/* 2. شريط تحكم لوحة التحكم في الجوال */
+body.dark-mode .dashboard-mobile-controls,
+html[data-theme="dark"] .dashboard-mobile-controls {
+  background: rgba(14, 33, 29, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* 3. أكورديون "من نحن" وأكورديون الإعدادات (الملف 23) */
+body.dark-mode .taldo-about-accordion .accordion-item,
+html[data-theme="dark"] .taldo-about-accordion .accordion-item,
+body.dark-mode .taldo-settings-accordion-card,
+html[data-theme="dark"] .taldo-settings-accordion-card,
+body.dark-mode .taldo-about-sections-admin .taldo-about-section-admin-item,
+html[data-theme="dark"] .taldo-about-sections-admin .taldo-about-section-admin-item {
+  background: #0e211d !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.dark-mode .taldo-about-accordion .accordion-button,
+html[data-theme="dark"] .taldo-about-accordion .accordion-button,
+body.dark-mode .taldo-about-accordion .accordion-body,
+html[data-theme="dark"] .taldo-about-accordion .accordion-body,
+body.dark-mode .taldo-settings-accordion-toggle,
+html[data-theme="dark"] .taldo-settings-accordion-toggle,
+body.dark-mode .taldo-about-section-admin-head,
+html[data-theme="dark"] .taldo-about-section-admin-head {
+  background: transparent !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode .taldo-about-accordion .accordion-button:not(.collapsed),
+html[data-theme="dark"] .taldo-about-accordion .accordion-button:not(.collapsed) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+}
+
+/* تلوين أسهم الأكورديون في الوضع الداكن */
+body.dark-mode .taldo-about-section-chevron,
+html[data-theme="dark"] .taldo-about-section-chevron,
+body.dark-mode .taldo-about-section-admin-toggle,
+html[data-theme="dark"] .taldo-about-section-admin-toggle {
+  color: #f4faf8 !important;
+}
+
+/* 4. الشارات (Badges) والكلمات الدلالية */
+body.dark-mode .message-linked-badge,
+html[data-theme="dark"] .message-linked-badge {
+  background: rgba(13, 110, 253, 0.15) !important;
+  color: #6ea8fe !important;
+  border-color: rgba(13, 110, 253, 0.25) !important;
+}
+
+body.dark-mode .user-reply-source-badge,
+html[data-theme="dark"] .user-reply-source-badge {
+  background: rgba(255, 193, 7, 0.15) !important;
+  color: #ffda6a !important;
+  border-color: rgba(255, 193, 7, 0.3) !important;
+}
+
+body.dark-mode .taldo-image-only-help,
+html[data-theme="dark"] .taldo-image-only-help {
+  background: rgba(13, 110, 253, 0.15) !important;
+  color: #6ea8fe !important;
+  border-color: rgba(13, 110, 253, 0.25) !important;
+}
+
+/* 5. خلفيات الصور الوهمية (Placeholders) وإطارات الصور المقتطعة */
+body.dark-mode .dashboard-mobile-image-wrap img,
+html[data-theme="dark"] .dashboard-mobile-image-wrap img,
+body.dark-mode .dashboard-mobile-placeholder,
+html[data-theme="dark"] .dashboard-mobile-placeholder,
+body.dark-mode .gallery-main-frame,
+html[data-theme="dark"] .gallery-main-frame,
+body.dark-mode .gallery-thumb-crop,
+html[data-theme="dark"] .gallery-thumb-crop {
+  background-color: #081714 !important; /* لون داكن يتناسب مع الخلفية الأساسية */
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 6. صفحة الترقيم في الجداول الداكنة */
+body.dark-mode .dashboard-pagination-row td,
+html[data-theme="dark"] .dashboard-pagination-row td {
+  background-color: transparent !important;
+}
+
+/* 7. كرت قسم من نحن (الهيدر الأخضر الداكن) */
+body.dark-mode .taldo-about-hero,
+html[data-theme="dark"] .taldo-about-hero {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+body.dark-mode .taldo-about-hero .taldo-about-hero-logo,
+html[data-theme="dark"] .taldo-about-hero .taldo-about-hero-logo {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
