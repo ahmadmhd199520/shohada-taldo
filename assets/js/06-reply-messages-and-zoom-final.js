@@ -137,15 +137,17 @@
     modals.dynamicMessageModal.show();
   };
 
-  window.skipDynamicMessage = function() {
-    modals.dynamicMessageModal.hide();
+window.skipDynamicMessage = function() {
+  rememberDynamicMessageIfChecked();
 
-    const list = window.__dynamicMessageList || [];
-    currentDynamicMessageIndex++;
-    if (list[currentDynamicMessageIndex]) {
-      setTimeout(() => showDynamicMessage(list[currentDynamicMessageIndex], list), 350);
-    }
-  };
+  modals.dynamicMessageModal.hide();
+
+  const list = window.__dynamicMessageList || [];
+  currentDynamicMessageIndex++;
+  if (list[currentDynamicMessageIndex]) {
+    setTimeout(() => showDynamicMessage(list[currentDynamicMessageIndex], list), 350);
+  }
+};
 
   window.acceptDynamicMessage = function() {
     const msg = window.__currentDynamicMessage;
