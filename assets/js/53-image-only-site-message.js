@@ -64,7 +64,106 @@
       .filter(msg => !isMessageHidden(msg));
   }
 
+
+  function ensureImageOnlyCriticalStyles() {
+    if (document.getElementById('taldoImageOnlyNoticeCriticalStyles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'taldoImageOnlyNoticeCriticalStyles';
+    style.textContent = `
+      #taldoImageOnlyNoticeOverlay.taldo-image-only-notice-overlay {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 2147483000 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 18px !important;
+        background: rgba(0, 0, 0, 0.72) !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+      }
+
+      #taldoImageOnlyNoticeOverlay.taldo-image-only-notice-overlay.d-none {
+        display: none !important;
+      }
+
+      #taldoImageOnlyNoticeOverlay .taldo-image-only-notice-stage {
+        position: relative !important;
+        display: inline-block !important;
+        max-width: min(94vw, 760px) !important;
+        max-height: 90vh !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        line-height: 0 !important;
+        transform: none !important;
+      }
+
+      #taldoImageOnlyNoticeOverlay .taldo-image-only-notice-image {
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        max-width: min(94vw, 760px) !important;
+        max-height: 90vh !important;
+        object-fit: contain !important;
+        background: transparent !important;
+        border: 0 !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      #taldoImageOnlyNoticeOverlay .taldo-image-only-notice-close {
+        position: absolute !important;
+        top: 8px !important;
+        inset-inline-end: 8px !important;
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        min-height: 34px !important;
+        border-radius: 50% !important;
+        border: 0 !important;
+        background: rgba(0, 0, 0, 0.62) !important;
+        color: #fff !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1 !important;
+        font-size: 18px !important;
+        cursor: pointer !important;
+        z-index: 2 !important;
+        box-shadow: 0 6px 16px rgba(0,0,0,.22) !important;
+      }
+
+      body.taldo-image-only-notice-open {
+        overflow: hidden !important;
+      }
+
+      @media (max-width: 576px) {
+        #taldoImageOnlyNoticeOverlay.taldo-image-only-notice-overlay {
+          padding: 10px !important;
+        }
+        #taldoImageOnlyNoticeOverlay .taldo-image-only-notice-stage,
+        #taldoImageOnlyNoticeOverlay .taldo-image-only-notice-image {
+          max-width: 96vw !important;
+          max-height: 88vh !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   function ensureImageOnlyOverlay() {
+    ensureImageOnlyCriticalStyles();
     let overlay = document.getElementById('taldoImageOnlyNoticeOverlay');
     if (overlay) return overlay;
 
@@ -128,6 +227,7 @@
     }
 
     imageOnlyOverlayIsOpen = false;
+    document.body.classList.remove('taldo-image-only-notice-open');
 
     const overlay = document.getElementById('taldoImageOnlyNoticeOverlay');
     overlay?.classList.add('d-none');
@@ -179,6 +279,7 @@
     }
 
     imageOnlyOverlayIsOpen = true;
+    document.body.classList.add('taldo-image-only-notice-open');
     overlay.classList.remove('d-none');
     return true;
   }
@@ -396,6 +497,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    ensureImageOnlyCriticalStyles();
     ensureImageOnlyOverlay();
     bootImageOnlyFallback();
     setTimeout(() => {
@@ -405,6 +507,8 @@
     }, 1200);
     setTimeout(bootImageOnlyFallback, 3500);
   });
+
+  ensureImageOnlyCriticalStyles();
 
   // في حال كان الملف محملًا بعد تعريف الدوال، نلفّها مباشرة أيضًا.
   wrapShowDynamicMessage();
