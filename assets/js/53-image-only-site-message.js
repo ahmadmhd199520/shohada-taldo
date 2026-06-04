@@ -27,28 +27,36 @@
     );
   }
 
-  function getDriveThumbnail(fileId, size) {
-    const id = String(fileId || '').trim();
-    return id ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${size || 1600}` : '';
-  }
+  const IMAGE_ONLY_NOTICE_THUMB_SIZE = 1000;
+const IMAGE_ONLY_NOTICE_FALLBACK_SIZE = 800;
 
-  function getMessageImageSrc(msg) {
-    if (!msg) return '';
+function getDriveThumbnail(fileId, size) {
+  const id = String(fileId || '').trim();
+  const finalSize = Number(size || IMAGE_ONLY_NOTICE_THUMB_SIZE) || IMAGE_ONLY_NOTICE_THUMB_SIZE;
+  return id ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${finalSize}` : '';
+}
 
-    // نفضّل thumbnail بالـ file id لأن رابط uc أحيانًا لا يُعرض كصورة مباشرة في بعض الحالات.
-    const imageFileId = String(msg.image_file_id || '').trim();
-    if (imageFileId) return getDriveThumbnail(imageFileId, 1600);
+function getMessageImageSrc(msg) {
+  if (!msg) return '';
 
-    return String(msg.image_url || '').trim();
-  }
+  // نعرض نسخة مصغّرة من Drive بدل الصورة الأصلية لتخفيف التحميل.
+  const imageFileId = String(msg.image_file_id || '').trim();
+  if (imageFileId) return getDriveThumbnail(imageFileId, IMAGE_ONLY_NOTICE_THUMB_SIZE);
 
-  function getMessageImageFallbackSrc(msg) {
-    if (!msg) return '';
-    const imageUrl = String(msg.image_url || '').trim();
-    const imageFileId = String(msg.image_file_id || '').trim();
-    const thumb = imageFileId ? getDriveThumbnail(imageFileId, 1200) : '';
-    return imageUrl && imageUrl !== thumb ? imageUrl : '';
-  }
+  return String(msg.image_url || '').trim();
+}
+
+function getMessageImageFallbackSrc(msg) {
+  if (!msg) return '';
+
+  const imageUrl = String(msg.image_url || '').trim();
+  const imageFileId = String(msg.image_file_id || '').trim();
+
+  // fallback أخف أيضًا، وفي حال فشل thumbnail يرجع لرابط image_url إن كان مختلفًا.
+  const thumb = imageFileId ? getDriveThumbnail(imageFileId, IMAGE_ONLY_NOTICE_FALLBACK_SIZE) : '';
+
+  return imageUrl && imageUrl !== thumb ? imageUrl : '';
+}
 
   function getMessageHiddenKey(msg) {
     return 'taldo_msg_hidden_' + (msg && msg.message_id ? msg.message_id : '');
