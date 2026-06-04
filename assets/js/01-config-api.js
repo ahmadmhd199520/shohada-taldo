@@ -3,23 +3,32 @@
   const API_URL = 'https://shohada-taldo.al-shwikh-1995-sultan.workers.dev/';
   const SHARE_PREVIEW_URL = 'https://shohada-taldo.al-shwikh-1995-sultan.workers.dev/';
 
-  async function apiRequest(action, data = {}) {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify({
-        action,
-        data
-      })
-    });
+  async function apiRequest(payload) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
 
-    const result = await response.json();
+  const text = await res.text();
 
-    if (!result) {
-      throw new Error('لم يرجع الخادم استجابة واضحة.');
-    }
-
-    return result;
+  if (!res.ok) {
+    console.error("API HTTP Error:", res.status, text);
+    return {
+      success: false,
+      message: "تعذر الاتصال بالخادم. كود الخطأ: " + res.status
+    };
   }
+
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    console.error("API did not return JSON:", text);
+    return {
+      success: false,
+      message: "الخادم لم يرجع بيانات JSON صالحة."
+    };
+  }
+}
