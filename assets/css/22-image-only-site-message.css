@@ -1,0 +1,94 @@
+/* ====== Image-only opening notices ====== */
+.taldo-image-only-notice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.taldo-image-only-notice-overlay.d-none {
+  display: none !important;
+}
+
+.taldo-image-only-notice-stage {
+  position: relative;
+  max-width: min(94vw, 860px);
+  max-height: 90vh;
+  display: inline-block;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  line-height: 0;
+}
+
+.taldo-image-only-notice-image {
+  display: block;
+  max-width: min(94vw, 860px);
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: transparent;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.taldo-image-only-notice-close {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.58);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: 1.15rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.taldo-image-only-notice-close:hover,
+.taldo-image-only-notice-close:focus {
+  background: rgba(0, 0, 0, 0.82);
+  color: #ffffff;
+}
+
+.taldo-image-only-help {
+  border: 1px solid rgba(13, 110, 253, 0.18);
+  background: rgba(13, 110, 253, 0.08);
+  color: #0b4e94;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-weight: 700;
+}
+
+@media (max-width: 576px) {
+  .taldo-image-only-notice-overlay {
+    padding: 10px;
+  }
+
+  .taldo-image-only-notice-stage,
+  .taldo-image-only-notice-image {
+    max-width: 96vw;
+    max-height: 88vh;
+  }
+
+  .taldo-image-only-notice-close {
+    width: 32px;
+    height: 32px;
+    top: 6px;
+    inset-inline-end: 6px;
+  }
+}
