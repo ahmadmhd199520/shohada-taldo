@@ -748,3 +748,132 @@ body.dark-mode #dashboardPage .fw-bold,
 html[data-theme="dark"] #dashboardPage .fw-bold {
   color: #f4faf8 !important;
 }
+
+
+/* ===== v9 FINAL: sticky search + modal layering fix =====
+   السبب الحقيقي للمشكلة كان اجتماع أمرين:
+   1) .app-shell وبعض الحاويات أخذت overflow-x:hidden، وهذا يكسر sticky لأنه يصنع scroll-container.
+   2) شريط البحث كان z-index مرتفعًا جدًا 2145، لذلك كان يظهر فوق المودالات مثل تنبيه التكرار.
+*/
+
+/* لا تجعل أي حاوية أب لشريط البحث تقصّه أو تصنع سياق تمرير */
+body:not(.modal-open) .app-shell,
+body:not(.modal-open) #homePage,
+body:not(.modal-open) #homePage.page-section,
+body:not(.modal-open) #homePage.page-section.active,
+body:not(.modal-open) .page-section,
+body:not(.modal-open) .page-section.active {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  transform: none !important;
+  contain: none !important;
+}
+
+/* منع الانزياح العرضي بدون كسر sticky */
+html,
+body {
+  max-width: 100% !important;
+}
+
+body:not(.modal-open) {
+  overflow-x: clip !important;
+  overflow-y: auto !important;
+}
+
+/* تثبيت شريط البحث بقيمة z-index طبيعية أقل من المودالات */
+#homePage .mobile-search-filter,
+.mobile-search-filter,
+.houla-compact-search-filter,
+.family-compact-search-filter,
+.join-compact-search-filter,
+.taldo-family-search-wrap,
+.taldo-family-page-search-wrap,
+.taldo-family-search-bar,
+.taldo-family-page-search-bar {
+  position: sticky !important;
+  position: -webkit-sticky !important;
+  top: 8px !important;
+  z-index: 90 !important;
+  isolation: isolate !important;
+  background: linear-gradient(180deg, rgba(245,247,251,.99), rgba(245,247,251,.94)) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  box-shadow: 0 10px 24px rgba(15,23,42,.10) !important;
+}
+
+/* عندما يكون أي مودال مفتوحًا، يجب أن يبقى شريط البحث خلف المودال لا فوقه */
+body.modal-open #homePage .mobile-search-filter,
+body.modal-open .mobile-search-filter,
+body.modal-open .houla-compact-search-filter,
+body.modal-open .family-compact-search-filter,
+body.modal-open .join-compact-search-filter,
+body.modal-open .taldo-family-search-wrap,
+body.modal-open .taldo-family-page-search-wrap,
+body.modal-open .taldo-family-search-bar,
+body.modal-open .taldo-family-page-search-bar {
+  z-index: 1 !important;
+}
+
+/* تأكيد طبقات Bootstrap الأصلية فوق شريط البحث */
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+.modal {
+  z-index: 1055 !important;
+}
+
+/* الوضع الليلي لشريط البحث */
+body.dark-mode #homePage .mobile-search-filter,
+body.dark-mode .mobile-search-filter,
+body.dark-mode .houla-compact-search-filter,
+body.dark-mode .family-compact-search-filter,
+body.dark-mode .join-compact-search-filter,
+body.dark-mode .taldo-family-search-wrap,
+body.dark-mode .taldo-family-page-search-wrap,
+body.dark-mode .taldo-family-search-bar,
+body.dark-mode .taldo-family-page-search-bar,
+html[data-theme="dark"] #homePage .mobile-search-filter,
+html[data-theme="dark"] .mobile-search-filter,
+html[data-theme="dark"] .houla-compact-search-filter,
+html[data-theme="dark"] .family-compact-search-filter,
+html[data-theme="dark"] .join-compact-search-filter,
+html[data-theme="dark"] .taldo-family-search-wrap,
+html[data-theme="dark"] .taldo-family-page-search-wrap,
+html[data-theme="dark"] .taldo-family-search-bar,
+html[data-theme="dark"] .taldo-family-page-search-bar {
+  background: linear-gradient(180deg, rgba(7,22,18,.98), rgba(7,22,18,.92)) !important;
+  border-color: rgba(255,255,255,.12) !important;
+  box-shadow: 0 12px 26px rgba(0,0,0,.22) !important;
+}
+
+/* تتمة الوضع الليلي للعناصر التي ذكرتها */
+body.dark-mode #dashboardPage .dashboard-controls-row,
+body.dark-mode #dashboardPage .dashboard-tabs,
+html[data-theme="dark"] #dashboardPage .dashboard-controls-row,
+html[data-theme="dark"] #dashboardPage .dashboard-tabs {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #dashboardPage .accordion-button,
+body.dark-mode #dashboardPage .accordion-header button,
+html[data-theme="dark"] #dashboardPage .accordion-button,
+html[data-theme="dark"] #dashboardPage .accordion-header button {
+  background: #0e211d !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #dashboardPage .accordion-button:not(.collapsed),
+html[data-theme="dark"] #dashboardPage .accordion-button:not(.collapsed) {
+  background: #054239 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode #dashboardPage .accordion-body,
+html[data-theme="dark"] #dashboardPage .accordion-body {
+  background: #071612 !important;
+  color: #f4faf8 !important;
+}
