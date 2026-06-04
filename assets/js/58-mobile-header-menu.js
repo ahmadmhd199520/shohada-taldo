@@ -79,6 +79,86 @@
     }
   }
 
+  function makeButton() {
+    let btn = document.getElementById(MENU_BTN_ID);
+    if (btn) return btn;
+
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = MENU_BTN_ID;
+    btn.className = 'btn btn-outline-light btn-sm taldo-mobile-header-menu-btn';
+    btn.setAttribute('aria-label', 'القائمة');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = '<i class="fa-solid fa-ellipsis-vertical"></i>';
+    return btn;
+  }
+
+  function bindButton(btn) {
+    if (!btn || btn.dataset.taldoMenuBound === '1') return;
+    btn.dataset.taldoMenuBound = '1';
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMenu();
+    });
+  }
+
+  function ensurePanel() {
+    let panel = document.getElementById(MENU_PANEL_ID);
+    if (panel) return panel;
+
+    panel = document.createElement('div');
+    panel.id = MENU_PANEL_ID;
+    panel.className = 'taldo-mobile-header-menu-panel';
+    panel.innerHTML = `
+      <button type="button" id="taldoMobileMenuAuth" class="taldo-mobile-menu-item"></button>
+      <button type="button" id="taldoMobileMenuAbout" class="taldo-mobile-menu-item">
+        <i class="fa-solid fa-triangle-exclamation"></i><span>عن المشروع</span>
+      </button>
+      <div class="taldo-mobile-menu-divider"></div>
+      <button type="button" id="taldoMobileMenuTheme" class="taldo-mobile-menu-item"></button>
+    `;
+    document.body.appendChild(panel);
+    document.getElementById('taldoMobileMenuAuth')?.addEventListener('click', runAuthAction);
+    document.getElementById('taldoMobileMenuAbout')?.addEventListener('click', runAboutAction);
+    document.getElementById('taldoMobileMenuTheme')?.addEventListener('click', runThemeAction);
+    return panel;
+  }
+
+  function rehomeHeaderButtons() {
+    const menuBtn = makeButton();
+    bindButton(menuBtn);
+
+    const dashboardBtn = document.getElementById('dashboardBtn');
+    const inlineActions = document.querySelector('.top-login-bar.header-inline-actions') || document.querySelector('.top-login-bar');
+    const topActions = document.querySelector('.top-actions');
+
+    if (isDesktopHeader() && topActions) {
+      // في اللابتوب: نضع زر الثلاث نقاط أول عنصر داخل top-actions، فيكون أقصى اليسار مع direction:ltr.
+      if (menuBtn.parentElement !== topActions || topActions.firstElementChild !== menuBtn) {
+        topActions.insertBefore(menuBtn, topActions.firstChild);
+      }
+      if (dashboardBtn && dashboardBtn.parentElement !== topActions) {
+        topActions.insertBefore(dashboardBtn, menuBtn.nextSibling);
+      } else if (dashboardBtn && dashboardBtn.previousElementSibling !== menuBtn) {
+        topActions.insertBefore(dashboardBtn, menuBtn.nextSibling);
+      }
+    } else if (inlineActions) {
+      // في الجوال: زر الثلاث نقاط أقصى اليسار، وزر لوحة التحكم بعده مباشرة.
+      if (menuBtn.parentElement !== inlineActions || inlineActions.firstElementChild !== menuBtn) {
+        inlineActions.insertBefore(menuBtn, inlineActions.firstChild);
+      }
+      if (dashboardBtn && dashboardBtn.parentElement !== inlineActions) {
+        inlineActions.insertBefore(dashboardBtn, menuBtn.nextSibling);
+      } else if (dashboardBtn && dashboardBtn.previousElementSibling !== menuBtn) {
+        inlineActions.insertBefore(dashboardBtn, menuBtn.nextSibling);
+      }
+    }
+
+    menuBtn.style.display = 'inline-flex';
+    menuBtn.classList.remove('d-none');
+  }
+
   function updateMenuState() {
     const authBtn = document.getElementById('taldoMobileMenuAuth');
     const themeBtn = document.getElementById('taldoMobileMenuTheme');
@@ -96,8 +176,6 @@
         ? '<i class="fa-solid fa-sun"></i><span>الوضع النهاري</span>'
         : '<i class="fa-solid fa-moon"></i><span>الوضع الليلي</span>';
     }
-
-    rehomeHeaderButtons();
   }
 
   function runAuthAction() {
@@ -129,88 +207,11 @@
   }
 
   function ensureMenu() {
-    const actions = document.querySelector('.top-login-bar.header-inline-actions') || document.querySelector('.top-login-bar');
-    if (!actions) return;
-
-    let btn = document.getElementById(MENU_BTN_ID);
-    if (!btn) {
-      btn = document.createElement('button');
-      btn.type = 'button';
-      btn.id = MENU_BTN_ID;
-      btn.className = 'btn btn-outline-light btn-sm taldo-mobile-header-menu-btn';
-      btn.setAttribute('aria-label', 'القائمة');
-      btn.setAttribute('aria-expanded', 'false');
-      btn.innerHTML = '<i class="fa-solid fa-ellipsis-vertical"></i>';
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMenu();
-      });
-    }
-
-    let panel = document.getElementById(MENU_PANEL_ID);
-    if (!panel) {
-      panel = document.createElement('div');
-      panel.id = MENU_PANEL_ID;
-      panel.className = 'taldo-mobile-header-menu-panel';
-      panel.innerHTML = `
-        <button type="button" id="taldoMobileMenuAuth" class="taldo-mobile-menu-item"></button>
-        <button type="button" id="taldoMobileMenuAbout" class="taldo-mobile-menu-item">
-          <i class="fa-solid fa-triangle-exclamation"></i><span>عن المشروع</span>
-        </button>
-        <div class="taldo-mobile-menu-divider"></div>
-        <button type="button" id="taldoMobileMenuTheme" class="taldo-mobile-menu-item"></button>
-      `;
-      document.body.appendChild(panel);
-      document.getElementById('taldoMobileMenuAuth')?.addEventListener('click', runAuthAction);
-      document.getElementById('taldoMobileMenuAbout')?.addEventListener('click', runAboutAction);
-      document.getElementById('taldoMobileMenuTheme')?.addEventListener('click', runThemeAction);
-    }
-
-    if (!window.__taldoMobileHeaderMenuGlobalBound) {
-      window.__taldoMobileHeaderMenuGlobalBound = true;
-      document.addEventListener('click', function(e) {
-        const panelEl = document.getElementById(MENU_PANEL_ID);
-        const btnEl = document.getElementById(MENU_BTN_ID);
-        if (!panelEl || !btnEl) return;
-        if (panelEl.contains(e.target) || btnEl.contains(e.target)) return;
-        closeMenu();
-      });
-
-      window.addEventListener('resize', function() {
-        closeMenu();
-        setTimeout(rehomeHeaderButtons, 50);
-      });
-
-      window.addEventListener('scroll', function() {
-        const panelEl = document.getElementById(MENU_PANEL_ID);
-        if (panelEl && panelEl.classList.contains('show')) positionMenuPanel();
-      }, true);
-    }
-
+    const btn = makeButton();
+    bindButton(btn);
+    ensurePanel();
     rehomeHeaderButtons();
     updateMenuState();
-  }
-
-  function rehomeHeaderButtons() {
-    const menuBtn = document.getElementById(MENU_BTN_ID);
-    const dashboardBtn = document.getElementById('dashboardBtn');
-    const inlineActions = document.querySelector('.top-login-bar.header-inline-actions') || document.querySelector('.top-login-bar');
-    const topActions = document.querySelector('.top-actions');
-    if (!menuBtn || !inlineActions) return;
-
-    if (isDesktopHeader() && topActions) {
-      // في اللابتوب: DOM order يجعل آخر عنصر يظهر أقصى اليسار بسبب RTL.
-      if (dashboardBtn && dashboardBtn.parentElement !== topActions) topActions.appendChild(dashboardBtn);
-      if (menuBtn.parentElement !== topActions) topActions.appendChild(menuBtn);
-    } else {
-      // في الجوال: يبقى الزران في سطر العنوان.
-      if (menuBtn.parentElement !== inlineActions) inlineActions.insertBefore(menuBtn, inlineActions.firstChild);
-      if (dashboardBtn && dashboardBtn.parentElement !== inlineActions) {
-        if (menuBtn.nextSibling) inlineActions.insertBefore(dashboardBtn, menuBtn.nextSibling);
-        else inlineActions.appendChild(dashboardBtn);
-      }
-    }
   }
 
   function wrapAdminButtonsUpdater() {
@@ -220,8 +221,7 @@
     const wrapped = function() {
       const result = original.apply(this, arguments);
       setTimeout(function() {
-        rehomeHeaderButtons();
-        updateMenuState();
+        ensureMenu();
       }, 0);
       return result;
     };
@@ -229,17 +229,37 @@
     window.updateAdminButtons = wrapped;
   }
 
+  function bindGlobalOnce() {
+    if (window.__taldoMobileHeaderMenuGlobalBound) return;
+    window.__taldoMobileHeaderMenuGlobalBound = true;
+
+    document.addEventListener('click', function(e) {
+      const panelEl = document.getElementById(MENU_PANEL_ID);
+      const btnEl = document.getElementById(MENU_BTN_ID);
+      if (!panelEl || !btnEl) return;
+      if (panelEl.contains(e.target) || btnEl.contains(e.target)) return;
+      closeMenu();
+    });
+
+    window.addEventListener('resize', function() {
+      closeMenu();
+      setTimeout(ensureMenu, 50);
+    });
+
+    window.addEventListener('scroll', function() {
+      const panelEl = document.getElementById(MENU_PANEL_ID);
+      if (panelEl && panelEl.classList.contains('show')) positionMenuPanel();
+    }, true);
+  }
+
   function boot() {
     initSavedTheme();
+    bindGlobalOnce();
     ensureMenu();
     wrapAdminButtonsUpdater();
-    updateMenuState();
-    setTimeout(function() {
-      ensureMenu();
-      wrapAdminButtonsUpdater();
-      rehomeHeaderButtons();
-      updateMenuState();
-    }, 800);
+    setTimeout(ensureMenu, 300);
+    setTimeout(ensureMenu, 1000);
+    setTimeout(ensureMenu, 2200);
   }
 
   if (document.readyState === 'loading') {
