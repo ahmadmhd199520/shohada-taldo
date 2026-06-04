@@ -1160,3 +1160,507 @@ body.dark-mode .modal-header .btn-close,
 html[data-theme="dark"] .modal-header .btn-close {
   filter: invert(1) grayscale(1) brightness(2) !important;
 }
+
+/* =========================================================
+   v10 FINAL OVERRIDES - إصلاح انزياح قائمة الثلاث نقاط + استكمال الوضع الليلي
+   ملاحظة: هذا القسم موضوع في آخر الملف ليغلب التكرارات السابقة بدون حذف ضبط sticky.
+   ========================================================= */
+
+/* 1) منع الانزياح العرضي بدون كسر sticky
+   لا نضع overflow:hidden على آباء شريط البحث، ونكتفي بقص أفقي آمن على html/body. */
+html {
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+body {
+  max-width: 100% !important;
+  overflow-y: auto !important;
+}
+
+body:not(.modal-open) {
+  overflow-x: clip !important;
+}
+
+body.modal-open {
+  overflow-x: clip !important;
+  overflow-y: hidden !important;
+}
+
+/* آباء شريط البحث يجب أن يبقوا overflow: visible حتى يعمل position: sticky */
+.app-shell,
+.main-content,
+.container,
+.page-section,
+.page-section.active,
+#homePage,
+#homePage.page-section,
+#homePage.page-section.active,
+#detailsPage,
+#familiesPage,
+#familyMartyrsPage,
+#dashboardPage {
+  max-width: 100% !important;
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  transform: none !important;
+  contain: none !important;
+  perspective: none !important;
+}
+
+/* 2) إصلاح انزياح قائمة الثلاث نقاط في الجوال
+   نجعل القائمة ثابتة داخل حدود الشاشة لا حسب أي إحداثيات قديمة. */
+#taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
+.taldo-mobile-header-menu-panel {
+  position: fixed !important;
+  top: 72px !important;
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+  width: auto !important;
+  min-width: 205px !important;
+  max-width: calc(100vw - 20px) !important;
+  transform: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 1040 !important; /* فوق الصفحة وتحت المودال */
+}
+
+#taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel.show,
+.taldo-mobile-header-menu-panel.show {
+  display: block !important;
+}
+
+@media (max-width: 576px) {
+  #taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
+  .taldo-mobile-header-menu-panel {
+    top: 62px !important;
+    left: max(8px, env(safe-area-inset-left)) !important;
+    min-width: 200px !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+}
+
+/* عند فتح مودال يجب أن تبقى قائمة الثلاث نقاط خلفه */
+body.modal-open #taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
+body.modal-open .taldo-mobile-header-menu-panel {
+  z-index: 1 !important;
+}
+
+/* 3) تثبيت شريط البحث - لا تمسح هذه القواعد */
+#homePage .mobile-search-filter,
+.mobile-search-filter,
+.houla-compact-search-filter,
+.family-compact-search-filter,
+.join-compact-search-filter,
+.taldo-family-search-wrap,
+.taldo-family-page-search-wrap,
+.taldo-family-search-bar,
+.taldo-family-page-search-bar,
+.taldo-simple-search,
+.taldo-simple-search-inner {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 8px !important;
+  z-index: 90 !important;
+  align-self: flex-start !important;
+  isolation: isolate !important;
+  box-sizing: border-box !important;
+}
+
+/* إذا كان هناك inline style قديم على الشريط */
+#homePage .mobile-search-filter[style],
+.mobile-search-filter[style],
+.taldo-simple-search[style],
+.taldo-simple-search-inner[style] {
+  position: sticky !important;
+  top: 8px !important;
+  z-index: 90 !important;
+}
+
+body.modal-open #homePage .mobile-search-filter,
+body.modal-open .mobile-search-filter,
+body.modal-open .houla-compact-search-filter,
+body.modal-open .family-compact-search-filter,
+body.modal-open .join-compact-search-filter,
+body.modal-open .taldo-family-search-wrap,
+body.modal-open .taldo-family-page-search-wrap,
+body.modal-open .taldo-family-search-bar,
+body.modal-open .taldo-family-page-search-bar,
+body.modal-open .taldo-simple-search,
+body.modal-open .taldo-simple-search-inner {
+  z-index: 1 !important;
+}
+
+.modal-backdrop { z-index: 1050 !important; }
+.modal { z-index: 1055 !important; }
+
+/* =========================================================
+   استكمال الوضع الليلي - عام
+   ========================================================= */
+body.dark-mode,
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 88% 0%, rgba(5, 66, 57, 0.42), transparent 36%),
+    radial-gradient(circle at 0% 100%, rgba(107, 31, 42, 0.18), transparent 32%),
+    linear-gradient(135deg, #020806 0%, #071612 58%, #03110e 100%) !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode .page-section,
+html[data-theme="dark"] .page-section {
+  color: #f4faf8 !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .filter-card,
+body.dark-mode .stat-card,
+body.dark-mode .empty-state,
+body.dark-mode .rounded-4,
+body.dark-mode .bg-light,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .filter-card,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .empty-state,
+html[data-theme="dark"] .rounded-4,
+html[data-theme="dark"] .bg-light {
+  background-color: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode .small,
+body.dark-mode .form-text,
+body.dark-mode .martyr-family,
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .small,
+html[data-theme="dark"] .form-text,
+html[data-theme="dark"] .martyr-family {
+  color: #b8c8c3 !important;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select,
+body.dark-mode textarea,
+body.dark-mode input,
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] input {
+  background-color: #071612 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.16) !important;
+}
+
+body.dark-mode .form-control::placeholder,
+body.dark-mode input::placeholder,
+html[data-theme="dark"] .form-control::placeholder,
+html[data-theme="dark"] input::placeholder {
+  color: rgba(244,250,248,.56) !important;
+}
+
+/* شريط البحث في الوضع الليلي */
+body.dark-mode .mobile-search-filter,
+body.dark-mode .houla-compact-search-filter,
+body.dark-mode .family-compact-search-filter,
+body.dark-mode .join-compact-search-filter,
+body.dark-mode .taldo-family-search-wrap,
+body.dark-mode .taldo-family-page-search-wrap,
+body.dark-mode .taldo-family-search-bar,
+body.dark-mode .taldo-family-page-search-bar,
+body.dark-mode .taldo-simple-search,
+body.dark-mode .taldo-simple-search-inner,
+html[data-theme="dark"] .mobile-search-filter,
+html[data-theme="dark"] .houla-compact-search-filter,
+html[data-theme="dark"] .family-compact-search-filter,
+html[data-theme="dark"] .join-compact-search-filter,
+html[data-theme="dark"] .taldo-family-search-wrap,
+html[data-theme="dark"] .taldo-family-page-search-wrap,
+html[data-theme="dark"] .taldo-family-search-bar,
+html[data-theme="dark"] .taldo-family-page-search-bar,
+html[data-theme="dark"] .taldo-simple-search,
+html[data-theme="dark"] .taldo-simple-search-inner {
+  background: linear-gradient(180deg, rgba(7,22,18,.98), rgba(7,22,18,.93)) !important;
+  border-color: rgba(255,255,255,.14) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.25) !important;
+}
+
+/* =========================================================
+   صفحة الشهيد الشخصية
+   ========================================================= */
+body.dark-mode #detailsPage,
+html[data-theme="dark"] #detailsPage,
+body.dark-mode #detailsContainer,
+html[data-theme="dark"] #detailsContainer {
+  color: #f4faf8 !important;
+}
+
+body.dark-mode #detailsPage .detail-box,
+body.dark-mode #detailsPage .admin-box,
+body.dark-mode #detailsPage .completed-info-box,
+body.dark-mode #detailsPage .detail-card,
+body.dark-mode #detailsPage .gallery-main-frame,
+body.dark-mode #detailsPage .gallery-thumb-crop,
+body.dark-mode #detailsPage .p-3.rounded-4,
+html[data-theme="dark"] #detailsPage .detail-box,
+html[data-theme="dark"] #detailsPage .admin-box,
+html[data-theme="dark"] #detailsPage .completed-info-box,
+html[data-theme="dark"] #detailsPage .detail-card,
+html[data-theme="dark"] #detailsPage .gallery-main-frame,
+html[data-theme="dark"] #detailsPage .gallery-thumb-crop,
+html[data-theme="dark"] #detailsPage .p-3.rounded-4 {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #detailsPage .detail-image-placeholder,
+body.dark-mode #detailsPage .martyr-placeholder,
+html[data-theme="dark"] #detailsPage .detail-image-placeholder,
+html[data-theme="dark"] #detailsPage .martyr-placeholder {
+  background: #313437 !important;
+  color: #9ca3af !important;
+}
+
+body.dark-mode #detailsPage .detail-image,
+html[data-theme="dark"] #detailsPage .detail-image {
+  background-color: #313437 !important;
+}
+
+body.dark-mode #detailsPage .taldo-detail-family-link,
+html[data-theme="dark"] #detailsPage .taldo-detail-family-link {
+  color: #d7fff4 !important;
+}
+
+/* =========================================================
+   صفحة العوائل وصفحة العائلة
+   ========================================================= */
+body.dark-mode #familiesPage,
+body.dark-mode #familyMartyrsPage,
+html[data-theme="dark"] #familiesPage,
+html[data-theme="dark"] #familyMartyrsPage {
+  color: #f4faf8 !important;
+}
+
+body.dark-mode #familiesPage .family-stat-card,
+body.dark-mode #familiesPage .family-stat-row,
+body.dark-mode #familiesPage .family-needs-summary,
+body.dark-mode #familiesPage .card,
+body.dark-mode #familyMartyrsPage .family-page-header,
+body.dark-mode #familyMartyrsPage .card,
+html[data-theme="dark"] #familiesPage .family-stat-card,
+html[data-theme="dark"] #familiesPage .family-stat-row,
+html[data-theme="dark"] #familiesPage .family-needs-summary,
+html[data-theme="dark"] #familiesPage .card,
+html[data-theme="dark"] #familyMartyrsPage .family-page-header,
+html[data-theme="dark"] #familyMartyrsPage .card {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode .taldo-simple-search input,
+html[data-theme="dark"] .taldo-simple-search input {
+  background: #071612 !important;
+  color: #f4faf8 !important;
+}
+
+/* بطاقات الشهداء */
+body.dark-mode .martyr-card,
+html[data-theme="dark"] .martyr-card {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode .martyr-body,
+html[data-theme="dark"] .martyr-body {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode .martyr-name,
+html[data-theme="dark"] .martyr-name {
+  color: #ffffff !important;
+}
+
+body.dark-mode .martyr-placeholder,
+html[data-theme="dark"] .martyr-placeholder {
+  background: #313437 !important;
+}
+
+body.dark-mode .martyr-placeholder i,
+html[data-theme="dark"] .martyr-placeholder i {
+  color: #9ca3af !important;
+}
+
+/* =========================================================
+   لوحة التحكم والإعدادات والجداول
+   ========================================================= */
+body.dark-mode #dashboardPage,
+html[data-theme="dark"] #dashboardPage {
+  color: #f4faf8 !important;
+}
+
+body.dark-mode #dashboardPage .dashboard-controls-row,
+body.dark-mode #dashboardPage .dashboard-tabs,
+body.dark-mode #dashboardPage .dashboard-tab-pane,
+body.dark-mode #dashboardPage .dashboard-section-card,
+body.dark-mode #dashboardPage .dashboard-section-header,
+body.dark-mode #dashboardPage .dashboard-table-card,
+body.dark-mode #dashboardPage .dashboard-card,
+body.dark-mode #dashboardPage .join-request-controls,
+body.dark-mode #dashboardPage .settings-card,
+body.dark-mode #dashboardPage .taldo-settings-accordion-card,
+body.dark-mode #dashboardPage .taldo-about-section-admin-item,
+html[data-theme="dark"] #dashboardPage .dashboard-controls-row,
+html[data-theme="dark"] #dashboardPage .dashboard-tabs,
+html[data-theme="dark"] #dashboardPage .dashboard-tab-pane,
+html[data-theme="dark"] #dashboardPage .dashboard-section-card,
+html[data-theme="dark"] #dashboardPage .dashboard-section-header,
+html[data-theme="dark"] #dashboardPage .dashboard-table-card,
+html[data-theme="dark"] #dashboardPage .dashboard-card,
+html[data-theme="dark"] #dashboardPage .join-request-controls,
+html[data-theme="dark"] #dashboardPage .settings-card,
+html[data-theme="dark"] #dashboardPage .taldo-settings-accordion-card,
+html[data-theme="dark"] #dashboardPage .taldo-about-section-admin-item {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.22) !important;
+}
+
+body.dark-mode #dashboardPage .dashboard-tabs .nav-link,
+html[data-theme="dark"] #dashboardPage .dashboard-tabs .nav-link {
+  color: rgba(244,250,248,.82) !important;
+  background: transparent !important;
+}
+
+body.dark-mode #dashboardPage .dashboard-tabs .nav-link.active,
+html[data-theme="dark"] #dashboardPage .dashboard-tabs .nav-link.active {
+  color: #ffffff !important;
+  background: #054239 !important;
+}
+
+body.dark-mode #dashboardPage .accordion-item,
+body.dark-mode #dashboardPage .accordion-body,
+html[data-theme="dark"] #dashboardPage .accordion-item,
+html[data-theme="dark"] #dashboardPage .accordion-body {
+  background: #071612 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #dashboardPage .accordion-button,
+body.dark-mode #dashboardPage .accordion-header,
+body.dark-mode #dashboardPage .accordion-header button,
+body.dark-mode #dashboardPage .taldo-settings-accordion-toggle,
+body.dark-mode #dashboardPage .taldo-about-section-admin-head,
+html[data-theme="dark"] #dashboardPage .accordion-button,
+html[data-theme="dark"] #dashboardPage .accordion-header,
+html[data-theme="dark"] #dashboardPage .accordion-header button,
+html[data-theme="dark"] #dashboardPage .taldo-settings-accordion-toggle,
+html[data-theme="dark"] #dashboardPage .taldo-about-section-admin-head {
+  background: #0b2a24 !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,.12) !important;
+  box-shadow: none !important;
+}
+
+body.dark-mode #dashboardPage .accordion-button:not(.collapsed),
+html[data-theme="dark"] #dashboardPage .accordion-button:not(.collapsed) {
+  background: #054239 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode #dashboardPage .accordion-button::after,
+html[data-theme="dark"] #dashboardPage .accordion-button::after {
+  filter: invert(1) grayscale(1) brightness(2) !important;
+}
+
+body.dark-mode #dashboardPage label,
+body.dark-mode #dashboardPage .form-label,
+body.dark-mode #dashboardPage .fw-bold,
+body.dark-mode #dashboardPage h1,
+body.dark-mode #dashboardPage h2,
+body.dark-mode #dashboardPage h3,
+body.dark-mode #dashboardPage h4,
+body.dark-mode #dashboardPage h5,
+body.dark-mode #dashboardPage h6,
+html[data-theme="dark"] #dashboardPage label,
+html[data-theme="dark"] #dashboardPage .form-label,
+html[data-theme="dark"] #dashboardPage .fw-bold,
+html[data-theme="dark"] #dashboardPage h1,
+html[data-theme="dark"] #dashboardPage h2,
+html[data-theme="dark"] #dashboardPage h3,
+html[data-theme="dark"] #dashboardPage h4,
+html[data-theme="dark"] #dashboardPage h5,
+html[data-theme="dark"] #dashboardPage h6 {
+  color: #ffffff !important;
+}
+
+body.dark-mode #dashboardPage .alert,
+html[data-theme="dark"] #dashboardPage .alert {
+  background: rgba(13,110,253,.14) !important;
+  color: #b9d7ff !important;
+  border-color: rgba(13,110,253,.28) !important;
+}
+
+body.dark-mode #dashboardPage .table,
+html[data-theme="dark"] #dashboardPage .table {
+  --bs-table-bg: #0e211d !important;
+  --bs-table-color: #f4faf8 !important;
+  --bs-table-border-color: rgba(255,255,255,.12) !important;
+  --bs-table-striped-bg: #102b26 !important;
+  --bs-table-hover-bg: #12352f !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode #dashboardPage table thead th,
+html[data-theme="dark"] #dashboardPage table thead th {
+  background: #071612 !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #dashboardPage table tbody td,
+html[data-theme="dark"] #dashboardPage table tbody td {
+  background: transparent !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.10) !important;
+}
+
+body.dark-mode #dashboardPage .table-responsive,
+html[data-theme="dark"] #dashboardPage .table-responsive {
+  background: #0e211d !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #dashboardPage .dataTables_wrapper,
+body.dark-mode #dashboardPage .dataTables_length,
+body.dark-mode #dashboardPage .dataTables_filter,
+body.dark-mode #dashboardPage .dataTables_info,
+body.dark-mode #dashboardPage .dataTables_paginate,
+html[data-theme="dark"] #dashboardPage .dataTables_wrapper,
+html[data-theme="dark"] #dashboardPage .dataTables_length,
+html[data-theme="dark"] #dashboardPage .dataTables_filter,
+html[data-theme="dark"] #dashboardPage .dataTables_info,
+html[data-theme="dark"] #dashboardPage .dataTables_paginate {
+  color: #f4faf8 !important;
+}
+
+/* الفوتر */
+body.dark-mode .site-footer,
+html[data-theme="dark"] .site-footer {
+  background: linear-gradient(135deg, #021f1b, #054239) !important;
+  color: #f4faf8 !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+body.dark-mode .site-footer .btn,
+html[data-theme="dark"] .site-footer .btn {
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,.45) !important;
+  background: rgba(255,255,255,.08) !important;
+}
