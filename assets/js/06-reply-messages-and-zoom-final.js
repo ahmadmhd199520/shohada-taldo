@@ -78,6 +78,15 @@
     return !!msg && (String(msg.message_type || '') === 'question' || isYesValue(msg.allow_reply));
   }
 
+  function rememberDynamicMessageIfChecked() {
+  const msg = window.__currentDynamicMessage;
+  const checkbox = document.getElementById('dynamicDontShowAgain');
+
+  if (msg && msg.message_id && checkbox && checkbox.checked) {
+    localStorage.setItem('taldo_msg_hidden_' + msg.message_id, '1');
+  }
+}
+
   window.showDynamicMessage = function(msg, list) {
     ensureDynamicReplyUI();
 
