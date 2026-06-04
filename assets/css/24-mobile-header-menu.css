@@ -1073,3 +1073,55 @@ html[data-theme="dark"] .site-footer .btn {
   border-color: rgba(255,255,255,.45) !important;
   background: rgba(255,255,255,.08) !important;
 }
+
+
+
+
+/* =========================================================
+   إصلاح انزياح الجوال فقط بسبب قائمة الثلاث نقاط
+   ========================================================= */
+
+@media (max-width: 768px) {
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .app-shell,
+  .hero,
+  .hero-layout,
+  .hero-top-row,
+  .page-section,
+  #homePage,
+  #detailsPage,
+  #familiesPage,
+  #familyMartyrsPage,
+  #dashboardPage {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* القائمة نفسها لا يجوز أن تتجاوز عرض الشاشة */
+  .taldo-mobile-header-menu-panel {
+    position: fixed !important;
+    left: 8px !important;
+    right: auto !important;
+    max-width: calc(100vw - 16px) !important;
+    min-width: min(205px, calc(100vw - 16px)) !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+  }
+
+  .taldo-mobile-header-menu-panel * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .taldo-mobile-menu-item {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
