@@ -321,6 +321,7 @@ html, body {
     align-items: center !important;
     justify-content: space-between !important;
     gap: 14px !important;
+    flex-direction: row-reverse !important;
   }
 
   .top-actions {
