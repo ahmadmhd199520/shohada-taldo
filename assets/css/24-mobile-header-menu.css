@@ -1125,3 +1125,92 @@ html[data-theme="dark"] .site-footer .btn {
     text-overflow: ellipsis !important;
   }
 }
+
+
+/* من نحن */
+/* =========================================================
+   الوضع الليلي لمودال من نحن
+   ========================================================= */
+
+body.dark-mode #aboutUsModal .modal-content,
+html[data-theme="dark"] #aboutUsModal .modal-content {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.dark-mode #aboutUsModal .modal-body,
+html[data-theme="dark"] #aboutUsModal .modal-body {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode #aboutUsText,
+html[data-theme="dark"] #aboutUsText {
+  background: transparent !important;
+  color: #f4faf8 !important;
+}
+
+/* رأس قسم من نحن */
+body.dark-mode #aboutUsModal .taldo-about-hero,
+html[data-theme="dark"] #aboutUsModal .taldo-about-hero {
+  background: linear-gradient(135deg, #021f1b, #054239) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.32) !important;
+}
+
+body.dark-mode #aboutUsModal .taldo-about-hero-title,
+body.dark-mode #aboutUsModal .taldo-about-hero-subtitle,
+html[data-theme="dark"] #aboutUsModal .taldo-about-hero-title,
+html[data-theme="dark"] #aboutUsModal .taldo-about-hero-subtitle {
+  color: #ffffff !important;
+}
+
+/* أكورديون من نحن */
+body.dark-mode #aboutUsModal .taldo-about-accordion .accordion-item,
+html[data-theme="dark"] #aboutUsModal .taldo-about-accordion .accordion-item {
+  background: #071612 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.dark-mode #aboutUsModal .taldo-about-accordion .accordion-button,
+html[data-theme="dark"] #aboutUsModal .taldo-about-accordion .accordion-button {
+  background: #0b2a24 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: none !important;
+}
+
+body.dark-mode #aboutUsModal .taldo-about-accordion .accordion-button:not(.collapsed),
+html[data-theme="dark"] #aboutUsModal .taldo-about-accordion .accordion-button:not(.collapsed) {
+  background: #054239 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode #aboutUsModal .taldo-about-accordion .accordion-button::after,
+html[data-theme="dark"] #aboutUsModal .taldo-about-accordion .accordion-button::after {
+  filter: invert(1) grayscale(1) brightness(2) !important;
+}
+
+body.dark-mode #aboutUsModal .taldo-about-accordion .accordion-body,
+html[data-theme="dark"] #aboutUsModal .taldo-about-accordion .accordion-body {
+  background: #071612 !important;
+  color: #f4faf8 !important;
+}
+
+/* النصوص داخل الأكورديون */
+body.dark-mode #aboutUsModal .taldo-about-accordion p,
+body.dark-mode #aboutUsModal .taldo-about-accordion div,
+body.dark-mode #aboutUsModal .taldo-about-accordion span,
+html[data-theme="dark"] #aboutUsModal .taldo-about-accordion p,
+html[data-theme="dark"] #aboutUsModal .taldo-about-accordion div,
+html[data-theme="dark"] #aboutUsModal .taldo-about-accordion span {
+  color: #f4faf8 !important;
+}
+
+/* زر الإغلاق */
+body.dark-mode #aboutUsModal .btn-close,
+html[data-theme="dark"] #aboutUsModal .btn-close {
+  filter: invert(1) grayscale(1) brightness(2) !important;
+}
