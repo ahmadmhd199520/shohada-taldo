@@ -183,3 +183,38 @@
     padding: 14px !important;
   }
 }
+
+
+/* v5 guard: منع تضخم صورة من نحن حتى لو أثرت عليها تنسيقات عامة */
+#aboutUsModal .modal-body,
+#aboutUsModal .modal-content,
+#aboutUsText {
+  overflow-x: hidden !important;
+}
+
+#aboutUsModal #aboutUsText img.taldo-about-hero-logo,
+#aboutUsText .taldo-about-hero img.taldo-about-hero-logo {
+  width: 74px !important;
+  height: 74px !important;
+  min-width: 74px !important;
+  min-height: 74px !important;
+  max-width: 74px !important;
+  max-height: 74px !important;
+  object-fit: cover !important;
+}
+
+#aboutUsModal #aboutUsText img:not(.taldo-about-hero-logo) {
+  max-width: 100% !important;
+}
+
+@media (max-width: 576px) {
+  #aboutUsModal #aboutUsText img.taldo-about-hero-logo,
+  #aboutUsText .taldo-about-hero img.taldo-about-hero-logo {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    min-height: 60px !important;
+    max-width: 60px !important;
+    max-height: 60px !important;
+  }
+}
