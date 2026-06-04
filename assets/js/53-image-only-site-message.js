@@ -1,25 +1,67 @@
 (function() {
   const IMAGE_ONLY_TYPE = 'image_only';
+  let imageOnlyOverlayIsOpen = false;
+  let imageOnlyBootTimer = null;
+
+  function normalizeArabicText(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[أإآٱ]/g, 'ا')
+      .replace(/ة/g, 'ه')
+      .replace(/ى/g, 'ي')
+      .replace(/[ًٌٍَُِّْـ]/g, '')
+      .replace(/\s+/g, ' ');
+  }
 
   function isImageOnlyMessage(msg) {
-    return String((msg && msg.message_type) || '').trim() === IMAGE_ONLY_TYPE;
+    const type = normalizeArabicText(msg && msg.message_type);
+    if (type === IMAGE_ONLY_TYPE) return true;
+
+    // توافق احتياطي إذا حُفظت القيمة كنص عربي بالخطأ بدل value="image_only".
+    return type.includes('صوره') && (
+      type.includes('مجرده') ||
+      type.includes('اعلام') ||
+      type.includes('اشعار') ||
+      type.includes('سريع')
+    );
+  }
+
+  function getDriveThumbnail(fileId, size) {
+    const id = String(fileId || '').trim();
+    return id ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${size || 1600}` : '';
   }
 
   function getMessageImageSrc(msg) {
     if (!msg) return '';
-    const imageUrl = String(msg.image_url || '').trim();
-    if (imageUrl) return imageUrl;
 
+    // نفضّل thumbnail بالـ file id لأن رابط uc أحيانًا لا يُعرض كصورة مباشرة في بعض الحالات.
     const imageFileId = String(msg.image_file_id || '').trim();
-    if (imageFileId) {
-      return `https://drive.google.com/thumbnail?id=${encodeURIComponent(imageFileId)}&sz=w1600`;
-    }
+    if (imageFileId) return getDriveThumbnail(imageFileId, 1600);
 
-    return '';
+    return String(msg.image_url || '').trim();
+  }
+
+  function getMessageImageFallbackSrc(msg) {
+    if (!msg) return '';
+    const imageUrl = String(msg.image_url || '').trim();
+    const imageFileId = String(msg.image_file_id || '').trim();
+    const thumb = imageFileId ? getDriveThumbnail(imageFileId, 1200) : '';
+    return imageUrl && imageUrl !== thumb ? imageUrl : '';
   }
 
   function getMessageHiddenKey(msg) {
     return 'taldo_msg_hidden_' + (msg && msg.message_id ? msg.message_id : '');
+  }
+
+  function isMessageHidden(msg) {
+    return !!(msg && msg.message_id && localStorage.getItem(getMessageHiddenKey(msg)) === '1');
+  }
+
+  function getVisibleMessages(list) {
+    return (Array.isArray(list) ? list : [])
+      .filter(msg => msg && String(msg.status || 'active').trim() !== 'inactive')
+      .filter(msg => !isMessageHidden(msg));
   }
 
   function ensureImageOnlyOverlay() {
@@ -43,16 +85,39 @@
     return overlay;
   }
 
+  function getCurrentMessageIndex(list, msg) {
+    const messages = Array.isArray(list) ? list : [];
+    if (!messages.length || !msg) return -1;
+    const byId = messages.findIndex(item => item && msg.message_id && item.message_id === msg.message_id);
+    if (byId !== -1) return byId;
+    return messages.indexOf(msg);
+  }
+
   function continueDynamicMessages() {
-    const list = window.__dynamicMessageList || [];
-    if (typeof currentDynamicMessageIndex === 'number') {
-      currentDynamicMessageIndex++;
-    } else {
-      window.currentDynamicMessageIndex = 1;
+    const list = Array.isArray(window.__dynamicMessageList) ? window.__dynamicMessageList : [];
+    const msg = window.__currentDynamicMessage || null;
+    let index = getCurrentMessageIndex(list, msg);
+
+    if (index === -1 && typeof currentDynamicMessageIndex === 'number') {
+      index = currentDynamicMessageIndex;
     }
 
-    if (list[currentDynamicMessageIndex]) {
-      setTimeout(() => window.showDynamicMessage(list[currentDynamicMessageIndex], list), 250);
+    const nextIndex = Math.max(0, index + 1);
+
+    try {
+      currentDynamicMessageIndex = nextIndex;
+    } catch (error) {
+      window.currentDynamicMessageIndex = nextIndex;
+    }
+
+    const next = list[nextIndex];
+    if (next) {
+      setTimeout(() => window.showDynamicMessage(next, list), 250);
+    } else {
+      const introHidden = localStorage.getItem('taldo_martyrs_intro_hidden') === '1';
+      if (!introHidden && window.modals && modals.introModal) {
+        setTimeout(() => modals.introModal.show(), 250);
+      }
     }
   }
 
@@ -62,32 +127,29 @@
       localStorage.setItem(getMessageHiddenKey(msg), '1');
     }
 
+    imageOnlyOverlayIsOpen = false;
+
     const overlay = document.getElementById('taldoImageOnlyNoticeOverlay');
     overlay?.classList.add('d-none');
 
     const img = document.getElementById('taldoImageOnlyNoticeImage');
-    if (img) img.removeAttribute('src');
+    if (img) {
+      img.removeAttribute('src');
+      img.dataset.fallbackSrc = '';
+      img.onerror = null;
+    }
 
     continueDynamicMessages();
   }
 
   window.closeImageOnlyNotice = closeImageOnlyNotice;
 
-  const previousShowDynamicMessage = window.showDynamicMessage;
-  window.showDynamicMessage = function(msg, list) {
-    if (!isImageOnlyMessage(msg)) {
-      if (typeof previousShowDynamicMessage === 'function') return previousShowDynamicMessage(msg, list);
-      return;
-    }
-
+  function showImageOnlyNotice(msg, list) {
     const src = getMessageImageSrc(msg);
-    if (!src) {
-      if (typeof previousShowDynamicMessage === 'function') return previousShowDynamicMessage(msg, list);
-      return;
-    }
+    if (!src) return false;
 
     window.__currentDynamicMessage = msg;
-    window.__dynamicMessageList = list || [];
+    window.__dynamicMessageList = Array.isArray(list) ? list : getVisibleMessages(window.siteMessages || siteMessages || []);
 
     try {
       if (window.modals && modals.dynamicMessageModal) modals.dynamicMessageModal.hide();
@@ -98,6 +160,15 @@
     const closeBtn = document.getElementById('taldoImageOnlyNoticeClose');
 
     if (img) {
+      const fallback = getMessageImageFallbackSrc(msg);
+      img.dataset.fallbackSrc = fallback || '';
+      img.onerror = function() {
+        const fallbackSrc = this.dataset.fallbackSrc || '';
+        if (fallbackSrc && this.src !== fallbackSrc) {
+          this.src = fallbackSrc;
+          this.dataset.fallbackSrc = '';
+        }
+      };
       img.src = src;
       img.alt = msg.title || 'إعلام سريع';
     }
@@ -107,8 +178,56 @@
       closeBtn.addEventListener('click', closeImageOnlyNotice);
     }
 
+    imageOnlyOverlayIsOpen = true;
     overlay.classList.remove('d-none');
-  };
+    return true;
+  }
+
+  function wrapShowDynamicMessage() {
+    const previous = window.showDynamicMessage;
+    if (typeof previous !== 'function') return;
+    if (previous.__imageOnlyWrapped === true) return;
+
+    const wrapped = function(msg, list) {
+      if (isImageOnlyMessage(msg)) {
+        const shown = showImageOnlyNotice(msg, list);
+        if (shown) return;
+      }
+
+      return previous.call(this, msg, list);
+    };
+
+    wrapped.__imageOnlyWrapped = true;
+    wrapped.__previousShowDynamicMessage = previous;
+    window.showDynamicMessage = wrapped;
+  }
+
+  function wrapShowNextDynamicMessage() {
+    const previous = window.showNextDynamicMessage;
+    if (typeof previous !== 'function') return;
+    if (previous.__imageOnlyNextWrapped === true) return;
+
+    const wrapped = function() {
+      const rawList = Array.isArray(window.siteMessages) ? window.siteMessages : (typeof siteMessages !== 'undefined' ? siteMessages : []);
+      const messages = getVisibleMessages(rawList);
+
+      if (!messages.length) {
+        return previous.call(this);
+      }
+
+      try {
+        currentDynamicMessageIndex = 0;
+      } catch (error) {
+        window.currentDynamicMessageIndex = 0;
+      }
+
+      return window.showDynamicMessage(messages[0], messages);
+    };
+
+    wrapped.__imageOnlyNextWrapped = true;
+    wrapped.__previousShowNextDynamicMessage = previous;
+    window.showNextDynamicMessage = wrapped;
+  }
 
   function findFieldWrap(id) {
     const el = document.getElementById(id);
@@ -147,9 +266,7 @@
       if (label) label.textContent = isImageOnly ? 'صورة الإعلام السريع' : 'صورة مع الرسالة';
     }
 
-    if (imageInput) {
-      imageInput.required = isImageOnly;
-    }
+    if (imageInput) imageInput.required = isImageOnly;
 
     const allow = document.getElementById('msgAllowReply');
     if (allow && isImageOnly) allow.checked = false;
@@ -251,11 +368,45 @@
     if (typeof previousSaveDashboardMessage === 'function') return previousSaveDashboardMessage();
   };
 
+  function bootImageOnlyFallback() {
+    wrapShowDynamicMessage();
+    wrapShowNextDynamicMessage();
+
+    clearTimeout(imageOnlyBootTimer);
+    imageOnlyBootTimer = setTimeout(() => {
+      if (imageOnlyOverlayIsOpen) return;
+
+      const modalIsOpen = !!document.querySelector('#dynamicMessageModal.show, #introModal.show');
+      if (modalIsOpen) return;
+
+      let list = [];
+      try {
+        list = getVisibleMessages(typeof siteMessages !== 'undefined' ? siteMessages : []);
+      } catch (error) {
+        list = [];
+      }
+
+      if (!list.length) return;
+      const imageOnly = list.find(isImageOnlyMessage);
+      if (!imageOnly) return;
+
+      // احتياط: إذا انتهى تحميل البيانات قبل تركيب هذا الملف، نعرض الصورة هنا.
+      showImageOnlyNotice(imageOnly, list);
+    }, 1800);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     ensureImageOnlyOverlay();
+    bootImageOnlyFallback();
     setTimeout(() => {
       enhanceSettingsFormAfterRender();
       enhanceMessageListLabels();
+      bootImageOnlyFallback();
     }, 1200);
+    setTimeout(bootImageOnlyFallback, 3500);
   });
+
+  // في حال كان الملف محملًا بعد تعريف الدوال، نلفّها مباشرة أيضًا.
+  wrapShowDynamicMessage();
+  wrapShowNextDynamicMessage();
 })();
