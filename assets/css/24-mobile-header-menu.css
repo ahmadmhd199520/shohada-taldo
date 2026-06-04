@@ -577,3 +577,205 @@ button#taldoMobileHeaderMenuBtn {
     direction: rtl !important;
   }
 }
+
+/* ===== v7: sticky search + dashboard dark patches ===== */
+/* تثبيت شريط البحث الرئيسي وشريط البحث في الصفحات الفرعية */
+body:not(.modal-open) .mobile-search-filter,
+body:not(.modal-open) #homePage .mobile-search-filter,
+body:not(.modal-open) .houla-compact-search-filter,
+body:not(.modal-open) .family-compact-search-filter,
+body:not(.modal-open) .join-compact-search-filter,
+body:not(.modal-open) .dashboard-search-filter,
+body:not(.modal-open) #dashboardPage .dashboard-filters,
+body:not(.modal-open) #dashboardPage .dashboard-filter-bar,
+body:not(.modal-open) #dashboardPage .filter-card {
+  position: sticky !important;
+  position: -webkit-sticky !important;
+  top: 0 !important;
+  z-index: 2200 !important;
+  isolation: isolate !important;
+  background: rgba(245, 247, 251, .96) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .10) !important;
+}
+
+/* في الوضع الليلي، خلفية شريط البحث المثبت */
+body.dark-mode:not(.modal-open) .mobile-search-filter,
+body.dark-mode:not(.modal-open) #homePage .mobile-search-filter,
+body.dark-mode:not(.modal-open) .houla-compact-search-filter,
+body.dark-mode:not(.modal-open) .family-compact-search-filter,
+body.dark-mode:not(.modal-open) .join-compact-search-filter,
+body.dark-mode:not(.modal-open) .dashboard-search-filter,
+body.dark-mode:not(.modal-open) #dashboardPage .dashboard-filters,
+body.dark-mode:not(.modal-open) #dashboardPage .dashboard-filter-bar,
+body.dark-mode:not(.modal-open) #dashboardPage .filter-card,
+html[data-theme="dark"] body:not(.modal-open) .mobile-search-filter,
+html[data-theme="dark"] body:not(.modal-open) #homePage .mobile-search-filter,
+html[data-theme="dark"] body:not(.modal-open) .houla-compact-search-filter,
+html[data-theme="dark"] body:not(.modal-open) .family-compact-search-filter,
+html[data-theme="dark"] body:not(.modal-open) .join-compact-search-filter,
+html[data-theme="dark"] body:not(.modal-open) .dashboard-search-filter,
+html[data-theme="dark"] body:not(.modal-open) #dashboardPage .dashboard-filters,
+html[data-theme="dark"] body:not(.modal-open) #dashboardPage .dashboard-filter-bar,
+html[data-theme="dark"] body:not(.modal-open) #dashboardPage .filter-card {
+  background: rgba(5, 20, 17, .96) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .34) !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+/* إزالة ما يمنع sticky داخل أقسام الصفحة */
+#homePage,
+#dashboardPage,
+#houlaPage,
+#familyDetailsPage,
+#familiesPage,
+.page-section.active,
+.app-shell,
+.main-content,
+.container,
+.container-fluid {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+}
+
+/* حماية من امتداد العناصر عرضياً بدون كسر sticky */
+html,
+body {
+  overflow-x: hidden !important;
+}
+
+/* الوضع الليلي للأجزاء البيضاء المتبقية في لوحة التحكم */
+body.dark-mode #dashboardPage .tab-content,
+body.dark-mode #dashboardPage .tab-pane,
+body.dark-mode #dashboardPage .dashboard-content,
+body.dark-mode #dashboardPage .dashboard-panel,
+body.dark-mode #dashboardPage .dashboard-box,
+body.dark-mode #dashboardPage .admin-card,
+body.dark-mode #dashboardPage .settings-card,
+body.dark-mode #dashboardPage .settings-section,
+body.dark-mode #dashboardPage .settings-panel,
+body.dark-mode #dashboardPage .admin-settings-card,
+body.dark-mode #dashboardPage .taldo-settings-accordion,
+body.dark-mode #dashboardPage .taldo-settings-accordion-item,
+body.dark-mode #dashboardPage .taldo-settings-accordion-body,
+body.dark-mode #dashboardPage .accordion,
+body.dark-mode #dashboardPage .accordion-item,
+body.dark-mode #dashboardPage .accordion-body,
+body.dark-mode #dashboardPage .list-group,
+body.dark-mode #dashboardPage .list-group-item,
+html[data-theme="dark"] #dashboardPage .tab-content,
+html[data-theme="dark"] #dashboardPage .tab-pane,
+html[data-theme="dark"] #dashboardPage .dashboard-content,
+html[data-theme="dark"] #dashboardPage .dashboard-panel,
+html[data-theme="dark"] #dashboardPage .dashboard-box,
+html[data-theme="dark"] #dashboardPage .admin-card,
+html[data-theme="dark"] #dashboardPage .settings-card,
+html[data-theme="dark"] #dashboardPage .settings-section,
+html[data-theme="dark"] #dashboardPage .settings-panel,
+html[data-theme="dark"] #dashboardPage .admin-settings-card,
+html[data-theme="dark"] #dashboardPage .taldo-settings-accordion,
+html[data-theme="dark"] #dashboardPage .taldo-settings-accordion-item,
+html[data-theme="dark"] #dashboardPage .taldo-settings-accordion-body,
+html[data-theme="dark"] #dashboardPage .accordion,
+html[data-theme="dark"] #dashboardPage .accordion-item,
+html[data-theme="dark"] #dashboardPage .accordion-body,
+html[data-theme="dark"] #dashboardPage .list-group,
+html[data-theme="dark"] #dashboardPage .list-group-item {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #dashboardPage .accordion-button,
+body.dark-mode #dashboardPage .taldo-settings-accordion-button,
+body.dark-mode #dashboardPage .section-header,
+body.dark-mode #dashboardPage .card-header,
+html[data-theme="dark"] #dashboardPage .accordion-button,
+html[data-theme="dark"] #dashboardPage .taldo-settings-accordion-button,
+html[data-theme="dark"] #dashboardPage .section-header,
+html[data-theme="dark"] #dashboardPage .card-header {
+  background: #102b26 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #dashboardPage .accordion-button:not(.collapsed),
+body.dark-mode #dashboardPage .taldo-settings-accordion-button[aria-expanded="true"],
+html[data-theme="dark"] #dashboardPage .accordion-button:not(.collapsed),
+html[data-theme="dark"] #dashboardPage .taldo-settings-accordion-button[aria-expanded="true"] {
+  background: #054239 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode #dashboardPage label,
+body.dark-mode #dashboardPage .form-label,
+body.dark-mode #dashboardPage .fw-bold,
+body.dark-mode #dashboardPage .small,
+html[data-theme="dark"] #dashboardPage label,
+html[data-theme="dark"] #dashboardPage .form-label,
+html[data-theme="dark"] #dashboardPage .fw-bold,
+html[data-theme="dark"] #dashboardPage .small {
+  color: #f4faf8 !important;
+}
+
+body.dark-mode #dashboardPage .alert,
+body.dark-mode #dashboardPage .alert-info,
+html[data-theme="dark"] #dashboardPage .alert,
+html[data-theme="dark"] #dashboardPage .alert-info {
+  background: rgba(66, 129, 119, .18) !important;
+  color: #dff7f1 !important;
+  border-color: rgba(66, 129, 119, .45) !important;
+}
+
+body.dark-mode #dashboardPage .form-control,
+body.dark-mode #dashboardPage .form-select,
+body.dark-mode #dashboardPage textarea,
+body.dark-mode #dashboardPage input,
+html[data-theme="dark"] #dashboardPage .form-control,
+html[data-theme="dark"] #dashboardPage .form-select,
+html[data-theme="dark"] #dashboardPage textarea,
+html[data-theme="dark"] #dashboardPage input {
+  background-color: #071612 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+
+body.dark-mode #dashboardPage input[type="file"],
+html[data-theme="dark"] #dashboardPage input[type="file"] {
+  background-color: #071612 !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode #dashboardPage input[type="file"]::file-selector-button,
+html[data-theme="dark"] #dashboardPage input[type="file"]::file-selector-button {
+  background: #102b26 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+
+body.dark-mode #dashboardPage .table-responsive,
+body.dark-mode #dashboardPage .dataTables_wrapper,
+body.dark-mode #dashboardPage .dataTables_scroll,
+body.dark-mode #dashboardPage .dataTables_scrollBody,
+body.dark-mode #dashboardPage .dataTables_scrollHead,
+html[data-theme="dark"] #dashboardPage .table-responsive,
+html[data-theme="dark"] #dashboardPage .dataTables_wrapper,
+html[data-theme="dark"] #dashboardPage .dataTables_scroll,
+html[data-theme="dark"] #dashboardPage .dataTables_scrollBody,
+html[data-theme="dark"] #dashboardPage .dataTables_scrollHead {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode #dashboardPage .dataTables_info,
+body.dark-mode #dashboardPage .dataTables_length,
+body.dark-mode #dashboardPage .dataTables_filter,
+body.dark-mode #dashboardPage .dataTables_paginate,
+html[data-theme="dark"] #dashboardPage .dataTables_info,
+html[data-theme="dark"] #dashboardPage .dataTables_length,
+html[data-theme="dark"] #dashboardPage .dataTables_filter,
+html[data-theme="dark"] #dashboardPage .dataTables_paginate {
+  color: #dce9e5 !important;
+}
