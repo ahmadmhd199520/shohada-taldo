@@ -27,7 +27,7 @@
     );
   }
 
-  const IMAGE_ONLY_NOTICE_THUMB_SIZE = 1000;
+  const IMAGE_ONLY_NOTICE_THUMB_SIZE = 800;
 const IMAGE_ONLY_NOTICE_FALLBACK_SIZE = 800;
 
 function getDriveThumbnail(fileId, size) {
