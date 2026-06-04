@@ -40,13 +40,37 @@
     if (btn) btn.setAttribute('aria-expanded', 'false');
   }
 
+  function positionMenuPanel() {
+    const panel = document.getElementById(MENU_PANEL_ID);
+    const btn = document.getElementById(MENU_BTN_ID);
+    if (!panel || !btn) return;
+
+    const rect = btn.getBoundingClientRect();
+    const panelWidth = Math.min(Math.max(panel.offsetWidth || 205, 205), window.innerWidth - 20);
+    const top = Math.min(window.innerHeight - 12, rect.bottom + 8);
+
+    // نضع القائمة تحت زر الثلاث نقاط مباشرة، مع منع خروجها خارج الشاشة.
+    let left = rect.left;
+    left = Math.max(10, Math.min(left, window.innerWidth - panelWidth - 10));
+
+    panel.style.top = top + 'px';
+    panel.style.left = left + 'px';
+    panel.style.right = 'auto';
+  }
+
   function toggleMenu() {
     const panel = document.getElementById(MENU_PANEL_ID);
     const btn = document.getElementById(MENU_BTN_ID);
     if (!panel || !btn) return;
+
     const show = !panel.classList.contains('show');
     panel.classList.toggle('show', show);
     btn.setAttribute('aria-expanded', show ? 'true' : 'false');
+
+    if (show) {
+      updateMenuState();
+      requestAnimationFrame(positionMenuPanel);
+    }
   }
 
   function updateMenuState() {
@@ -79,7 +103,16 @@
 
   function runAboutAction() {
     closeMenu();
-    if (typeof window.openAboutProjectModal === 'function') window.openAboutProjectModal();
+    if (typeof window.openAboutProjectModal === 'function') {
+      window.openAboutProjectModal();
+      return;
+    }
+    if (typeof window.openAboutUsModal === 'function') {
+      window.openAboutUsModal();
+      return;
+    }
+    const aboutBtn = document.querySelector('[onclick*="openAbout"], [data-bs-target="#aboutUsModal"]');
+    if (aboutBtn) aboutBtn.click();
   }
 
   function runThemeAction() {
@@ -111,8 +144,9 @@
       <button type="button" id="taldoMobileMenuTheme" class="taldo-mobile-menu-item"></button>
     `;
 
+    // نضع الزر داخل الهيدر، لكن القائمة نفسها داخل body كي لا تُقصّ من حدود الهيدر.
     actions.insertBefore(btn, actions.firstChild);
-    actions.appendChild(panel);
+    document.body.appendChild(panel);
 
     btn.addEventListener('click', function(e) {
       e.preventDefault();
@@ -133,8 +167,13 @@
     });
 
     window.addEventListener('resize', function() {
-      if (window.innerWidth > 576) closeMenu();
+      closeMenu();
     });
+
+    window.addEventListener('scroll', function() {
+      const panelEl = document.getElementById(MENU_PANEL_ID);
+      if (panelEl && panelEl.classList.contains('show')) positionMenuPanel();
+    }, true);
 
     updateMenuState();
   }
