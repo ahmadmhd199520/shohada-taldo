@@ -1,21 +1,67 @@
-/* ===== Mobile header 3-dots menu ===== */
+/* ===== Compact/mobile header 3-dots menu ===== */
+
+/*
+  هذا الملف خاص بالهيدر المضغوط للجوال/العرض الضيق.
+  السبب في النسخة السابقة:
+  - الزر كان يُنشأ دائمًا بالـ JS، لكن تنسيق القائمة كان محصورًا بـ 576px.
+  - بعض تنسيقات الهيدر القديمة كانت تجعل الزر يظهر في عرض أوسع من 576 بدون أن تعمل القائمة.
+  - overflow: visible على .hero كان يسبب انزياحًا/سكرولًا عرضيًا في الجوال.
+*/
+
 .taldo-mobile-header-menu-btn,
 .taldo-mobile-header-menu-panel {
   display: none !important;
 }
 
-/* مهم: منع قص القائمة من حدود الهيدر */
-.hero,
-.hero-top-row,
-.top-login-bar.header-inline-actions,
-.top-login-bar {
-  overflow: visible !important;
+/* منع الانزياح العرضي الناتج عن أي عنصر ثابت أو زخرفة خارج الهيدر */
+html,
+body {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
 }
 
-@media (max-width: 576px) {
+/* في العرض الواسع: لا تظهر قائمة الثلاث نقاط إطلاقًا */
+@media (min-width: 769px) {
+  .taldo-mobile-header-menu-btn,
+  .taldo-mobile-header-menu-panel,
+  .taldo-mobile-header-menu-panel.show {
+    display: none !important;
+  }
+
+  .hero-title-actions > .btn-warning {
+    display: inline-flex !important;
+  }
+
+  .top-login-bar.header-inline-actions #loginBtn:not(.d-none),
+  .top-login-bar.header-inline-actions #logoutBtn:not(.d-none),
+  .top-login-bar.header-inline-actions #dashboardBtn:not(.d-none) {
+    display: inline-flex !important;
+  }
+}
+
+/* الجوال والعرض الضيق */
+@media (max-width: 768px) {
+  .hero {
+    overflow: hidden !important;
+    max-width: 100% !important;
+  }
+
+  .hero-layout,
+  .hero-top-row,
+  .hero-title-actions,
+  .top-actions {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
   .hero-top-row {
     position: relative !important;
-    overflow: visible !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    overflow: hidden !important;
   }
 
   /* إخفاء زر عن المشروع القديم من السطر الأول في الجوال */
@@ -23,43 +69,55 @@
     display: none !important;
   }
 
-  /* إبقاء السطر الأول نظيفًا: العنوان + أيقونات صغيرة فقط */
   .hero-title-actions {
-    justify-content: center !important;
     flex: 1 1 auto !important;
+    min-width: 0 !important;
+    justify-content: flex-start !important;
   }
 
   .hero-title {
-    width: 100% !important;
-    text-align: center !important;
-    padding-inline: 4px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    text-align: right !important;
+    padding-inline: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   .top-login-bar.header-inline-actions {
-    position: relative !important;
+    direction: ltr !important;
     flex: 0 0 auto !important;
     display: inline-flex !important;
     align-items: center !important;
-    justify-content: flex-end !important;
+    justify-content: flex-start !important;
     gap: 6px !important;
+    max-width: 92px !important;
+    min-width: 0 !important;
     overflow: visible !important;
     z-index: 2147482500 !important;
   }
 
-  /* في الجوال: تسجيل الدخول والخروج داخل القائمة، ولوحة التحكم تبقى ظاهرة عند تسجيل الدخول */
+  /* تسجيل الدخول والخروج داخل القائمة فقط */
   .top-login-bar.header-inline-actions #loginBtn,
   .top-login-bar.header-inline-actions #logoutBtn {
     display: none !important;
   }
 
+  /* لوحة التحكم تبقى بجانب الثلاث نقاط عند تسجيل الدخول */
   .top-login-bar.header-inline-actions #dashboardBtn:not(.d-none) {
     display: inline-flex !important;
     order: 2 !important;
+    flex: 0 0 34px !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
   }
 
-  /* زر الثلاث نقاط يكون أقصى اليسار، وبعده إلى اليمين زر لوحة التحكم */
+  /* زر الثلاث نقاط أقصى اليسار، ولوحة التحكم على يمينه */
   .taldo-mobile-header-menu-btn {
-    order: 3 !important;
+    order: 1 !important;
+    flex: 0 0 34px !important;
     width: 34px !important;
     height: 34px !important;
     min-width: 34px !important;
@@ -87,7 +145,7 @@
     margin: 0 !important;
   }
 
-  /* القائمة مثبتة على الشاشة لا داخل الهيدر حتى لا تُقصّ من حدود الهيدر */
+  /* القائمة خارج الهيدر position: fixed حتى لا تُقصّ من حدود الهيدر */
   .taldo-mobile-header-menu-panel {
     position: fixed !important;
     top: 64px !important;
