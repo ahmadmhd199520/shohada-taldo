@@ -64,6 +64,7 @@
         z-index: 8 !important;
         pointer-events: none !important;
         line-height: 1 !important;
+        right: 10px;
       }
 
       #martyrsContainer .martyr-card .${BADGE_CLASS} i {
