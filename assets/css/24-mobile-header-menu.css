@@ -877,3 +877,121 @@ html[data-theme="dark"] #dashboardPage .accordion-body {
   background: #071612 !important;
   color: #f4faf8 !important;
 }
+
+
+
+
+
+/* من جيميني */
+/* ==========================================
+   إصلاح التثبيت (Sticky Fix) لجميع الحاويات
+   ========================================== */
+
+/* 1. إجبار جميع الحاويات الأساسية على السماح بالتمرير وعدم قص العناصر */
+html, body, .app-shell, .page-section, #homePage, .container, .main-content {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  contain: none !important;
+}
+
+/* 2. الإعداد الصحيح لشريط البحث ليعمل كعنصر لاصق */
+.mobile-search-filter,
+.houla-compact-search-filter,
+.family-compact-search-filter,
+.join-compact-search-filter,
+.taldo-family-search-wrap,
+.taldo-family-page-search-wrap,
+.taldo-family-search-bar,
+.taldo-family-page-search-bar {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 8px !important;
+  z-index: 1020 !important; /* أعلى من المحتوى وأقل من المودال (1050) */
+  align-self: flex-start !important; /* مهم جداً إذا كان الأب Flexbox */
+  will-change: transform; /* تسريع الأداء أثناء التمرير */
+}
+
+/* 3. إرجاع شريط البحث للخلف عند فتح المودال لتجنب تداخل الطبقات */
+body.modal-open .mobile-search-filter,
+body.modal-open .houla-compact-search-filter,
+body.modal-open .family-compact-search-filter,
+body.modal-open .join-compact-search-filter,
+body.modal-open .taldo-family-search-wrap,
+body.modal-open .taldo-family-page-search-wrap,
+body.modal-open .taldo-family-search-bar,
+body.modal-open .taldo-family-page-search-bar {
+  z-index: 1 !important;
+}
+
+
+/* ==========================================
+   الوضع الليلي لعناصر لوحة التحكم والأوكورديون
+   ========================================== */
+
+/* 1. الحاويات الأساسية والعناوين */
+body.dark-mode .dashboard-section-header,
+html[data-theme="dark"] .dashboard-section-header,
+body.dark-mode .join-request-controls,
+html[data-theme="dark"] .join-request-controls,
+body.dark-mode .dashboard-tab-pane,
+html[data-theme="dark"] .dashboard-tab-pane {
+  background-color: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255, 255, 255, .12) !important;
+}
+
+/* 2. عناصر الأوكورديون (Accordion Items) */
+body.dark-mode .dashboard-tab-pane .accordion-item,
+html[data-theme="dark"] .dashboard-tab-pane .accordion-item,
+body.dark-mode .join-request-controls .accordion-item,
+html[data-theme="dark"] .join-request-controls .accordion-item,
+body.dark-mode .dashboard-section-header .accordion-item,
+html[data-theme="dark"] .dashboard-section-header .accordion-item {
+  background-color: #0e211d !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+}
+
+/* 3. زر فتح وإغلاق الأوكورديون (الحالة العادية) */
+body.dark-mode .dashboard-tab-pane .accordion-button,
+html[data-theme="dark"] .dashboard-tab-pane .accordion-button,
+body.dark-mode .join-request-controls .accordion-button,
+html[data-theme="dark"] .join-request-controls .accordion-button,
+body.dark-mode .dashboard-section-header .accordion-button,
+html[data-theme="dark"] .dashboard-section-header .accordion-button {
+  background-color: #0b2a24 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, .12) !important;
+  box-shadow: none !important;
+}
+
+/* 4. زر الأوكورديون (حالة الفتح / Active) */
+body.dark-mode .dashboard-tab-pane .accordion-button:not(.collapsed),
+html[data-theme="dark"] .dashboard-tab-pane .accordion-button:not(.collapsed),
+body.dark-mode .join-request-controls .accordion-button:not(.collapsed),
+html[data-theme="dark"] .join-request-controls .accordion-button:not(.collapsed),
+body.dark-mode .dashboard-section-header .accordion-button:not(.collapsed),
+html[data-theme="dark"] .dashboard-section-header .accordion-button:not(.collapsed) {
+  background-color: #054239 !important; /* اللون الأخضر الداكن المخصص للـ Active */
+  color: #ffffff !important;
+}
+
+/* 5. قلب لون سهم الأوكورديون ليصبح أبيض في الوضع الليلي */
+body.dark-mode .dashboard-tab-pane .accordion-button::after,
+html[data-theme="dark"] .dashboard-tab-pane .accordion-button::after,
+body.dark-mode .join-request-controls .accordion-button::after,
+html[data-theme="dark"] .join-request-controls .accordion-button::after,
+body.dark-mode .dashboard-section-header .accordion-button::after,
+html[data-theme="dark"] .dashboard-section-header .accordion-button::after {
+  filter: invert(1) grayscale(1) brightness(2) !important;
+}
+
+/* 6. جسم الأوكورديون (المحتوى الداخلي) */
+body.dark-mode .dashboard-tab-pane .accordion-body,
+html[data-theme="dark"] .dashboard-tab-pane .accordion-body,
+body.dark-mode .join-request-controls .accordion-body,
+html[data-theme="dark"] .join-request-controls .accordion-body,
+body.dark-mode .dashboard-section-header .accordion-body,
+html[data-theme="dark"] .dashboard-section-header .accordion-body {
+  background-color: #071612 !important; /* خلفية داكنة متباينة عن الهيدر */
+  color: #f4faf8 !important;
+}
