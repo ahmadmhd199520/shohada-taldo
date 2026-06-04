@@ -499,3 +499,79 @@ html[data-theme="dark"] .taldo-mobile-menu-item:hover,
 html[data-theme="dark"] .taldo-mobile-menu-item:focus { background: rgba(255,255,255,.09) !important; }
 body.dark-mode .taldo-mobile-menu-divider,
 html[data-theme="dark"] .taldo-mobile-menu-divider { background: rgba(255,255,255,.12) !important; }
+
+/* ===== Emergency visibility + layout fix v6 ===== */
+#taldoMobileHeaderMenuBtn.taldo-mobile-header-menu-btn,
+button#taldoMobileHeaderMenuBtn {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255,255,255,.75) !important;
+  background: rgba(255,255,255,.10) !important;
+  color: #fff !important;
+  z-index: 2147482600 !important;
+  font-size: 0 !important;
+  flex: 0 0 auto !important;
+}
+#taldoMobileHeaderMenuBtn i { font-size: 1rem !important; }
+
+/* جعل الأزرار في أقصى اليسار فعليًا وعدم ترك RTL يعكسها */
+.top-actions,
+.top-login-bar.header-inline-actions {
+  direction: ltr !important;
+}
+.top-actions > *,
+.top-login-bar.header-inline-actions > * {
+  direction: rtl !important;
+}
+
+/* في اللابتوب: مجموعة top-actions تبقى في اليسار، وأول عناصرها الثلاث نقاط ثم لوحة التحكم */
+@media (min-width: 769px) {
+  .hero-layout {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+  }
+  .top-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    flex: 0 0 auto !important;
+    order: 1 !important;
+  }
+  .hero-top-row,
+  .hero-title-actions {
+    order: 2 !important;
+    flex: 1 1 auto !important;
+  }
+  .top-actions #dashboardBtn:not(.d-none) {
+    display: inline-flex !important;
+  }
+}
+
+/* في الجوال */
+@media (max-width: 768px) {
+  #taldoMobileHeaderMenuBtn.taldo-mobile-header-menu-btn,
+  button#taldoMobileHeaderMenuBtn,
+  .top-login-bar.header-inline-actions #dashboardBtn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 12px !important;
+  }
+  .top-login-bar.header-inline-actions {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+  }
+}
