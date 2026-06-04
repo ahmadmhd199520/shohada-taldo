@@ -55,6 +55,75 @@
       #detailsContainer .taldo-detail-family-link:focus i {
         transform: translateX(-2px) !important;
       }
+
+
+      .taldo-simple-search-box {
+        background: rgba(255,255,255,.92) !important;
+        border: 1px solid rgba(13, 110, 253, .12) !important;
+        border-radius: 18px !important;
+        padding: 10px 12px !important;
+        margin: 0 0 16px 0 !important;
+        box-shadow: 0 10px 26px rgba(15, 35, 65, .08) !important;
+      }
+
+      .taldo-simple-search-inner {
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+      }
+
+      .taldo-simple-search-inner i {
+        color: var(--bs-primary, #0d6efd) !important;
+        opacity: .82 !important;
+        font-size: 15px !important;
+        flex: 0 0 auto !important;
+      }
+
+      .taldo-simple-search-input {
+        width: 100% !important;
+        border: 0 !important;
+        outline: 0 !important;
+        background: transparent !important;
+        color: var(--bs-body-color, #172033) !important;
+        font: inherit !important;
+        font-size: 15px !important;
+        padding: 6px 4px !important;
+        box-shadow: none !important;
+      }
+
+      .taldo-simple-search-input::placeholder {
+        color: rgba(33, 37, 41, .56) !important;
+      }
+
+      .taldo-simple-search-empty {
+        display: none;
+        margin-top: 10px !important;
+      }
+
+      .taldo-simple-search-empty.is-visible {
+        display: block !important;
+      }
+
+      [data-bs-theme="dark"] .taldo-simple-search-box,
+      body.dark-mode .taldo-simple-search-box,
+      body.dark .taldo-simple-search-box {
+        background: rgba(10, 28, 27, .94) !important;
+        border-color: rgba(185, 167, 121, .22) !important;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, .28) !important;
+      }
+
+      [data-bs-theme="dark"] .taldo-simple-search-input,
+      body.dark-mode .taldo-simple-search-input,
+      body.dark .taldo-simple-search-input {
+        color: #fff !important;
+      }
+
+      [data-bs-theme="dark"] .taldo-simple-search-input::placeholder,
+      body.dark-mode .taldo-simple-search-input::placeholder,
+      body.dark .taldo-simple-search-input::placeholder {
+        color: rgba(255,255,255,.62) !important;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -266,6 +335,164 @@
     setTimeout(patchFamilyBackButtonToDetail, 180);
   }
 
+
+  function normalizeSearchText(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[أإآٱ]/g, 'ا')
+      .replace(/ة/g, 'ه')
+      .replace(/ى/g, 'ي')
+      .replace(/[ًٌٍَُِّْـ]/g, '')
+      .replace(/\s+/g, ' ');
+  }
+
+  function ensureFamiliesSearchBar() {
+    const container = document.getElementById('familiesStatsContainer');
+    if (!container) return null;
+
+    let box = document.getElementById('taldoFamiliesSearchBox');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'taldoFamiliesSearchBox';
+      box.className = 'taldo-simple-search-box';
+      box.innerHTML = `
+        <div class="taldo-simple-search-inner">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input id="taldoFamiliesSearchInput" class="taldo-simple-search-input" type="search" autocomplete="off" placeholder="ابحث عن اسم عائلة..." aria-label="البحث عن اسم عائلة">
+        </div>
+        <div id="taldoFamiliesSearchEmpty" class="empty-state taldo-simple-search-empty">لا توجد عائلة مطابقة للبحث.</div>
+      `;
+      container.parentNode.insertBefore(box, container);
+    }
+
+    const input = document.getElementById('taldoFamiliesSearchInput');
+    if (input && input.dataset.bound !== '1') {
+      input.dataset.bound = '1';
+      input.addEventListener('input', filterFamiliesRows);
+      input.addEventListener('search', filterFamiliesRows);
+    }
+
+    return box;
+  }
+
+  function filterFamiliesRows() {
+    const input = document.getElementById('taldoFamiliesSearchInput');
+    const container = document.getElementById('familiesStatsContainer');
+    const empty = document.getElementById('taldoFamiliesSearchEmpty');
+    if (!input || !container) return;
+
+    const q = normalizeSearchText(input.value);
+    const rows = Array.from(container.querySelectorAll('.family-row'));
+    let visible = 0;
+
+    rows.forEach(row => {
+      const title = row.querySelector('h5')?.textContent || row.textContent || '';
+      const match = !q || normalizeSearchText(title).includes(q);
+      row.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+
+    if (empty) empty.classList.toggle('is-visible', !!q && rows.length > 0 && visible === 0);
+  }
+
+  function ensureFamilyMartyrsSearchBar(familyName) {
+    const container = document.getElementById('familyMartyrsContainer');
+    if (!container) return null;
+
+    let box = document.getElementById('taldoFamilyMartyrsSearchBox');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'taldoFamilyMartyrsSearchBox';
+      box.className = 'taldo-simple-search-box';
+      box.innerHTML = `
+        <div class="taldo-simple-search-inner">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input id="taldoFamilyMartyrsSearchInput" class="taldo-simple-search-input" type="search" autocomplete="off" placeholder="ابحث عن اسم شهيد ضمن هذه العائلة..." aria-label="البحث عن شهيد ضمن العائلة">
+        </div>
+        <div id="taldoFamilyMartyrsSearchEmpty" class="empty-state taldo-simple-search-empty">لا يوجد شهيد مطابق للبحث ضمن هذه العائلة.</div>
+      `;
+      container.parentNode.insertBefore(box, container);
+    }
+
+    const input = document.getElementById('taldoFamilyMartyrsSearchInput');
+    const currentFamily = safeText(familyName || getCurrentFamilyNameFromTitle());
+
+    if (input && currentFamily && input.dataset.familyName !== currentFamily) {
+      input.value = '';
+      input.dataset.familyName = currentFamily;
+    }
+
+    if (input && input.dataset.bound !== '1') {
+      input.dataset.bound = '1';
+      input.addEventListener('input', filterFamilyMartyrCards);
+      input.addEventListener('search', filterFamilyMartyrCards);
+    }
+
+    return box;
+  }
+
+  function getCurrentFamilyNameFromTitle() {
+    const title = document.getElementById('familyPageTitle')?.textContent || '';
+    return safeText(title.replace(/شهداء\s+عائلة/g, '').replace(/يحتاج\s+استكمال:\s*\d+/g, ''));
+  }
+
+  function filterFamilyMartyrCards() {
+    const input = document.getElementById('taldoFamilyMartyrsSearchInput');
+    const container = document.getElementById('familyMartyrsContainer');
+    const empty = document.getElementById('taldoFamilyMartyrsSearchEmpty');
+    if (!input || !container) return;
+
+    const q = normalizeSearchText(input.value);
+    const cards = Array.from(container.querySelectorAll('.martyr-card'));
+    let visible = 0;
+
+    cards.forEach(card => {
+      const name = card.querySelector('.martyr-name')?.textContent || '';
+      const father = card.querySelector('.martyr-family')?.textContent || '';
+      const text = name + ' ' + father;
+      const match = !q || normalizeSearchText(text).includes(q);
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+
+    if (empty) empty.classList.toggle('is-visible', !!q && cards.length > 0 && visible === 0);
+  }
+
+  function enhanceFamilySearchBars(familyName) {
+    ensureFamiliesSearchBar();
+    ensureFamilyMartyrsSearchBar(familyName);
+    filterFamiliesRows();
+    filterFamilyMartyrCards();
+  }
+
+  function wrapOpenFamiliesStatsPage() {
+    const oldOpenFamilies = window.openFamiliesStatsPage || (typeof openFamiliesStatsPage === 'function' ? openFamiliesStatsPage : null);
+    if (typeof oldOpenFamilies !== 'function') return;
+    if (oldOpenFamilies.__simpleFamilySearchWrapped === true) return;
+
+    const wrapped = function() {
+      const result = oldOpenFamilies.apply(this, arguments);
+      setTimeout(function() {
+        ensureFamiliesSearchBar();
+        filterFamiliesRows();
+      }, 0);
+      requestAnimationFrame(function() {
+        ensureFamiliesSearchBar();
+        filterFamiliesRows();
+      });
+      return result;
+    };
+
+    wrapped.__simpleFamilySearchWrapped = true;
+    wrapped.__previousOpenFamiliesStatsPage = oldOpenFamilies;
+    window.openFamiliesStatsPage = wrapped;
+
+    try {
+      openFamiliesStatsPage = window.openFamiliesStatsPage;
+    } catch (error) {}
+  }
+
   function wrapOpenFamilyMartyrs() {
     const oldOpenFamily = window.openFamilyMartyrs || (typeof openFamilyMartyrs === 'function' ? openFamilyMartyrs : null);
     if (typeof oldOpenFamily !== 'function') return;
@@ -276,6 +503,9 @@
       const result = oldOpenFamily.apply(this, arguments);
 
       setTimeout(function() {
+        ensureFamilyMartyrsSearchBar(familyName);
+        filterFamilyMartyrCards();
+
         if (fromDetailLink) {
           patchFamilyBackButtonToDetail();
         } else {
@@ -283,6 +513,11 @@
           restoreNormalFamilyBackButtonIfNeeded();
         }
       }, 0);
+
+      requestAnimationFrame(function() {
+        ensureFamilyMartyrsSearchBar(familyName);
+        filterFamilyMartyrCards();
+      });
 
       return result;
     };
@@ -368,17 +603,21 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     injectFamilyLinkStyles();
+    wrapOpenFamiliesStatsPage();
     wrapOpenFamilyMartyrs();
     wrapOpenMartyrDetails();
     setTimeout(function() {
+      wrapOpenFamiliesStatsPage();
       wrapOpenFamilyMartyrs();
       wrapOpenMartyrDetails();
       patchDetailFamilyLink();
       patchFamilyBackButtonToDetail();
+      enhanceFamilySearchBars();
     }, 1200);
   });
 
   injectFamilyLinkStyles();
+  wrapOpenFamiliesStatsPage();
   wrapOpenFamilyMartyrs();
   wrapOpenMartyrDetails();
 })();
