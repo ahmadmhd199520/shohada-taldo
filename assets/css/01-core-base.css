@@ -534,7 +534,7 @@
     .site-footer a {
       color: #ffffff;
       font-weight: 800;
-      text-decoration: none;
+      /* text-decoration: none; */
     }
 
     .site-footer a:hover {
