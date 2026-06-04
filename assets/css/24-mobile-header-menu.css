@@ -581,19 +581,18 @@ body {
 }
 
 /* قائمة الثلاث نقاط: ثابتة داخل الشاشة ولا تسبب عرضًا زائدًا في الجوال */
+/* تموضع قائمة الثلاث نقاط (آمن لكل الشاشات) */
 #taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
 .taldo-mobile-header-menu-panel {
   position: fixed !important;
-  top: 72px !important;
-  left: max(8px, env(safe-area-inset-left)) !important;
+  top: 72px !important; /* متناسق مع ارتفاع الهيدر أسفل الزر مباشرة */
+  left: 15px !important; /* محاذاة لليسار لتبدأ من عند الزر */
   right: auto !important;
   width: auto !important;
-  min-width: min(205px, calc(100vw - 16px)) !important;
-  max-width: calc(100vw - 16px) !important;
+  min-width: 205px !important;
+  max-width: calc(100vw - 30px) !important;
   margin: 0 !important;
-  transform: none !important;
-  box-sizing: border-box !important;
-  z-index: 1040 !important;
+  z-index: 2147482700 !important;
 }
 
 #taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel.show,
