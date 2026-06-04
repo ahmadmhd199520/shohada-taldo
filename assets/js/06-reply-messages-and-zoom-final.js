@@ -149,14 +149,10 @@ window.skipDynamicMessage = function() {
   }
 };
 
-  window.acceptDynamicMessage = function() {
-    const msg = window.__currentDynamicMessage;
-    if (msg && document.getElementById('dynamicDontShowAgain')?.checked) {
-      localStorage.setItem('taldo_msg_hidden_' + msg.message_id, '1');
-    }
-
-    skipDynamicMessage();
-  };
+window.acceptDynamicMessage = function() {
+  rememberDynamicMessageIfChecked();
+  skipDynamicMessage();
+};
 
   window.submitDynamicMessageReply = async function() {
     const msg = window.__currentDynamicMessage;
