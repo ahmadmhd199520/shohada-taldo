@@ -2,6 +2,11 @@
   const MENU_BTN_ID = 'taldoMobileHeaderMenuBtn';
   const MENU_PANEL_ID = 'taldoMobileHeaderMenuPanel';
   const THEME_KEY = 'taldo_theme';
+  const COMPACT_HEADER_QUERY = '(max-width: 768px)';
+
+  function isCompactHeader() {
+    return window.matchMedia(COMPACT_HEADER_QUERY).matches;
+  }
 
   function isAdminActive() {
     try {
@@ -41,6 +46,11 @@
   }
 
   function positionMenuPanel() {
+    if (!isCompactHeader()) {
+      closeMenu();
+      return;
+    }
+
     const panel = document.getElementById(MENU_PANEL_ID);
     const btn = document.getElementById(MENU_BTN_ID);
     if (!panel || !btn) return;
@@ -59,6 +69,11 @@
   }
 
   function toggleMenu() {
+    if (!isCompactHeader()) {
+      closeMenu();
+      return;
+    }
+
     const panel = document.getElementById(MENU_PANEL_ID);
     const btn = document.getElementById(MENU_BTN_ID);
     if (!panel || !btn) return;
@@ -74,6 +89,9 @@
   }
 
   function updateMenuState() {
+    document.body.classList.toggle('taldo-compact-header-active', isCompactHeader());
+    if (!isCompactHeader()) closeMenu();
+
     const authBtn = document.getElementById('taldoMobileMenuAuth');
     const themeBtn = document.getElementById('taldoMobileMenuTheme');
     const admin = isAdminActive();
@@ -167,6 +185,7 @@
     });
 
     window.addEventListener('resize', function() {
+      updateMenuState();
       closeMenu();
     });
 
