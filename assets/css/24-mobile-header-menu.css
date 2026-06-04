@@ -224,10 +224,9 @@ body.dark-mode .taldo-mobile-menu-divider {
 
 
 /* ===== Taldo header/menu + sticky/dark fixes v5 ===== */
-/* منع الانزياح العرضي في كل الحالات */
+/* منع الانزياح العرضي بدون تغيير overflow العام */
 html, body {
   max-width: 100% !important;
-  overflow-x: hidden !important;
 }
 .app-shell, .page-section, #homePage, .hero, .hero-layout, .hero-top-row {
   max-width: 100% !important;
@@ -385,15 +384,6 @@ html, body {
   -webkit-backdrop-filter: blur(14px) !important;
   box-shadow: 0 10px 24px rgba(15,23,42,.10) !important;
 }
-#homePage.page-section.active,
-.page-section.active,
-.app-shell,
-.container,
-body:not(.modal-open) {
-  overflow: visible !important;
-}
-body.modal-open { overflow: hidden !important; }
-
 /* لون خلفية صورة الشهيد البديلة في الوضع الليلي */
 body.dark-mode .martyr-placeholder,
 html[data-theme="dark"] .martyr-placeholder {
@@ -578,652 +568,32 @@ button#taldoMobileHeaderMenuBtn {
   }
 }
 
-/* ===== v8: sticky search + dashboard dark mode targeted fix ===== */
-/* السبب: overflow-x:hidden على html/body قد ينشئ scroll-container ويعطّل sticky في بعض المتصفحات.
-   نستخدم clip بدل hidden حتى نمنع الانزياح العرضي بدون كسر sticky. */
-html,
-body {
-  max-width: 100% !important;
-  overflow-y: auto !important;
-}
+/* =========================================================
+   FINAL SAFE PATCH - 2026-06
+   يحافظ على تثبيت شريط البحث، يمنع انزياح قائمة الثلاث نقاط،
+   ويكمل الوضع الليلي بدون تغيير overflow العام للحاويات.
+   ========================================================= */
 
-@supports (overflow: clip) {
-  html,
-  body {
-    overflow-x: clip !important;
-  }
-}
-
-@supports not (overflow: clip) {
-  html,
-  body {
-    overflow-x: visible !important;
-  }
-  .app-shell {
-    overflow-x: hidden !important;
-  }
-}
-
-/* إبقاء الحاويات الرئيسية غير قاطعة للـ sticky */
-.app-shell,
-#homePage,
-#homePage.page-section,
-#homePage.page-section.active,
-.page-section.active {
-  overflow-y: visible !important;
-  overflow-x: visible !important;
-  transform: none !important;
-  contain: none !important;
-}
-
-/* تثبيت شريط البحث الأساسي والشرائط الفرعية في الوضعين */
-#homePage .mobile-search-filter,
-.mobile-search-filter,
-.houla-compact-search-filter,
-.family-compact-search-filter,
-.join-compact-search-filter,
-.taldo-family-search-bar,
-.taldo-family-page-search-bar {
-  position: -webkit-sticky !important;
-  position: sticky !important;
-  top: 8px !important;
-  z-index: 2145 !important;
-  isolation: isolate !important;
-  background: linear-gradient(180deg, rgba(245,247,251,.99), rgba(245,247,251,.94)) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  box-shadow: 0 10px 24px rgba(15,23,42,.10) !important;
-}
-
-/* في حال كانت هناك inline style قديمة من JS */
-#homePage .mobile-search-filter[style],
-.mobile-search-filter[style] {
-  position: sticky !important;
-  top: 8px !important;
-  z-index: 2145 !important;
-}
-
-body.dark-mode #homePage .mobile-search-filter,
-body.dark-mode .mobile-search-filter,
-body.dark-mode .houla-compact-search-filter,
-body.dark-mode .family-compact-search-filter,
-body.dark-mode .join-compact-search-filter,
-body.dark-mode .taldo-family-search-bar,
-body.dark-mode .taldo-family-page-search-bar,
-html[data-theme="dark"] #homePage .mobile-search-filter,
-html[data-theme="dark"] .mobile-search-filter,
-html[data-theme="dark"] .houla-compact-search-filter,
-html[data-theme="dark"] .family-compact-search-filter,
-html[data-theme="dark"] .join-compact-search-filter,
-html[data-theme="dark"] .taldo-family-search-bar,
-html[data-theme="dark"] .taldo-family-page-search-bar {
-  background: linear-gradient(180deg, rgba(7,22,18,.98), rgba(7,22,18,.92)) !important;
-  border-color: rgba(255,255,255,.14) !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,.28) !important;
-}
-
-/* Dashboard dark mode: controls row */
-body.dark-mode #dashboardPage .dashboard-controls-row,
-html[data-theme="dark"] #dashboardPage .dashboard-controls-row,
-body.dark-mode .dashboard-controls-row,
-html[data-theme="dark"] .dashboard-controls-row {
-  background: #0e211d !important;
-  color: #f4faf8 !important;
-  border: 1px solid rgba(255,255,255,.12) !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,.22) !important;
-}
-
-/* Dashboard dark mode: tabs */
-body.dark-mode #dashboardPage .dashboard-tabs,
-html[data-theme="dark"] #dashboardPage .dashboard-tabs,
-body.dark-mode .dashboard-tabs,
-html[data-theme="dark"] .dashboard-tabs {
-  background: #0e211d !important;
-  color: #f4faf8 !important;
-  border: 1px solid rgba(255,255,255,.12) !important;
-  box-shadow: 0 12px 28px rgba(0,0,0,.22) !important;
-}
-
-body.dark-mode #dashboardPage .dashboard-tabs .nav-link,
-html[data-theme="dark"] #dashboardPage .dashboard-tabs .nav-link,
-body.dark-mode .dashboard-tabs .nav-link,
-html[data-theme="dark"] .dashboard-tabs .nav-link {
-  color: rgba(244,250,248,.78) !important;
-  background: transparent !important;
-  border: 1px solid transparent !important;
-}
-
-body.dark-mode #dashboardPage .dashboard-tabs .nav-link.active,
-html[data-theme="dark"] #dashboardPage .dashboard-tabs .nav-link.active,
-body.dark-mode .dashboard-tabs .nav-link.active,
-html[data-theme="dark"] .dashboard-tabs .nav-link.active {
-  color: #ffffff !important;
-  background: #054239 !important;
-  border-color: rgba(255,255,255,.16) !important;
-}
-
-/* Dashboard/settings accordion dark mode: white text in headers */
-body.dark-mode #dashboardPage .accordion-button,
-html[data-theme="dark"] #dashboardPage .accordion-button,
-body.dark-mode #dashboardPage .accordion-header,
-html[data-theme="dark"] #dashboardPage .accordion-header,
-body.dark-mode #dashboardPage .accordion-header button,
-html[data-theme="dark"] #dashboardPage .accordion-header button,
-body.dark-mode .settings-card .accordion-button,
-html[data-theme="dark"] .settings-card .accordion-button,
-body.dark-mode .taldo-settings-accordion .accordion-button,
-html[data-theme="dark"] .taldo-settings-accordion .accordion-button {
-  background: #0b2a24 !important;
-  color: #ffffff !important;
-  border-color: rgba(255,255,255,.12) !important;
-  box-shadow: none !important;
-}
-
-body.dark-mode #dashboardPage .accordion-button::after,
-html[data-theme="dark"] #dashboardPage .accordion-button::after,
-body.dark-mode .settings-card .accordion-button::after,
-html[data-theme="dark"] .settings-card .accordion-button::after {
-  filter: invert(1) grayscale(1) brightness(2) !important;
-}
-
-body.dark-mode #dashboardPage .accordion-item,
-html[data-theme="dark"] #dashboardPage .accordion-item,
-body.dark-mode #dashboardPage .accordion-body,
-html[data-theme="dark"] #dashboardPage .accordion-body,
-body.dark-mode .settings-card .accordion-item,
-html[data-theme="dark"] .settings-card .accordion-item,
-body.dark-mode .settings-card .accordion-body,
-html[data-theme="dark"] .settings-card .accordion-body {
-  background: #0e211d !important;
-  color: #f4faf8 !important;
-  border-color: rgba(255,255,255,.12) !important;
-}
-
-/* ألوان نصوص داخل لوحة التحكم في الوضع الليلي */
-body.dark-mode #dashboardPage label,
-html[data-theme="dark"] #dashboardPage label,
-body.dark-mode #dashboardPage .form-label,
-html[data-theme="dark"] #dashboardPage .form-label,
-body.dark-mode #dashboardPage .fw-bold,
-html[data-theme="dark"] #dashboardPage .fw-bold {
-  color: #f4faf8 !important;
-}
-
-
-/* ===== v9 FINAL: sticky search + modal layering fix =====
-   السبب الحقيقي للمشكلة كان اجتماع أمرين:
-   1) .app-shell وبعض الحاويات أخذت overflow-x:hidden، وهذا يكسر sticky لأنه يصنع scroll-container.
-   2) شريط البحث كان z-index مرتفعًا جدًا 2145، لذلك كان يظهر فوق المودالات مثل تنبيه التكرار.
-*/
-
-/* لا تجعل أي حاوية أب لشريط البحث تقصّه أو تصنع سياق تمرير */
-body:not(.modal-open) .app-shell,
-body:not(.modal-open) #homePage,
-body:not(.modal-open) #homePage.page-section,
-body:not(.modal-open) #homePage.page-section.active,
-body:not(.modal-open) .page-section,
-body:not(.modal-open) .page-section.active {
-  overflow: visible !important;
-  overflow-x: visible !important;
-  overflow-y: visible !important;
-  transform: none !important;
-  contain: none !important;
-}
-
-/* منع الانزياح العرضي بدون كسر sticky */
+/* حماية عامة من الانزياح بدون لمس overflow على آباء sticky */
 html,
 body {
   max-width: 100% !important;
 }
 
-body:not(.modal-open) {
-  overflow-x: clip !important;
-  overflow-y: auto !important;
-}
-
-/* تثبيت شريط البحث بقيمة z-index طبيعية أقل من المودالات */
-#homePage .mobile-search-filter,
-.mobile-search-filter,
-.houla-compact-search-filter,
-.family-compact-search-filter,
-.join-compact-search-filter,
-.taldo-family-search-wrap,
-.taldo-family-page-search-wrap,
-.taldo-family-search-bar,
-.taldo-family-page-search-bar {
-  position: sticky !important;
-  position: -webkit-sticky !important;
-  top: 8px !important;
-  z-index: 90 !important;
-  isolation: isolate !important;
-  background: linear-gradient(180deg, rgba(245,247,251,.99), rgba(245,247,251,.94)) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  box-shadow: 0 10px 24px rgba(15,23,42,.10) !important;
-}
-
-/* عندما يكون أي مودال مفتوحًا، يجب أن يبقى شريط البحث خلف المودال لا فوقه */
-body.modal-open #homePage .mobile-search-filter,
-body.modal-open .mobile-search-filter,
-body.modal-open .houla-compact-search-filter,
-body.modal-open .family-compact-search-filter,
-body.modal-open .join-compact-search-filter,
-body.modal-open .taldo-family-search-wrap,
-body.modal-open .taldo-family-page-search-wrap,
-body.modal-open .taldo-family-search-bar,
-body.modal-open .taldo-family-page-search-bar {
-  z-index: 1 !important;
-}
-
-/* تأكيد طبقات Bootstrap الأصلية فوق شريط البحث */
-.modal-backdrop {
-  z-index: 1050 !important;
-}
-.modal {
-  z-index: 1055 !important;
-}
-
-/* الوضع الليلي لشريط البحث */
-body.dark-mode #homePage .mobile-search-filter,
-body.dark-mode .mobile-search-filter,
-body.dark-mode .houla-compact-search-filter,
-body.dark-mode .family-compact-search-filter,
-body.dark-mode .join-compact-search-filter,
-body.dark-mode .taldo-family-search-wrap,
-body.dark-mode .taldo-family-page-search-wrap,
-body.dark-mode .taldo-family-search-bar,
-body.dark-mode .taldo-family-page-search-bar,
-html[data-theme="dark"] #homePage .mobile-search-filter,
-html[data-theme="dark"] .mobile-search-filter,
-html[data-theme="dark"] .houla-compact-search-filter,
-html[data-theme="dark"] .family-compact-search-filter,
-html[data-theme="dark"] .join-compact-search-filter,
-html[data-theme="dark"] .taldo-family-search-wrap,
-html[data-theme="dark"] .taldo-family-page-search-wrap,
-html[data-theme="dark"] .taldo-family-search-bar,
-html[data-theme="dark"] .taldo-family-page-search-bar {
-  background: linear-gradient(180deg, rgba(7,22,18,.98), rgba(7,22,18,.92)) !important;
-  border-color: rgba(255,255,255,.12) !important;
-  box-shadow: 0 12px 26px rgba(0,0,0,.22) !important;
-}
-
-/* تتمة الوضع الليلي للعناصر التي ذكرتها */
-body.dark-mode #dashboardPage .dashboard-controls-row,
-body.dark-mode #dashboardPage .dashboard-tabs,
-html[data-theme="dark"] #dashboardPage .dashboard-controls-row,
-html[data-theme="dark"] #dashboardPage .dashboard-tabs {
-  background: #0e211d !important;
-  color: #f4faf8 !important;
-  border-color: rgba(255,255,255,.12) !important;
-}
-
-body.dark-mode #dashboardPage .accordion-button,
-body.dark-mode #dashboardPage .accordion-header button,
-html[data-theme="dark"] #dashboardPage .accordion-button,
-html[data-theme="dark"] #dashboardPage .accordion-header button {
-  background: #0e211d !important;
-  color: #ffffff !important;
-  border-color: rgba(255,255,255,.12) !important;
-}
-
-body.dark-mode #dashboardPage .accordion-button:not(.collapsed),
-html[data-theme="dark"] #dashboardPage .accordion-button:not(.collapsed) {
-  background: #054239 !important;
-  color: #ffffff !important;
-}
-
-body.dark-mode #dashboardPage .accordion-body,
-html[data-theme="dark"] #dashboardPage .accordion-body {
-  background: #071612 !important;
-  color: #f4faf8 !important;
-}
-
-
-
-
-
-/* من جيميني */
-/* ==========================================
-   إصلاح التثبيت (Sticky Fix) لجميع الحاويات
-   ========================================== */
-
-/* 1. إجبار جميع الحاويات الأساسية على السماح بالتمرير وعدم قص العناصر */
-html, body, .app-shell, .page-section, #homePage, .container, .main-content {
-  overflow-x: visible !important;
-  overflow-y: visible !important;
-  contain: none !important;
-}
-
-/* 2. الإعداد الصحيح لشريط البحث ليعمل كعنصر لاصق */
-.mobile-search-filter,
-.houla-compact-search-filter,
-.family-compact-search-filter,
-.join-compact-search-filter,
-.taldo-family-search-wrap,
-.taldo-family-page-search-wrap,
-.taldo-family-search-bar,
-.taldo-family-page-search-bar {
-  position: -webkit-sticky !important;
-  position: sticky !important;
-  top: 8px !important;
-  z-index: 1020 !important; /* أعلى من المحتوى وأقل من المودال (1050) */
-  align-self: flex-start !important; /* مهم جداً إذا كان الأب Flexbox */
-  will-change: transform; /* تسريع الأداء أثناء التمرير */
-}
-
-/* 3. إرجاع شريط البحث للخلف عند فتح المودال لتجنب تداخل الطبقات */
-body.modal-open .mobile-search-filter,
-body.modal-open .houla-compact-search-filter,
-body.modal-open .family-compact-search-filter,
-body.modal-open .join-compact-search-filter,
-body.modal-open .taldo-family-search-wrap,
-body.modal-open .taldo-family-page-search-wrap,
-body.modal-open .taldo-family-search-bar,
-body.modal-open .taldo-family-page-search-bar {
-  z-index: 1 !important;
-}
-
-
-/* ==========================================
-   الوضع الليلي لعناصر لوحة التحكم والأوكورديون
-   ========================================== */
-
-/* 1. الحاويات الأساسية والعناوين */
-body.dark-mode .dashboard-section-header,
-html[data-theme="dark"] .dashboard-section-header,
-body.dark-mode .join-request-controls,
-html[data-theme="dark"] .join-request-controls,
-body.dark-mode .dashboard-tab-pane,
-html[data-theme="dark"] .dashboard-tab-pane {
-  background-color: #0e211d !important;
-  color: #f4faf8 !important;
-  border-color: rgba(255, 255, 255, .12) !important;
-}
-
-/* 2. عناصر الأوكورديون (Accordion Items) */
-body.dark-mode .dashboard-tab-pane .accordion-item,
-html[data-theme="dark"] .dashboard-tab-pane .accordion-item,
-body.dark-mode .join-request-controls .accordion-item,
-html[data-theme="dark"] .join-request-controls .accordion-item,
-body.dark-mode .dashboard-section-header .accordion-item,
-html[data-theme="dark"] .dashboard-section-header .accordion-item {
-  background-color: #0e211d !important;
-  border: 1px solid rgba(255, 255, 255, .12) !important;
-}
-
-/* 3. زر فتح وإغلاق الأوكورديون (الحالة العادية) */
-body.dark-mode .dashboard-tab-pane .accordion-button,
-html[data-theme="dark"] .dashboard-tab-pane .accordion-button,
-body.dark-mode .join-request-controls .accordion-button,
-html[data-theme="dark"] .join-request-controls .accordion-button,
-body.dark-mode .dashboard-section-header .accordion-button,
-html[data-theme="dark"] .dashboard-section-header .accordion-button {
-  background-color: #0b2a24 !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, .12) !important;
-  box-shadow: none !important;
-}
-
-/* 4. زر الأوكورديون (حالة الفتح / Active) */
-body.dark-mode .dashboard-tab-pane .accordion-button:not(.collapsed),
-html[data-theme="dark"] .dashboard-tab-pane .accordion-button:not(.collapsed),
-body.dark-mode .join-request-controls .accordion-button:not(.collapsed),
-html[data-theme="dark"] .join-request-controls .accordion-button:not(.collapsed),
-body.dark-mode .dashboard-section-header .accordion-button:not(.collapsed),
-html[data-theme="dark"] .dashboard-section-header .accordion-button:not(.collapsed) {
-  background-color: #054239 !important; /* اللون الأخضر الداكن المخصص للـ Active */
-  color: #ffffff !important;
-}
-
-/* 5. قلب لون سهم الأوكورديون ليصبح أبيض في الوضع الليلي */
-body.dark-mode .dashboard-tab-pane .accordion-button::after,
-html[data-theme="dark"] .dashboard-tab-pane .accordion-button::after,
-body.dark-mode .join-request-controls .accordion-button::after,
-html[data-theme="dark"] .join-request-controls .accordion-button::after,
-body.dark-mode .dashboard-section-header .accordion-button::after,
-html[data-theme="dark"] .dashboard-section-header .accordion-button::after {
-  filter: invert(1) grayscale(1) brightness(2) !important;
-}
-
-/* 6. جسم الأوكورديون (المحتوى الداخلي) */
-body.dark-mode .dashboard-tab-pane .accordion-body,
-html[data-theme="dark"] .dashboard-tab-pane .accordion-body,
-body.dark-mode .join-request-controls .accordion-body,
-html[data-theme="dark"] .join-request-controls .accordion-body,
-body.dark-mode .dashboard-section-header .accordion-body,
-html[data-theme="dark"] .dashboard-section-header .accordion-body {
-  background-color: #071612 !important; /* خلفية داكنة متباينة عن الهيدر */
-  color: #f4faf8 !important;
-}
-
-
-
-/* تتمة تغطية كل المشروع في الوضع الليلي */
-/* =========================================================
-   التغطية الشاملة للوضع الداكن لجميع المكونات (Catch-All Dark Mode)
-   ========================================================= */
-
-/* 1. الكروت الإضافية، ملخصات العوائل، وصناديق الردود */
-body.dark-mode .family-needs-summary,
-html[data-theme="dark"] .family-needs-summary,
-body.dark-mode .houla-page-header,
-html[data-theme="dark"] .houla-page-header,
-body.dark-mode .houla-admin-box,
-html[data-theme="dark"] .houla-admin-box,
-body.dark-mode .join-request-controls,
-html[data-theme="dark"] .join-request-controls,
-body.dark-mode .message-reply-card,
-html[data-theme="dark"] .message-reply-card,
-body.dark-mode .dynamic-reply-box,
-html[data-theme="dark"] .dynamic-reply-box {
-  background: #0e211d !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  color: #f4faf8 !important;
-}
-
-/* 2. شريط تحكم لوحة التحكم في الجوال */
-body.dark-mode .dashboard-mobile-controls,
-html[data-theme="dark"] .dashboard-mobile-controls {
-  background: rgba(14, 33, 29, 0.95) !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-}
-
-/* 3. أكورديون "من نحن" وأكورديون الإعدادات (الملف 23) */
-body.dark-mode .taldo-about-accordion .accordion-item,
-html[data-theme="dark"] .taldo-about-accordion .accordion-item,
-body.dark-mode .taldo-settings-accordion-card,
-html[data-theme="dark"] .taldo-settings-accordion-card,
-body.dark-mode .taldo-about-sections-admin .taldo-about-section-admin-item,
-html[data-theme="dark"] .taldo-about-sections-admin .taldo-about-section-admin-item {
-  background: #0e211d !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-}
-
-body.dark-mode .taldo-about-accordion .accordion-button,
-html[data-theme="dark"] .taldo-about-accordion .accordion-button,
-body.dark-mode .taldo-about-accordion .accordion-body,
-html[data-theme="dark"] .taldo-about-accordion .accordion-body,
-body.dark-mode .taldo-settings-accordion-toggle,
-html[data-theme="dark"] .taldo-settings-accordion-toggle,
-body.dark-mode .taldo-about-section-admin-head,
-html[data-theme="dark"] .taldo-about-section-admin-head {
-  background: transparent !important;
-  color: #f4faf8 !important;
-}
-
-body.dark-mode .taldo-about-accordion .accordion-button:not(.collapsed),
-html[data-theme="dark"] .taldo-about-accordion .accordion-button:not(.collapsed) {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #ffffff !important;
-}
-
-/* تلوين أسهم الأكورديون في الوضع الداكن */
-body.dark-mode .taldo-about-section-chevron,
-html[data-theme="dark"] .taldo-about-section-chevron,
-body.dark-mode .taldo-about-section-admin-toggle,
-html[data-theme="dark"] .taldo-about-section-admin-toggle {
-  color: #f4faf8 !important;
-}
-
-/* 4. الشارات (Badges) والكلمات الدلالية */
-body.dark-mode .message-linked-badge,
-html[data-theme="dark"] .message-linked-badge {
-  background: rgba(13, 110, 253, 0.15) !important;
-  color: #6ea8fe !important;
-  border-color: rgba(13, 110, 253, 0.25) !important;
-}
-
-body.dark-mode .user-reply-source-badge,
-html[data-theme="dark"] .user-reply-source-badge {
-  background: rgba(255, 193, 7, 0.15) !important;
-  color: #ffda6a !important;
-  border-color: rgba(255, 193, 7, 0.3) !important;
-}
-
-body.dark-mode .taldo-image-only-help,
-html[data-theme="dark"] .taldo-image-only-help {
-  background: rgba(13, 110, 253, 0.15) !important;
-  color: #6ea8fe !important;
-  border-color: rgba(13, 110, 253, 0.25) !important;
-}
-
-/* 5. خلفيات الصور الوهمية (Placeholders) وإطارات الصور المقتطعة */
-body.dark-mode .dashboard-mobile-image-wrap img,
-html[data-theme="dark"] .dashboard-mobile-image-wrap img,
-body.dark-mode .dashboard-mobile-placeholder,
-html[data-theme="dark"] .dashboard-mobile-placeholder,
-body.dark-mode .gallery-main-frame,
-html[data-theme="dark"] .gallery-main-frame,
-body.dark-mode .gallery-thumb-crop,
-html[data-theme="dark"] .gallery-thumb-crop {
-  background-color: #081714 !important; /* لون داكن يتناسب مع الخلفية الأساسية */
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* 6. صفحة الترقيم في الجداول الداكنة */
-body.dark-mode .dashboard-pagination-row td,
-html[data-theme="dark"] .dashboard-pagination-row td {
-  background-color: transparent !important;
-}
-
-/* 7. كرت قسم من نحن (الهيدر الأخضر الداكن) */
-body.dark-mode .taldo-about-hero,
-html[data-theme="dark"] .taldo-about-hero {
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-body.dark-mode .taldo-about-hero .taldo-about-hero-logo,
-html[data-theme="dark"] .taldo-about-hero .taldo-about-hero-logo {
-  border-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-
-/* =========================================================
-   إصلاح الوضع الداكن للنوافذ المنبثقة (Modals)
-   ========================================================= */
-
-/* 1. الحاوية الرئيسية للنافذة */
-body.dark-mode .modal-content,
-html[data-theme="dark"] .modal-content {
-  background-color: #0e211d !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  color: #f4faf8 !important;
-}
-
-/* 2. خطوط الفصل بين الترويسة، المحتوى، والذيل */
-body.dark-mode .modal-header,
-html[data-theme="dark"] .modal-header,
-body.dark-mode .modal-footer,
-html[data-theme="dark"] .modal-footer {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-/* 3. حقول الإدخال والقوائم المنسدلة داخل النوافذ */
-body.dark-mode .modal-content .form-control,
-html[data-theme="dark"] .modal-content .form-control,
-body.dark-mode .modal-content .form-select,
-html[data-theme="dark"] .modal-content .form-select {
-  background-color: #071612 !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-  color: #f4faf8 !important;
-}
-
-/* 4. تغيير لون نصوص حقول الإدخال (Placeholder) */
-body.dark-mode .modal-content .form-control::placeholder,
-html[data-theme="dark"] .modal-content .form-control::placeholder {
-  color: rgba(244, 250, 248, 0.5) !important;
-}
-
-/* 5. زر الإغلاق (X) في الترويسة */
-body.dark-mode .modal-header .btn-close,
-html[data-theme="dark"] .modal-header .btn-close {
-  filter: invert(1) grayscale(1) brightness(2) !important;
-}
-
-/* =========================================================
-   v10 FINAL OVERRIDES - إصلاح انزياح قائمة الثلاث نقاط + استكمال الوضع الليلي
-   ملاحظة: هذا القسم موضوع في آخر الملف ليغلب التكرارات السابقة بدون حذف ضبط sticky.
-   ========================================================= */
-
-/* 1) منع الانزياح العرضي بدون كسر sticky
-   لا نضع overflow:hidden على آباء شريط البحث، ونكتفي بقص أفقي آمن على html/body. */
-html {
-  max-width: 100% !important;
-  overflow-x: clip !important;
-}
-
-body {
-  max-width: 100% !important;
-  overflow-y: auto !important;
-}
-
-body:not(.modal-open) {
-  overflow-x: clip !important;
-}
-
-body.modal-open {
-  overflow-x: clip !important;
-  overflow-y: hidden !important;
-}
-
-/* آباء شريط البحث يجب أن يبقوا overflow: visible حتى يعمل position: sticky */
-.app-shell,
-.main-content,
-.container,
-.page-section,
-.page-section.active,
-#homePage,
-#homePage.page-section,
-#homePage.page-section.active,
-#detailsPage,
-#familiesPage,
-#familyMartyrsPage,
-#dashboardPage {
-  max-width: 100% !important;
-  overflow: visible !important;
-  overflow-x: visible !important;
-  overflow-y: visible !important;
-  transform: none !important;
-  contain: none !important;
-  perspective: none !important;
-}
-
-/* 2) إصلاح انزياح قائمة الثلاث نقاط في الجوال
-   نجعل القائمة ثابتة داخل حدود الشاشة لا حسب أي إحداثيات قديمة. */
+/* قائمة الثلاث نقاط: ثابتة داخل الشاشة ولا تسبب عرضًا زائدًا في الجوال */
 #taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
 .taldo-mobile-header-menu-panel {
   position: fixed !important;
   top: 72px !important;
-  left: max(10px, env(safe-area-inset-left)) !important;
+  left: max(8px, env(safe-area-inset-left)) !important;
   right: auto !important;
   width: auto !important;
-  min-width: 205px !important;
-  max-width: calc(100vw - 20px) !important;
-  transform: none !important;
+  min-width: min(205px, calc(100vw - 16px)) !important;
+  max-width: calc(100vw - 16px) !important;
   margin: 0 !important;
+  transform: none !important;
   box-sizing: border-box !important;
-  z-index: 1040 !important; /* فوق الصفحة وتحت المودال */
+  z-index: 1040 !important;
 }
 
 #taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel.show,
@@ -1236,18 +606,17 @@ body.modal-open {
   .taldo-mobile-header-menu-panel {
     top: 62px !important;
     left: max(8px, env(safe-area-inset-left)) !important;
-    min-width: 200px !important;
+    min-width: min(200px, calc(100vw - 16px)) !important;
     max-width: calc(100vw - 16px) !important;
   }
 }
 
-/* عند فتح مودال يجب أن تبقى قائمة الثلاث نقاط خلفه */
 body.modal-open #taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
 body.modal-open .taldo-mobile-header-menu-panel {
   z-index: 1 !important;
 }
 
-/* 3) تثبيت شريط البحث - لا تمسح هذه القواعد */
+/* تثبيت شريط البحث - لا نغيّر overflow العام للحاويات حتى لا ينكسر sticky */
 #homePage .mobile-search-filter,
 .mobile-search-filter,
 .houla-compact-search-filter,
@@ -1262,20 +631,22 @@ body.modal-open .taldo-mobile-header-menu-panel {
   position: -webkit-sticky !important;
   position: sticky !important;
   top: 8px !important;
-  z-index: 90 !important;
+  z-index: 1020 !important;
   align-self: flex-start !important;
-  isolation: isolate !important;
   box-sizing: border-box !important;
+  background: linear-gradient(180deg, rgba(245,247,251,.99), rgba(245,247,251,.94)) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  box-shadow: 0 10px 24px rgba(15,23,42,.10) !important;
 }
 
-/* إذا كان هناك inline style قديم على الشريط */
 #homePage .mobile-search-filter[style],
 .mobile-search-filter[style],
 .taldo-simple-search[style],
 .taldo-simple-search-inner[style] {
   position: sticky !important;
   top: 8px !important;
-  z-index: 90 !important;
+  z-index: 1020 !important;
 }
 
 body.modal-open #homePage .mobile-search-filter,
@@ -1295,9 +666,7 @@ body.modal-open .taldo-simple-search-inner {
 .modal-backdrop { z-index: 1050 !important; }
 .modal { z-index: 1055 !important; }
 
-/* =========================================================
-   استكمال الوضع الليلي - عام
-   ========================================================= */
+/* الوضع الليلي العام */
 body.dark-mode,
 html[data-theme="dark"] body {
   background:
@@ -1386,9 +755,7 @@ html[data-theme="dark"] .taldo-simple-search-inner {
   box-shadow: 0 12px 28px rgba(0,0,0,.25) !important;
 }
 
-/* =========================================================
-   صفحة الشهيد الشخصية
-   ========================================================= */
+/* صفحة الشهيد الشخصية */
 body.dark-mode #detailsPage,
 html[data-theme="dark"] #detailsPage,
 body.dark-mode #detailsContainer,
@@ -1418,7 +785,9 @@ html[data-theme="dark"] #detailsPage .p-3.rounded-4 {
 body.dark-mode #detailsPage .detail-image-placeholder,
 body.dark-mode #detailsPage .martyr-placeholder,
 html[data-theme="dark"] #detailsPage .detail-image-placeholder,
-html[data-theme="dark"] #detailsPage .martyr-placeholder {
+html[data-theme="dark"] #detailsPage .martyr-placeholder,
+body.dark-mode .martyr-placeholder,
+html[data-theme="dark"] .martyr-placeholder {
   background: #313437 !important;
   color: #9ca3af !important;
 }
@@ -1433,9 +802,42 @@ html[data-theme="dark"] #detailsPage .taldo-detail-family-link {
   color: #d7fff4 !important;
 }
 
-/* =========================================================
-   صفحة العوائل وصفحة العائلة
-   ========================================================= */
+/* أدوات إدارة معرض الصور */
+body.dark-mode .gallery-admin-tools,
+html[data-theme="dark"] .gallery-admin-tools {
+  background: #0e211d !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25) !important;
+}
+body.dark-mode .gallery-admin-tools .form-control,
+body.dark-mode .gallery-admin-tools .form-select,
+body.dark-mode .gallery-admin-tools input,
+body.dark-mode .gallery-admin-tools textarea,
+html[data-theme="dark"] .gallery-admin-tools .form-control,
+html[data-theme="dark"] .gallery-admin-tools .form-select,
+html[data-theme="dark"] .gallery-admin-tools input,
+html[data-theme="dark"] .gallery-admin-tools textarea {
+  background-color: #071612 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+body.dark-mode .gallery-admin-tools .text-muted,
+body.dark-mode .gallery-admin-tools .form-text,
+html[data-theme="dark"] .gallery-admin-tools .text-muted,
+html[data-theme="dark"] .gallery-admin-tools .form-text {
+  color: #b8c8c3 !important;
+}
+body.dark-mode .gallery-admin-tools .card,
+body.dark-mode .gallery-admin-tools .bg-light,
+html[data-theme="dark"] .gallery-admin-tools .card,
+html[data-theme="dark"] .gallery-admin-tools .bg-light {
+  background: #071612 !important;
+  color: #f4faf8 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* صفحة العوائل وصفحة العائلة */
 body.dark-mode #familiesPage,
 body.dark-mode #familyMartyrsPage,
 html[data-theme="dark"] #familiesPage,
@@ -1449,15 +851,29 @@ body.dark-mode #familiesPage .family-needs-summary,
 body.dark-mode #familiesPage .card,
 body.dark-mode #familyMartyrsPage .family-page-header,
 body.dark-mode #familyMartyrsPage .card,
+body.dark-mode .family-row,
 html[data-theme="dark"] #familiesPage .family-stat-card,
 html[data-theme="dark"] #familiesPage .family-stat-row,
 html[data-theme="dark"] #familiesPage .family-needs-summary,
 html[data-theme="dark"] #familiesPage .card,
 html[data-theme="dark"] #familyMartyrsPage .family-page-header,
-html[data-theme="dark"] #familyMartyrsPage .card {
+html[data-theme="dark"] #familyMartyrsPage .card,
+html[data-theme="dark"] .family-row {
   background: #0e211d !important;
   color: #f4faf8 !important;
   border-color: rgba(255,255,255,.12) !important;
+}
+
+body.dark-mode .family-row *,
+html[data-theme="dark"] .family-row * {
+  color: inherit;
+}
+
+body.dark-mode .family-row .text-muted,
+body.dark-mode .family-row .small,
+html[data-theme="dark"] .family-row .text-muted,
+html[data-theme="dark"] .family-row .small {
+  color: #b8c8c3 !important;
 }
 
 body.dark-mode .taldo-simple-search input,
@@ -1485,19 +901,12 @@ html[data-theme="dark"] .martyr-name {
   color: #ffffff !important;
 }
 
-body.dark-mode .martyr-placeholder,
-html[data-theme="dark"] .martyr-placeholder {
-  background: #313437 !important;
-}
-
 body.dark-mode .martyr-placeholder i,
 html[data-theme="dark"] .martyr-placeholder i {
   color: #9ca3af !important;
 }
 
-/* =========================================================
-   لوحة التحكم والإعدادات والجداول
-   ========================================================= */
+/* لوحة التحكم والإعدادات والجداول */
 body.dark-mode #dashboardPage,
 html[data-theme="dark"] #dashboardPage {
   color: #f4faf8 !important;
@@ -1663,42 +1072,4 @@ html[data-theme="dark"] .site-footer .btn {
   color: #ffffff !important;
   border-color: rgba(255,255,255,.45) !important;
   background: rgba(255,255,255,.08) !important;
-}
-
-
-/* تطبيق الوضع الليلي على أدوات إدارة معرض الصور */
-body.dark-mode .gallery-admin-tools,
-html[data-theme="dark"] .gallery-admin-tools {
-  background: #0e211d !important;
-  color: #f4faf8 !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25) !important;
-}
-
-/* النصوص والعناوين داخل أدوات المعرض */
-body.dark-mode .gallery-admin-tools *,
-html[data-theme="dark"] .gallery-admin-tools * {
-  color: inherit;
-}
-
-/* الحقول والقوائم داخل أدوات المعرض */
-body.dark-mode .gallery-admin-tools .form-control,
-body.dark-mode .gallery-admin-tools .form-select,
-body.dark-mode .gallery-admin-tools input,
-body.dark-mode .gallery-admin-tools textarea,
-html[data-theme="dark"] .gallery-admin-tools .form-control,
-html[data-theme="dark"] .gallery-admin-tools .form-select,
-html[data-theme="dark"] .gallery-admin-tools input,
-html[data-theme="dark"] .gallery-admin-tools textarea {
-  background-color: #071612 !important;
-  color: #f4faf8 !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-/* النصوص الثانوية داخل أدوات المعرض */
-body.dark-mode .gallery-admin-tools .text-muted,
-body.dark-mode .gallery-admin-tools .form-text,
-html[data-theme="dark"] .gallery-admin-tools .text-muted,
-html[data-theme="dark"] .gallery-admin-tools .form-text {
-  color: #b8c8c3 !important;
 }
