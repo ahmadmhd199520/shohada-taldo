@@ -157,3 +157,35 @@
     padding: 14px;
   }
 }
+
+/* إصلاح رأس قسم من نحن: منع تضخيم الأيقونة ومنع تكرار الشعار */
+.taldo-about-hero > img:not(.taldo-about-hero-logo) {
+  display: none !important;
+}
+
+.taldo-about-hero .taldo-about-hero-logo {
+  position: relative !important;
+  inset: auto !important;
+  width: 78px !important;
+  height: 78px !important;
+  max-width: 78px !important;
+  max-height: 78px !important;
+  min-width: 78px !important;
+  min-height: 78px !important;
+  display: inline-block !important;
+  object-fit: cover !important;
+  opacity: 1 !important;
+  filter: none !important;
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 576px) {
+  .taldo-about-hero .taldo-about-hero-logo {
+    width: 64px !important;
+    height: 64px !important;
+    max-width: 64px !important;
+    max-height: 64px !important;
+    min-width: 64px !important;
+    min-height: 64px !important;
+  }
+}
