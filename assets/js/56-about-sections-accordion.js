@@ -4,6 +4,8 @@
   const ABOUT_HERO_IMAGE = './assets/site-preview.png';
   const ABOUT_LOGO_IMAGE = './assets/favicon-512.png';
 
+  let aboutRenderTimer = null;
+
   function escapeHtml(value) {
     return String(value || '')
       .replace(/&/g, '&amp;')
@@ -88,6 +90,23 @@
     });
   }
 
+  function getAboutRawValue() {
+    if (window.publicSettings && typeof publicSettings.about_us_text === 'string' && publicSettings.about_us_text.trim()) {
+      return publicSettings.about_us_text;
+    }
+
+    const hidden = document.getElementById('aboutUsAdminText');
+    if (hidden && String(hidden.value || '').trim()) return hidden.value;
+
+    const current = document.getElementById('aboutUsText');
+    if (current) {
+      const text = String(current.textContent || '').trim();
+      if (text) return text;
+    }
+
+    return '';
+  }
+
   function ensureAboutContainer() {
     const current = document.getElementById('aboutUsText');
     if (!current) return null;
@@ -95,12 +114,13 @@
     if (current.tagName && current.tagName.toLowerCase() === 'p') {
       const div = document.createElement('div');
       div.id = current.id;
-      div.className = (current.className || '') + ' taldo-about-sections-content';
+      div.className = ((current.className || '') + ' taldo-about-sections-content').trim();
       current.replaceWith(div);
       return div;
     }
 
     current.classList.add('taldo-about-sections-content');
+    current.style.whiteSpace = 'normal';
     return current;
   }
 
@@ -108,7 +128,13 @@
     const container = ensureAboutContainer();
     if (!container) return;
 
-    const sections = parseAboutSections(window.publicSettings && publicSettings.about_us_text);
+    const rawValue = getAboutRawValue();
+    const sections = parseAboutSections(rawValue);
+
+    // مهم: نخزن القيمة المقروءة في publicSettings حتى لا تعود الدالة الأصلية وتعرض JSON كنص عادي.
+    if (window.publicSettings && rawValue) {
+      publicSettings.about_us_text = rawValue;
+    }
 
     container.innerHTML = `
       <div class="taldo-about-hero">
@@ -134,11 +160,18 @@
                 </button>
               </h2>
               <div id="${collapseId}" class="accordion-collapse collapse ${show}" aria-labelledby="${collapseId}_heading" data-bs-parent="#taldoAboutAccordion">
-                <div class="accordion-body">${escapeHtml(section.body)}</div>
+                <div class="accordion-body">${escapeHtml(section.body).replace(/\n/g, '<br>')}</div>
               </div>
             </div>`;
         }).join('')}
       </div>`;
+  }
+
+  function renderAboutSectionsSoon() {
+    clearTimeout(aboutRenderTimer);
+    renderAboutSectionsPublic();
+    aboutRenderTimer = setTimeout(renderAboutSectionsPublic, 80);
+    setTimeout(renderAboutSectionsPublic, 250);
   }
 
   function readSectionsFromBuilder() {
@@ -216,8 +249,8 @@
     if (!card) return;
     if (card.dataset.aboutSectionsEnhanced === '1') return;
 
-    const sections = parseAboutSections(window.publicSettings && publicSettings.about_us_text);
-    const hiddenValue = String((window.publicSettings && publicSettings.about_us_text) || '');
+    const sections = parseAboutSections(getAboutRawValue());
+    const hiddenValue = String(getAboutRawValue() || '');
 
     card.dataset.aboutSectionsEnhanced = '1';
     card.innerHTML = `
@@ -250,19 +283,21 @@
     }
   }
 
-  const previousOpenAboutUsModal = window.openAboutUsModal;
-  window.openAboutUsModal = function () {
-    renderAboutSectionsPublic();
+  function patchOpenAboutUsModal() {
+    const current = window.openAboutUsModal;
+    if (typeof current !== 'function') return;
+    if (current.__aboutSectionsWrapped === true) return;
 
-    if (window.modals && modals.aboutUsModal) {
-      modals.aboutUsModal.show();
-      return;
-    }
+    const wrapped = function () {
+      const result = current.apply(this, arguments);
+      renderAboutSectionsSoon();
+      return result;
+    };
 
-    if (typeof previousOpenAboutUsModal === 'function') {
-      return previousOpenAboutUsModal.apply(this, arguments);
-    }
-  };
+    wrapped.__aboutSectionsWrapped = true;
+    wrapped.__previousOpenAboutUsModal = current;
+    window.openAboutUsModal = wrapped;
+  }
 
   const previousRenderSettingsTab = window.renderSettingsTab;
   window.renderSettingsTab = function () {
@@ -271,6 +306,7 @@
     }
 
     setTimeout(enhanceAboutAdminCard, 0);
+    setTimeout(enhanceAboutAdminCard, 300);
   };
 
   window.saveAboutUsText = function () {
@@ -296,10 +332,11 @@
           return;
         }
 
+        if (!window.publicSettings) window.publicSettings = {};
         publicSettings.about_us_text = value;
         showToast(res.message || 'تم حفظ قسم من نحن.');
         renderAboutSectionsPublic();
-        loadInitialData();
+        if (typeof loadInitialData === 'function') loadInitialData();
       })
       .catch(err => {
         showToast(err.message || 'تعذر حفظ قسم من نحن.');
@@ -307,11 +344,27 @@
   };
 
   function bootAboutSections() {
+    try { patchOpenAboutUsModal(); } catch (error) {}
     try { enhanceAboutAdminCard(); } catch (error) {}
+
+    const aboutModal = document.getElementById('aboutUsModal');
+    if (aboutModal && aboutModal.dataset.aboutSectionsListener !== '1') {
+      aboutModal.dataset.aboutSectionsListener = '1';
+      aboutModal.addEventListener('show.bs.modal', renderAboutSectionsSoon);
+      aboutModal.addEventListener('shown.bs.modal', renderAboutSectionsSoon);
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(bootAboutSections, 800);
-    setTimeout(bootAboutSections, 1800);
+    bootAboutSections();
+    setTimeout(bootAboutSections, 500);
+    setTimeout(bootAboutSections, 1500);
+    setTimeout(bootAboutSections, 3000);
   });
+
+  // في حال حُمّل هذا الملف بعد اكتمال الصفحة أو قبل اكتمال تعريف دوال المشروع.
+  bootAboutSections();
+  setTimeout(bootAboutSections, 500);
+  setTimeout(bootAboutSections, 1500);
+  setTimeout(bootAboutSections, 3000);
 })();
