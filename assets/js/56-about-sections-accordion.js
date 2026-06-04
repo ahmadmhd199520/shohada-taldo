@@ -5,6 +5,9 @@
 
   let aboutRenderTimer = null;
   let isRenderingAbout = false;
+  let aboutFreshLoadInProgress = false;
+
+  const ABOUT_LOCAL_CACHE_KEY = 'taldo_about_sections_last_saved';
 
   function escapeHtml(value) {
     return String(value || '')
@@ -42,6 +45,27 @@
         body: 'يمكنكم المساهمة بإرسال معلومة ناقصة، أو تصحيح خطأ، أو تزويدنا بصورة أو تفاصيل إضافية تساعد في استكمال بيانات الشهداء.'
       }
     ];
+  }
+
+
+  function isStructuredAboutValue(value) {
+    const text = String(value || '').trim();
+    if (!text) return false;
+    return text.includes(ABOUT_FORMAT) || text.includes('"sections"') || text.includes('"title"') || text.includes('العنوان:') || text.includes('النص:');
+  }
+
+  function getLocalAboutValue() {
+    try {
+      return localStorage.getItem(ABOUT_LOCAL_CACHE_KEY) || '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function setLocalAboutValue(value) {
+    try {
+      if (value) localStorage.setItem(ABOUT_LOCAL_CACHE_KEY, value);
+    } catch (error) {}
   }
 
   function cleanSection(section) {
@@ -232,6 +256,9 @@
     const hidden = document.getElementById('aboutUsAdminText');
     if (hidden && String(hidden.value || '').trim()) return hidden.value;
 
+    const local = getLocalAboutValue();
+    if (local && local.trim()) return local;
+
     const current = document.getElementById('aboutUsText');
     if (current) {
       const text = String(current.textContent || '').trim();
@@ -337,33 +364,48 @@
 
     section = cleanSection(section);
     const key = 'about_row_' + Date.now() + '_' + Math.random().toString(16).slice(2);
+    const currentRowsCount = container.querySelectorAll('.taldo-about-section-admin-item').length;
+    const collapseId = 'aboutSectionAdminCollapse_' + key;
+    const isOpen = currentRowsCount === 0;
 
     const wrap = document.createElement('div');
     wrap.className = 'taldo-about-section-admin-item';
     wrap.dataset.rowKey = key;
     wrap.innerHTML = `
-      <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
-        <div class="d-flex align-items-center gap-2">
+      <div class="taldo-about-section-admin-head">
+        <button type="button" class="taldo-about-section-admin-toggle ${isOpen ? '' : 'collapsed'}" data-bs-toggle="collapse" data-bs-target="#${escapeAttr(collapseId)}" aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="${escapeAttr(collapseId)}">
           <span class="taldo-about-section-number">1</span>
-          <strong>قسم من نحن</strong>
-        </div>
-        <button type="button" class="btn btn-sm btn-outline-danger taldo-about-remove-section-btn" onclick="removeAboutSectionRow('${escapeAttr(key)}')">
+          <span class="taldo-about-section-title-preview">${escapeHtml(section.title || 'قسم جديد')}</span>
+          <i class="fa-solid fa-chevron-down taldo-about-section-chevron"></i>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger taldo-about-remove-section-btn" onclick="removeAboutSectionRow('${escapeAttr(key)}')" title="حذف القسم">
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
 
-      <div class="row g-3">
-        <div class="col-12">
-          <label class="form-label fw-bold">عنوان القسم</label>
-          <input type="text" class="form-control taldo-about-section-title" value="${escapeAttr(section.title)}" placeholder="مثال: هدف المشروع">
-        </div>
-        <div class="col-12">
-          <label class="form-label fw-bold">النص</label>
-          <textarea class="form-control taldo-about-section-body" rows="4" placeholder="اكتب نص هذا القسم هنا...">${escapeHtml(section.body)}</textarea>
+      <div id="${escapeAttr(collapseId)}" class="collapse taldo-about-section-admin-collapse ${isOpen ? 'show' : ''}">
+        <div class="row g-3 pt-3">
+          <div class="col-12">
+            <label class="form-label fw-bold">عنوان القسم</label>
+            <input type="text" class="form-control taldo-about-section-title" value="${escapeAttr(section.title)}" placeholder="مثال: هدف المشروع">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-bold">النص</label>
+            <textarea class="form-control taldo-about-section-body" rows="4" placeholder="اكتب نص هذا القسم هنا...">${escapeHtml(section.body)}</textarea>
+          </div>
         </div>
       </div>`;
 
     container.appendChild(wrap);
+
+    const titleInput = wrap.querySelector('.taldo-about-section-title');
+    const preview = wrap.querySelector('.taldo-about-section-title-preview');
+    if (titleInput && preview) {
+      titleInput.addEventListener('input', () => {
+        preview.textContent = titleInput.value.trim() || 'قسم جديد';
+      });
+    }
+
     renumberAboutRows();
   }
 
@@ -379,6 +421,74 @@
   window.addAboutSectionRow = addAboutSectionRow;
   window.removeAboutSectionRow = removeAboutSectionRow;
 
+
+  function chooseAboutRawForAdmin(textareaValue) {
+    const candidates = [
+      String(textareaValue || ''),
+      (window.publicSettings && typeof window.publicSettings.about_us_text === 'string') ? window.publicSettings.about_us_text : '',
+      (() => { try { return (typeof publicSettings !== 'undefined' && publicSettings && typeof publicSettings.about_us_text === 'string') ? publicSettings.about_us_text : ''; } catch (error) { return ''; } })(),
+      getLocalAboutValue(),
+      String(window.__taldoAboutRawValue || '')
+    ].map(v => String(v || '').trim()).filter(Boolean);
+
+    const structured = candidates.find(isStructuredAboutValue);
+    if (structured) return structured;
+
+    return candidates[0] || '';
+  }
+
+  function rebuildAboutAdminBuilderFromRaw(raw) {
+    const builder = document.getElementById('aboutSectionsBuilder');
+    if (!builder) return;
+
+    if (raw) {
+      window.__taldoAboutRawValue = raw;
+      setLocalAboutValue(raw);
+    }
+
+    const sections = parseAboutSections(raw || '');
+    builder.innerHTML = '';
+    sections.forEach(section => addAboutSectionRow(section));
+    if (!sections.length) addAboutSectionRow({ title: '', body: '' });
+  }
+
+  function refreshAboutSettingFromServer() {
+    if (aboutFreshLoadInProgress) return;
+    if (typeof apiRequest !== 'function') return;
+
+    aboutFreshLoadInProgress = true;
+
+    apiRequest('getInitialData', {
+      forceFresh: true,
+      __cacheBust: Date.now()
+    })
+      .then(res => {
+        const value = res && res.settings && typeof res.settings.about_us_text === 'string'
+          ? res.settings.about_us_text
+          : '';
+
+        if (!value) return;
+
+        if (!window.publicSettings) window.publicSettings = {};
+        window.publicSettings.about_us_text = value;
+        try {
+          if (typeof publicSettings !== 'undefined' && publicSettings) publicSettings.about_us_text = value;
+        } catch (error) {}
+
+        window.__taldoAboutRawValue = value;
+        setLocalAboutValue(value);
+
+        const hidden = document.getElementById('aboutUsAdminText');
+        if (hidden) hidden.value = value;
+
+        rebuildAboutAdminBuilderFromRaw(value);
+      })
+      .catch(() => {})
+      .finally(() => {
+        aboutFreshLoadInProgress = false;
+      });
+  }
+
   function enhanceAboutAdminCard() {
     const textarea = document.getElementById('aboutUsAdminText');
     if (!textarea) return;
@@ -387,8 +497,11 @@
     if (!card) return;
     if (card.dataset.aboutSectionsEnhanced === '1') return;
 
-    const raw = String(textarea.value || getAboutRawValue() || '');
-    if (raw) window.__taldoAboutRawValue = raw;
+    const raw = chooseAboutRawForAdmin(textarea.value || getAboutRawValue() || '');
+    if (raw) {
+      window.__taldoAboutRawValue = raw;
+      setLocalAboutValue(raw);
+    }
     const sections = parseAboutSections(raw);
 
     card.dataset.aboutSectionsEnhanced = '1';
@@ -419,6 +532,8 @@
       sections.forEach(section => addAboutSectionRow(section));
       if (!sections.length) addAboutSectionRow({ title: '', body: '' });
     }
+
+    setTimeout(refreshAboutSettingFromServer, 80);
   }
 
   function patchOpenAboutUsModal() {
@@ -444,14 +559,56 @@
     window.openAboutUsModal = wrapped;
   }
 
+
+  function enhanceSettingsAccordion() {
+    const tab = document.getElementById('dashboardSettingsTab');
+    if (!tab) return;
+
+    const cards = Array.from(tab.querySelectorAll(':scope > .settings-card'));
+    cards.forEach((card, index) => {
+      if (card.dataset.settingsAccordionEnhanced === '1') return;
+
+      const title = card.querySelector(':scope > h5');
+      if (!title) return;
+
+      const panelId = 'taldoSettingsPanel_' + index;
+      const isOpen = index === 0;
+      const titleHtml = title.innerHTML;
+      title.remove();
+
+      const body = document.createElement('div');
+      body.className = 'taldo-settings-accordion-body collapse ' + (isOpen ? 'show' : '');
+      body.id = panelId;
+
+      while (card.firstChild) {
+        body.appendChild(card.firstChild);
+      }
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'taldo-settings-accordion-toggle ' + (isOpen ? '' : 'collapsed');
+      btn.setAttribute('data-bs-toggle', 'collapse');
+      btn.setAttribute('data-bs-target', '#' + panelId);
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      btn.setAttribute('aria-controls', panelId);
+      btn.innerHTML = `<span>${titleHtml}</span><i class="fa-solid fa-chevron-down"></i>`;
+
+      card.classList.add('taldo-settings-accordion-card');
+      card.dataset.settingsAccordionEnhanced = '1';
+      card.appendChild(btn);
+      card.appendChild(body);
+    });
+  }
+
   const previousRenderSettingsTab = window.renderSettingsTab;
   window.renderSettingsTab = function () {
     if (typeof previousRenderSettingsTab === 'function') {
       previousRenderSettingsTab.apply(this, arguments);
     }
 
-    setTimeout(enhanceAboutAdminCard, 0);
-    setTimeout(enhanceAboutAdminCard, 300);
+    setTimeout(() => { enhanceAboutAdminCard(); enhanceSettingsAccordion(); refreshAboutSettingFromServer(); }, 0);
+    setTimeout(() => { enhanceAboutAdminCard(); enhanceSettingsAccordion(); }, 300);
+    setTimeout(enhanceSettingsAccordion, 700);
   };
 
   window.saveAboutUsText = function () {
@@ -464,6 +621,7 @@
 
     const value = stringifyAboutSections(sections);
     window.__taldoAboutRawValue = value;
+    setLocalAboutValue(value);
 
     const hidden = document.getElementById('aboutUsAdminText');
     if (hidden) hidden.value = value;
@@ -485,6 +643,8 @@
           if (typeof publicSettings !== 'undefined' && publicSettings) publicSettings.about_us_text = value;
         } catch (error) {}
 
+        setLocalAboutValue(value);
+        rebuildAboutAdminBuilderFromRaw(value);
         showToast(res.message || 'تم حفظ قسم من نحن.');
         renderAboutSectionsPublic();
       })
@@ -515,6 +675,7 @@
   function bootAboutSections() {
     try { patchOpenAboutUsModal(); } catch (error) {}
     try { enhanceAboutAdminCard(); } catch (error) {}
+    try { enhanceSettingsAccordion(); } catch (error) {}
     try { installAboutMutationGuard(); } catch (error) {}
 
     const aboutModal = document.getElementById('aboutUsModal');
