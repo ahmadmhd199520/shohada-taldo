@@ -1117,3 +1117,46 @@ body.dark-mode .taldo-about-hero .taldo-about-hero-logo,
 html[data-theme="dark"] .taldo-about-hero .taldo-about-hero-logo {
   border-color: rgba(255, 255, 255, 0.15) !important;
 }
+
+
+/* =========================================================
+   إصلاح الوضع الداكن للنوافذ المنبثقة (Modals)
+   ========================================================= */
+
+/* 1. الحاوية الرئيسية للنافذة */
+body.dark-mode .modal-content,
+html[data-theme="dark"] .modal-content {
+  background-color: #0e211d !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f4faf8 !important;
+}
+
+/* 2. خطوط الفصل بين الترويسة، المحتوى، والذيل */
+body.dark-mode .modal-header,
+html[data-theme="dark"] .modal-header,
+body.dark-mode .modal-footer,
+html[data-theme="dark"] .modal-footer {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 3. حقول الإدخال والقوائم المنسدلة داخل النوافذ */
+body.dark-mode .modal-content .form-control,
+html[data-theme="dark"] .modal-content .form-control,
+body.dark-mode .modal-content .form-select,
+html[data-theme="dark"] .modal-content .form-select {
+  background-color: #071612 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f4faf8 !important;
+}
+
+/* 4. تغيير لون نصوص حقول الإدخال (Placeholder) */
+body.dark-mode .modal-content .form-control::placeholder,
+html[data-theme="dark"] .modal-content .form-control::placeholder {
+  color: rgba(244, 250, 248, 0.5) !important;
+}
+
+/* 5. زر الإغلاق (X) في الترويسة */
+body.dark-mode .modal-header .btn-close,
+html[data-theme="dark"] .modal-header .btn-close {
+  filter: invert(1) grayscale(1) brightness(2) !important;
+}
