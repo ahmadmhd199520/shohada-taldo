@@ -1086,7 +1086,7 @@ html[data-theme="dark"] .site-footer .btn {
   body {
     width: 100% !important;
     max-width: 100% !important;
-    overflow-x: hidden !important;
+    overflow-x: clip !important; /* استخدام clip بدلاً من hidden يحل المشكلة */
   }
 
   .app-shell,
