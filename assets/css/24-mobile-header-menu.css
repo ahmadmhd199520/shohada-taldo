@@ -1,12 +1,21 @@
 /* ===== Mobile header 3-dots menu ===== */
 .taldo-mobile-header-menu-btn,
 .taldo-mobile-header-menu-panel {
-  display: none;
+  display: none !important;
+}
+
+/* مهم: منع قص القائمة من حدود الهيدر */
+.hero,
+.hero-top-row,
+.top-login-bar.header-inline-actions,
+.top-login-bar {
+  overflow: visible !important;
 }
 
 @media (max-width: 576px) {
   .hero-top-row {
     position: relative !important;
+    overflow: visible !important;
   }
 
   /* إخفاء زر عن المشروع القديم من السطر الأول في الجوال */
@@ -33,6 +42,8 @@
     align-items: center !important;
     justify-content: flex-end !important;
     gap: 6px !important;
+    overflow: visible !important;
+    z-index: 2147482500 !important;
   }
 
   /* في الجوال: تسجيل الدخول والخروج داخل القائمة، ولوحة التحكم تبقى ظاهرة عند تسجيل الدخول */
@@ -46,8 +57,9 @@
     order: 2 !important;
   }
 
+  /* زر الثلاث نقاط يكون أقصى اليسار، وبعده إلى اليمين زر لوحة التحكم */
   .taldo-mobile-header-menu-btn {
-    order: 1 !important;
+    order: 3 !important;
     width: 34px !important;
     height: 34px !important;
     min-width: 34px !important;
@@ -60,6 +72,8 @@
     border: 1px solid rgba(255,255,255,.75) !important;
     background: rgba(255,255,255,.10) !important;
     box-shadow: none !important;
+    position: relative !important;
+    z-index: 2147482600 !important;
   }
 
   .taldo-mobile-header-menu-btn:hover,
@@ -73,12 +87,15 @@
     margin: 0 !important;
   }
 
+  /* القائمة مثبتة على الشاشة لا داخل الهيدر حتى لا تُقصّ من حدود الهيدر */
   .taldo-mobile-header-menu-panel {
-    position: absolute !important;
-    top: calc(100% + 8px) !important;
-    inset-inline-start: 0 !important;
-    min-width: 190px !important;
-    z-index: 9999 !important;
+    position: fixed !important;
+    top: 64px !important;
+    left: 10px !important;
+    right: auto !important;
+    min-width: 205px !important;
+    max-width: calc(100vw - 20px) !important;
+    z-index: 2147482700 !important;
     background: rgba(255,255,255,.98) !important;
     color: #172033 !important;
     border: 1px solid rgba(15, 23, 42, .10) !important;
