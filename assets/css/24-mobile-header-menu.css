@@ -1100,7 +1100,7 @@ html[data-theme="dark"] .site-footer .btn {
   #familyMartyrsPage,
   #dashboardPage {
     max-width: 100vw !important;
-    overflow-x: hidden !important;
+    /* overflow-x: hidden !important; */
   }
 
   /* القائمة نفسها لا يجوز أن تتجاوز عرض الشاشة */
