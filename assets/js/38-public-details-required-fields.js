@@ -4,10 +4,10 @@
   const PUBLIC_MISSING_TEXT = 'بيانات تحتاج لاستكمال';
 
   const REQUIRED_PUBLIC_FIELDS = [
-    // {
-    //   label: 'اللقب',
-    //   field: 'nickname'
-    // },
+    {
+      label: 'اسم الأب',
+      field: 'father_name'
+    },
     {
       label: 'استشهد بـ',
       field: 'martyrdom_type'
@@ -19,6 +19,13 @@
     {
       label: 'مكان الاستشهاد',
       field: 'martyrdom_place'
+    }
+  ];
+
+  const PUBLIC_EMPTY_AS_NONE_FIELDS = [
+    {
+      label: 'اللقب',
+      field: 'nickname'
     }
   ];
 
@@ -44,6 +51,23 @@
 
   function missingValueHtml() {
     return `<span class="public-missing-field">${PUBLIC_MISSING_TEXT}</span>`;
+  }
+
+  function noValueHtml() {
+    return '<span class="public-no-extra-info">لا يوجد</span>';
+  }
+
+  function makePublicNoneDetailItem(label) {
+    return `
+      <div class="col-md-6 public-none-detail-item" data-public-label="${escapeAttr(label)}">
+        <div class="p-3 rounded-4 bg-light h-100">
+          <div class="text-muted small mb-1">${escapeHtml(label)}</div>
+          <div class="fw-bold">
+            ${noValueHtml()}
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   function makePublicDetailItem(label, value, isMissing) {
@@ -72,7 +96,7 @@
   function removeOldPublicInjectedItems(row) {
     if (!row) return;
 
-    row.querySelectorAll('.public-required-detail-item').forEach(function(el) {
+    row.querySelectorAll('.public-required-detail-item, .public-none-detail-item').forEach(function(el) {
       el.remove();
     });
   }
@@ -134,6 +158,22 @@
     });
   }
 
+  function patchEmptyAsNoneFields(item) {
+    const row = findDetailsRow();
+
+    if (!row || !item) return;
+
+    PUBLIC_EMPTY_AS_NONE_FIELDS.forEach(function(def) {
+      if (rowHasLabel(row, def.label)) return;
+      if (!isEmptyValue(item[def.field])) return;
+
+      row.insertAdjacentHTML(
+        'beforeend',
+        makePublicNoneDetailItem(def.label)
+      );
+    });
+  }
+
   function patchExtraInfoField(item) {
     if (!item) return;
 
@@ -182,6 +222,7 @@
 
     patchHeaderFields(item);
     patchRequiredFieldsRow(item);
+    patchEmptyAsNoneFields(item);
     patchExtraInfoField(item);
   }
 
