@@ -664,10 +664,13 @@ body.modal-open .taldo-simple-search-inner {
 }
 
 /* منع انزياح الصفحة الرئيسية عند فتح أي مودال */
-body.modal-open {
-  padding-right: 0 !important;
-  padding-left: 0 !important;
-  overflow-y: hidden !important; /* لمنع التمرير الخلفي إن وجد */
+/* منع انزياح الصفحة الرئيسية عند فتح مودال (في الجوال فقط) */
+@media (max-width: 768px) {
+  body.modal-open {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    overflow-y: hidden !important;
+  }
 }
 
 .modal-backdrop { z-index: 1050 !important; }
