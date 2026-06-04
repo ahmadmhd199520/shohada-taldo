@@ -379,3 +379,15 @@
     min-height: 60vh !important;
   }
 }
+
+
+/* إخفاء الهيدر القديم في نافذة من نحن: الأيقونة + عنوان من نحن */
+#aboutUsModal .modal-body > .intro-icon,
+#aboutUsModal .modal-body > h4.fw-bold {
+  display: none !important;
+}
+
+/* إزالة الفراغ العلوي بعد إخفاء الهيدر القديم */
+#aboutUsModal .modal-body {
+  padding-top: 16px !important;
+}
