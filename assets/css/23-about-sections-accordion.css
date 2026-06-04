@@ -221,18 +221,18 @@
 
 
 /* إخفاء رأس من نحن القديم: الأيقونة + العنوان */
-#aboutModal .modal-body > .modal-icon,
-#aboutModal .modal-body > .intro-icon,
-#aboutModal .modal-body > .about-icon,
-#aboutModal .modal-body > .section-icon,
-#aboutModal .modal-body > .rounded-circle,
-#aboutModal .modal-body > h5.fw-bold,
-#aboutModal .modal-body > h5.modal-title,
-#aboutModal .modal-body > h5 {
+#aboutUsModal .modal-body > .modal-icon,
+#aboutUsModal .modal-body > .intro-icon,
+#aboutUsModal .modal-body > .about-icon,
+#aboutUsModal .modal-body > .section-icon,
+#aboutUsModal .modal-body > .rounded-circle,
+#aboutUsModal .modal-body > h5.fw-bold,
+#aboutUsModal .modal-body > h5.modal-title,
+#aboutUsModal .modal-body > h5 {
   display: none !important;
 }
 
 /* تقليل الفراغ العلوي بعد إخفاء الرأس القديم */
-#aboutModal .modal-body {
+#aboutUsModal .modal-body {
   padding-top: 8px !important;
 }
