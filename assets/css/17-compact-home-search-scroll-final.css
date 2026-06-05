@@ -7,7 +7,7 @@
   }
 
   body:not(.modal-open) {
-    overflow-y: auto !important;
+    /* overflow-y: auto !important; */
     padding-right: 0 !important;
   }
 
