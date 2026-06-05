@@ -111,7 +111,7 @@
 
   @media (max-width: 576px) {
     #dashboardPage > .row.g-3.mb-4 > [class*="col-"] {
-      flex-basis: 180px !important;
+      flex-basis: 125px !important;
       width: 180px !important;
       max-width: 180px !important;
     }
