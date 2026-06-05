@@ -271,41 +271,100 @@
   window.taldoSetDarkMode = applyTheme;
 })();
 // تثبيت القائمة للثلاث نقاط
-(function () {
-  const btn = document.getElementById('taldoMobileHeaderMenuBtn');
-  const panel = document.getElementById('taldoMobileHeaderMenuPanel');
 
-  if (!btn || !panel) return;
+
+(function () {
+  function getButton() {
+    return document.getElementById('taldoMobileHeaderMenuBtn') ||
+      document.querySelector('.taldo-mobile-header-menu-btn');
+  }
+
+  function getPanel() {
+    return document.getElementById('taldoMobileHeaderMenuPanel') ||
+      document.querySelector('.taldo-mobile-header-menu-panel');
+  }
+
+  function measurePanel(panel) {
+    const computed = window.getComputedStyle(panel);
+    const wasHidden = computed.display === 'none';
+
+    if (wasHidden) {
+      panel.style.setProperty('display', 'block', 'important');
+      panel.style.setProperty('visibility', 'hidden', 'important');
+    }
+
+    const width = panel.getBoundingClientRect().width || 205;
+
+    if (wasHidden) {
+      panel.style.removeProperty('display');
+      panel.style.removeProperty('visibility');
+    }
+
+    return Math.min(width, window.innerWidth - 16);
+  }
 
   function positionTaldoMenu() {
-    const gap = 8;
+    const btn = getButton();
+    const panel = getPanel();
+    if (!btn || !panel) return;
+
     const safe = 8;
+    const gap = 8;
     const rect = btn.getBoundingClientRect();
+    const panelWidth = measurePanel(panel);
 
-    const panelWidth = Math.min(
-      panel.offsetWidth || 205,
-      window.innerWidth - safe * 2
-    );
+    let left = rect.left < window.innerWidth / 2
+      ? rect.left
+      : rect.right - panelWidth;
 
-    let left = rect.left;
     left = Math.max(safe, Math.min(left, window.innerWidth - panelWidth - safe));
 
     const top = Math.max(safe, rect.bottom + gap);
 
     panel.style.setProperty('--taldo-menu-left', left + 'px');
     panel.style.setProperty('--taldo-menu-top', top + 'px');
+
+    panel.style.setProperty('left', left + 'px', 'important');
+    panel.style.setProperty('top', top + 'px', 'important');
+    panel.style.setProperty('right', 'auto', 'important');
+    panel.style.setProperty('position', 'fixed', 'important');
+    panel.style.setProperty('transform', 'none', 'important');
   }
 
-  btn.addEventListener('click', function () {
-    requestAnimationFrame(positionTaldoMenu);
-    setTimeout(positionTaldoMenu, 0);
+  function hook() {
+    const btn = getButton();
+    const panel = getPanel();
+    if (!btn || !panel) return;
+
+    btn.addEventListener('click', function () {
+      requestAnimationFrame(positionTaldoMenu);
+      setTimeout(positionTaldoMenu, 0);
+      setTimeout(positionTaldoMenu, 80);
+    });
+
+    const observer = new MutationObserver(function () {
+      if (panel.classList.contains('show')) positionTaldoMenu();
+    });
+
+    observer.observe(panel, {
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    });
+  }
+
+  document.addEventListener('click', function (event) {
+    if (event.target.closest('#taldoMobileHeaderMenuBtn, .taldo-mobile-header-menu-btn')) {
+      requestAnimationFrame(positionTaldoMenu);
+      setTimeout(positionTaldoMenu, 0);
+    }
   });
 
-  window.addEventListener('resize', function () {
-    if (panel.classList.contains('show')) positionTaldoMenu();
-  });
+  window.addEventListener('resize', positionTaldoMenu);
+  window.addEventListener('scroll', positionTaldoMenu, true);
 
-  window.addEventListener('scroll', function () {
-    if (panel.classList.contains('show')) positionTaldoMenu();
-  }, true);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hook);
+  } else {
+    hook();
+  }
 })();
