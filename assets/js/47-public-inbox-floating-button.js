@@ -471,23 +471,66 @@ window.resetInboxMessagesAndRender = function() {
 
     if (dash && !document.getElementById('dashboardInboxTab')) {
       dash.insertAdjacentHTML('beforeend', `
-        <div id="dashboardInboxTab" class="dashboard-tab-pane d-none">
-          <div class="table-responsive">
-            <table class="table align-middle">
-              <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>الاسم</th>
-                  <th>الرسالة</th>
-                  <th>إجراء</th>
-                </tr>
-              </thead>
-              <tbody id="inboxMessagesTableBody"></tbody>
-            </table>
-          </div>
+dash.insertAdjacentHTML('beforeend', `
+  <div id="dashboardInboxTab" class="dashboard-tab-pane d-none">
+
+    <div class="dashboard-controls-row mb-2" id="inboxMessagesControls">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label fw-bold">بحث</label>
+          <input
+            class="form-control"
+            id="inboxMessagesSearchInput"
+            type="search"
+            placeholder="بحث باسم المرسل أو نص الرسالة..."
+            oninput="resetInboxMessagesAndRender()"
+          >
         </div>
-      `);
-    }
+
+        <div class="col-md-4">
+          <label class="form-label fw-bold">الحالة</label>
+          <select
+            class="form-select"
+            id="inboxMessagesStatusFilter"
+            onchange="resetInboxMessagesAndRender()"
+          >
+            <option value="active" selected>غير المقروءة</option>
+            <option value="hidden">المخفية / المقروءة</option>
+            <option value="">الكل</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-bold">فرز</label>
+          <select
+            class="form-select"
+            id="inboxMessagesSortSelect"
+            onchange="resetInboxMessagesAndRender()"
+          >
+            <option value="newest">الأحدث أولًا</option>
+            <option value="oldest">الأقدم أولًا</option>
+            <option value="sender">أبجديًا حسب الاسم</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>الاسم</th>
+            <th>الرسالة</th>
+            <th>إجراء</th>
+          </tr>
+        </thead>
+        <tbody id="inboxMessagesTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+`);
+}
 
     renderInboxTable();
   }
