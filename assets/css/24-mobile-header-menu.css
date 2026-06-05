@@ -1512,3 +1512,137 @@ body.modal-open {
   padding-right: 0 !important;
   padding-left: 0 !important;
 }
+
+
+
+
+/* =========================================================
+   TALDO CONFLICT FIX PATCH
+   ضع هذا الكود بعد:
+   24-mobile-header-menu.css
+   19-final-requested-fixes-v2.css
+   ========================================================= */
+
+/* لا تُعد تفعيل overflow: visible على body/app-shell عالميًا */
+@media (max-width: 768px) {
+  body,
+  html {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: clip !important;
+  }
+
+  .page-section.active:not(#dashboardPage),
+  #homePage.active,
+  #familiesPage.active,
+  #familyMartyrsPage.active,
+  #houlaMassacrePage.active {
+    overflow: visible !important;
+    contain: none !important;
+  }
+
+  #dashboardPage,
+  #dashboardPage.active {
+    overflow: visible !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Sticky طبيعي للابتوب */
+.mobile-search-filter,
+.houla-compact-search-filter,
+.family-compact-search-filter,
+.join-compact-search-filter,
+.taldo-family-search-wrap,
+.taldo-family-page-search-wrap,
+.taldo-family-search-bar,
+.taldo-family-page-search-bar,
+.taldo-simple-search,
+.taldo-simple-search-inner {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 10px !important;
+  z-index: 1030 !important;
+  align-self: flex-start !important;
+  transform: translateZ(0) !important;
+  box-sizing: border-box !important;
+}
+
+/* الجوال: fallback ثابت لأن sticky ينكسر بسبب overflow/transform في الآباء */
+@media (max-width: 768px) {
+  .page-section.active .mobile-search-filter,
+  .page-section.active .houla-compact-search-filter,
+  .page-section.active .family-compact-search-filter,
+  .page-section.active .join-compact-search-filter {
+    position: fixed !important;
+    top: max(8px, env(safe-area-inset-top)) !important;
+    left: max(10px, env(safe-area-inset-left)) !important;
+    right: max(10px, env(safe-area-inset-right)) !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    z-index: 1030 !important;
+    box-sizing: border-box !important;
+  }
+
+  #homePage.active,
+  #familiesPage.active,
+  #familyMartyrsPage.active,
+  #houlaMassacrePage.active {
+    padding-top: 72px !important;
+    scroll-padding-top: 88px !important;
+  }
+
+  body.modal-open .page-section.active .mobile-search-filter,
+  body.modal-open .page-section.active .houla-compact-search-filter,
+  body.modal-open .page-section.active .family-compact-search-filter,
+  body.modal-open .page-section.active .join-compact-search-filter {
+    z-index: 1 !important;
+  }
+}
+
+/* قائمة الثلاث نقاط: المكان الحقيقي يأتي من JS */
+#taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
+.taldo-mobile-header-menu-panel {
+  position: fixed !important;
+  top: var(--taldo-menu-top, 72px) !important;
+  left: var(--taldo-menu-left, 8px) !important;
+  right: auto !important;
+  width: auto !important;
+  min-width: min(205px, calc(100vw - 16px)) !important;
+  max-width: calc(100vw - 16px) !important;
+  margin: 0 !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+  z-index: 2147482700 !important;
+}
+
+#taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel.show,
+.taldo-mobile-header-menu-panel.show {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: clip !important;
+  }
+
+  .app-shell,
+  .hero,
+  .hero-layout,
+  .hero-top-row,
+  .page-section,
+  #homePage,
+  #detailsPage,
+  #familiesPage,
+  #familyMartyrsPage,
+  #dashboardPage {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+}
