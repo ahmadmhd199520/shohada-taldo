@@ -325,13 +325,30 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
   }
 
   function updateDashboardInboxDot() {
-    const has = isAdminMode() && unreadInboxCount() > 0;
+  const count = isAdminMode() ? unreadInboxCount() : 0;
+  const has = count > 0;
+  const label = count > 99 ? '99+' : String(count);
 
-    findDashboardButtons().forEach(function(btn) {
-      btn.classList.add('taldo-inbox-dashboard-dot-host');
-      btn.classList.toggle('taldo-has-inbox-messages', has);
-    });
-  }
+  const dashboardTabCount = document.getElementById('dashInboxCount');
+  if (dashboardTabCount) dashboardTabCount.textContent = count;
+
+  findDashboardButtons().forEach(function(btn) {
+    btn.classList.add('taldo-inbox-dashboard-dot-host');
+    btn.classList.toggle('taldo-has-inbox-messages', has);
+
+    let badge = btn.querySelector('.taldo-dashboard-inbox-count-bubble');
+
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'taldo-dashboard-inbox-count-bubble is-hidden';
+      btn.appendChild(badge);
+    }
+
+    badge.textContent = label;
+    badge.setAttribute('aria-label', count + ' رسائل غير مقروءة');
+    badge.classList.toggle('is-hidden', !has);
+  });
+}
 
   async function loadInboxBadgeSilently() {
     if (!isAdminMode()) {
