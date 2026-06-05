@@ -74,22 +74,40 @@
       }
 
       .taldo-inbox-dashboard-dot-host {
-        position: relative !important;
-      }
+  position: relative !important;
+}
 
-      .taldo-inbox-dashboard-dot-host.taldo-has-inbox-messages::after {
-        content: "";
-        position: absolute;
-        top: -2px;
-        right: -2px;
-        width: 11px;
-        height: 11px;
-        border-radius: 999px;
-        background: #20c997;
-        border: 2px solid #fff;
-        box-shadow: 0 0 0 4px rgba(32, 201, 151, .22);
-        z-index: 5;
-      }
+.taldo-dashboard-inbox-count-bubble {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #16a34a, #20c997);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 4px rgba(32, 201, 151, .22), 0 8px 18px rgba(0, 0, 0, .18);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.taldo-dashboard-inbox-count-bubble.is-hidden {
+  display: none !important;
+}
+
+body.dark-mode .taldo-dashboard-inbox-count-bubble,
+[data-theme="dark"] .taldo-dashboard-inbox-count-bubble {
+  border-color: #10231f;
+  box-shadow: 0 0 0 4px rgba(32, 201, 151, .18), 0 8px 18px rgba(0, 0, 0, .35);
+}
 
       .taldo-inbox-message-cell {
         white-space: pre-line;
