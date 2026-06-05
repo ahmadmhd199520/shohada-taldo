@@ -12,11 +12,11 @@
     box-shadow: 0 10px 24px rgba(15,23,42,.08) !important;
   }
 
-  .page-section.active,
+  /* .page-section.active,
   .app-shell,
   body {
     overflow: visible !important;
-  }
+  } */
 
   /* Family stats compact mobile title/actions */
   @media (max-width: 576px) {
