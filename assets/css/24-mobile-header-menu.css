@@ -1575,7 +1575,7 @@ body.modal-open {
   .page-section.active .houla-compact-search-filter,
   .page-section.active .family-compact-search-filter,
   .page-section.active .join-compact-search-filter {
-    position: fixed !important;
+    /* position: fixed !important; */
     top: max(8px, env(safe-area-inset-top)) !important;
     left: max(10px, env(safe-area-inset-left)) !important;
     right: max(10px, env(safe-area-inset-right)) !important;
