@@ -588,6 +588,76 @@ function dashboardStatusClass(status) {
       </tr>`;
   };
 
+  function isJoinPendingStatus(status) {
+  const text = String(status || '').trim();
+  return !text ||
+    text === 'بانتظار التوثيق' ||
+    text === 'بانتظار المراجعة' ||
+    text === 'قيد المراجعة' ||
+    text.includes('انتظار') ||
+    text.includes('مراجعة');
+}
+
+function buildJoinRequestsList() {
+  const search = normalize(
+    document.getElementById('joinRequestsSearchInput')?.value ||
+    document.getElementById('joinCompactSearchInput')?.value ||
+    ''
+  );
+
+  const statusFilter =
+    document.getElementById('joinRequestsStatusFilter')?.value ??
+    document.getElementById('joinCompactStatusFilter')?.value ??
+    'بانتظار التوثيق';
+
+  const sortBy =
+    document.getElementById('joinRequestsSortSelect')?.value ||
+    document.getElementById('joinCompactSortSelect')?.value ||
+    'newest';
+
+  let list = Array.isArray(joinRequests) ? joinRequests.slice() : [];
+  list.forEach(prepareRequestItem);
+
+  if (statusFilter) {
+    if (statusFilter === 'بانتظار التوثيق' || statusFilter === 'بانتظار المراجعة') {
+      list = list.filter(function(item) {
+        return isJoinPendingStatus(item.status);
+      });
+    } else {
+      list = list.filter(function(item) {
+        return String(item.status || '').trim() === statusFilter;
+      });
+    }
+  }
+
+  if (search) {
+    list = list.filter(function(item) {
+      const content = normalize([
+        item.__stableRequestSearchText,
+        item.full_name,
+        item.family_name,
+        item.phone,
+        item.notes,
+        item.birth_year
+      ].join(' '));
+
+      return content.includes(search);
+    });
+  }
+
+  if (sortBy === 'oldest') {
+    list.sort((a, b) => String(a.created_at || '').localeCompare(String(b.created_at || '')));
+  } else if (sortBy === 'name') {
+    list.sort((a, b) => String(a.full_name || '').localeCompare(String(b.full_name || ''), 'ar'));
+  } else if (sortBy === 'family') {
+    list.sort((a, b) => String(a.family_name || '').localeCompare(String(b.family_name || ''), 'ar'));
+  } else {
+    list.sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+  }
+
+  return list;
+}
+
   window.renderJoinRequestsTable = function() {
     const tbody = document.getElementById('joinRequestsTableBody');
     const countBadge = document.getElementById('joinRequestsCount');
