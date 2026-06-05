@@ -658,59 +658,64 @@ function buildJoinRequestsList() {
   return list;
 }
 
-  window.renderJoinRequestsTable = function() {
-    const tbody = document.getElementById('joinRequestsTableBody');
-    const countBadge = document.getElementById('joinRequestsCount');
-    if (!tbody) return;
+ window.renderJoinRequestsTable = function() {
+  const tbody = document.getElementById('joinRequestsTableBody');
+  const countBadge = document.getElementById('joinRequestsCount');
+  if (!tbody) return;
 
-    const rawList = Array.isArray(joinRequests) ? joinRequests : [];
-    if (!rawList.length && (state.loading || !state.loaded)) {
-      tbody.innerHTML = loadingRow(8, 'جاري تحميل طلبات الانضمام...');
-      if (countBadge) countBadge.textContent = '...';
-      return;
-    }
+  const rawList = Array.isArray(joinRequests) ? joinRequests : [];
 
-    let list = rawList.slice();
-    list.forEach(prepareRequestItem);
-    list.sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
-    if (countBadge) countBadge.textContent = list.length;
+  if (!rawList.length && (state.loading || !state.loaded)) {
+    tbody.innerHTML = loadingRow(8, 'جاري تحميل طلبات الانضمام...');
+    if (countBadge) countBadge.textContent = '...';
+    return;
+  }
 
-    if (!list.length) {
-      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">لا توجد طلبات انضمام.</td></tr>`;
-      return;
-    }
+  const list = buildJoinRequestsList();
 
-    const pageSize = requestPageSize();
-    const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
-    if (state.joinPage > totalPages) state.joinPage = totalPages;
-    if (state.joinPage < 1) state.joinPage = 1;
+  if (countBadge) countBadge.textContent = list.length;
 
-    const start = (state.joinPage - 1) * pageSize;
-    const pageList = list.slice(start, start + pageSize);
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">لا توجد طلبات انضمام مطابقة.</td></tr>`;
+    return;
+  }
 
-    tbody.innerHTML = pageList.map(function(item) {
-      const requestId = item.request_id || '';
-      return `
-        <tr data-join-id="${attr(requestId)}">
-          <td>${html(item.created_at || '')}</td>
-          <td class="fw-bold">${html(item.full_name || '')}</td>
-          <td>${html(item.family_name || '')}</td>
-          <td>${html(item.birth_year || '')}</td>
-          <td>${html(item.phone || '')}</td>
-          <td class="request-text-cell">${html(item.notes || '')}</td>
-          <td>${statusBadgeSafe(item.status)}</td>
-          <td class="dashboard-action-cell">
+  const pageSize = requestPageSize();
+  const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+
+  if (state.joinPage > totalPages) state.joinPage = totalPages;
+  if (state.joinPage < 1) state.joinPage = 1;
+
+  const start = (state.joinPage - 1) * pageSize;
+  const pageList = list.slice(start, start + pageSize);
+
+  tbody.innerHTML = pageList.map(function(item) {
+    const requestId = item.request_id || '';
+    const pending = isJoinPendingStatus(item.status);
+
+    return `
+      <tr data-join-id="${attr(requestId)}">
+        <td>${html(item.created_at || '')}</td>
+        <td class="fw-bold">${html(item.full_name || '')}</td>
+        <td>${html(item.family_name || '')}</td>
+        <td>${html(item.birth_year || '')}</td>
+        <td>${html(item.phone || '')}</td>
+        <td class="request-text-cell">${html(item.notes || '')}</td>
+        <td>${statusBadgeSafe(item.status)}</td>
+        <td class="dashboard-action-cell">
+          ${pending ? `
             <div class="d-flex gap-1 flex-wrap">
               <button class="btn btn-sm btn-success" onclick="updateJoinRequestStatusFromDashboard('${attr(requestId)}', 'موثق')">قبول</button>
               <button class="btn btn-sm btn-outline-danger" onclick="updateJoinRequestStatusFromDashboard('${attr(requestId)}', 'مرفوض')">رفض</button>
             </div>
-          </td>
-        </tr>`;
-    }).join('') + `
-      <tr class="dash-pagination-row">
-        <td colspan="8">${makePagination(state.joinPage, totalPages, 'goToJoinRequestsPage', list.length, pageSize)}</td>
+          ` : '-'}
+        </td>
       </tr>`;
-  };
+  }).join('') + `
+    <tr class="dash-pagination-row">
+      <td colspan="8">${makePagination(state.joinPage, totalPages, 'goToJoinRequestsPage', list.length, pageSize)}</td>
+    </tr>`;
+};
 
   function renderAllDashboardTables() {
     try { window.renderDashboardTable(); } catch (e) {}
@@ -733,6 +738,16 @@ function buildJoinRequestsList() {
     state.joinPage = Math.max(1, Number(page) || 1);
     window.renderJoinRequestsTable();
   };
+
+  window.resetJoinRequestsPageAndRender = function() {
+  state.joinPage = 1;
+  window.renderJoinRequestsTable();
+};
+
+window.goToJoinRequestsPageFixed = window.goToJoinRequestsPage;
+
+try { resetJoinRequestsPageAndRender = window.resetJoinRequestsPageAndRender; } catch (e) {}
+try { goToJoinRequestsPageFixed = window.goToJoinRequestsPageFixed; } catch (e) {}
 
   function bindFilterControls() {
     const dashSearch = document.getElementById('dashboardSearchInput');
