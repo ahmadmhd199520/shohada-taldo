@@ -118,6 +118,99 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
         font-size: .75rem;
       }
 
+
+
+      /* تنسيق شريط بحث وفلترة صندوق الوارد */
+      #inboxMessagesControls {
+        background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.92));
+        border: 1px solid rgba(13, 110, 253, .12);
+        border-radius: 18px;
+        padding: 12px;
+        margin-bottom: 14px !important;
+        box-shadow: 0 10px 24px rgba(15, 35, 65, .08);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      #inboxMessagesControls .form-label {
+        margin-bottom: 5px;
+        font-size: 13px;
+        color: #334155;
+      }
+
+      #inboxMessagesControls .form-control,
+      #inboxMessagesControls .form-select {
+        border-radius: 14px;
+        border: 1px solid rgba(15, 23, 42, .12);
+        background-color: rgba(255,255,255,.92);
+        min-height: 42px;
+        box-shadow: none;
+      }
+
+      #inboxMessagesControls .form-control:focus,
+      #inboxMessagesControls .form-select:focus {
+        border-color: rgba(5, 66, 57, .45);
+        box-shadow: 0 0 0 4px rgba(66, 129, 119, .14);
+      }
+
+      body.dark-mode #inboxMessagesControls,
+      [data-theme="dark"] #inboxMessagesControls {
+        background: linear-gradient(180deg, rgba(15, 35, 31, .96), rgba(8, 24, 22, .94));
+        border-color: rgba(185, 167, 121, .18);
+        box-shadow: 0 12px 26px rgba(0, 0, 0, .32);
+      }
+
+      body.dark-mode #inboxMessagesControls .form-label,
+      [data-theme="dark"] #inboxMessagesControls .form-label {
+        color: #edebe0;
+      }
+
+      body.dark-mode #inboxMessagesControls .form-control,
+      body.dark-mode #inboxMessagesControls .form-select,
+      [data-theme="dark"] #inboxMessagesControls .form-control,
+      [data-theme="dark"] #inboxMessagesControls .form-select {
+        background-color: rgba(255,255,255,.08);
+        border-color: rgba(237, 235, 224, .18);
+        color: #ffffff;
+      }
+
+      body.dark-mode #inboxMessagesControls .form-control::placeholder,
+      [data-theme="dark"] #inboxMessagesControls .form-control::placeholder {
+        color: rgba(255,255,255,.58);
+      }
+
+      @media (max-width: 768px) {
+        #inboxMessagesControls {
+          border-radius: 20px;
+          padding: 10px;
+          margin: 0 0 12px 0 !important;
+        }
+
+        #inboxMessagesControls .row {
+          --bs-gutter-x: 8px;
+          --bs-gutter-y: 8px;
+        }
+
+        #inboxMessagesControls .form-label {
+          display: none;
+        }
+
+        #inboxMessagesControls .col-md-4 {
+          width: 100%;
+        }
+
+        #inboxMessagesControls .form-control,
+        #inboxMessagesControls .form-select {
+          min-height: 44px;
+          border-radius: 16px;
+          font-size: 14px;
+        }
+
+        #inboxMessagesControls #inboxMessagesSearchInput {
+          font-weight: 600;
+        }
+      }
+
       @media (max-width: 576px) {
         .taldo-public-inbox-floating-btn {
           right: 14px;
