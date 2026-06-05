@@ -1591,7 +1591,7 @@ body.modal-open {
   #familiesPage.active,
   #familyMartyrsPage.active,
   #houlaMassacrePage.active {
-    padding-top: 72px !important;
+    /* padding-top: 72px !important; */
     scroll-padding-top: 88px !important;
   }
 
