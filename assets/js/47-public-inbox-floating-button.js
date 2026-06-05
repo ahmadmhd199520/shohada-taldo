@@ -3,6 +3,8 @@
 
   const INBOX_STYLE_ID = 'taldoPublicInboxStyle';
   let inboxSubmitting = false;
+  let inboxFooterStopListenersInstalled = false;
+  let inboxFooterStopRaf = null;
 
   function isAdminMode() {
     try {
@@ -43,7 +45,7 @@
       .taldo-public-inbox-floating-btn {
         position: fixed;
         right: 18px;
-        bottom: 22px;
+        bottom: calc(var(--taldo-inbox-floating-base-bottom, 22px) + var(--taldo-inbox-floating-footer-lift, 0px) + env(safe-area-inset-bottom, 0px));
         z-index: 1055;
         width: 56px;
         height: 56px;
@@ -422,7 +424,7 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
       @media (max-width: 576px) {
         .taldo-public-inbox-floating-btn {
           right: 14px;
-          bottom: 18px;
+          --taldo-inbox-floating-base-bottom: 18px;
           width: 52px;
           height: 52px;
         }
@@ -555,6 +557,61 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
     btn.onclick = openTaldoInboxModal;
 
     document.body.appendChild(btn);
+  }
+
+
+  function getInboxFooterElement() {
+    return document.querySelector('footer, #footer, .site-footer, .main-footer, .app-footer, .taldo-footer, [role="contentinfo"]');
+  }
+
+  function updateInboxFloatingFooterStop() {
+    const btn = document.getElementById('taldoPublicInboxFloatingBtn');
+    if (!btn) return;
+
+    const footer = getInboxFooterElement();
+    if (!footer) {
+      btn.style.setProperty('--taldo-inbox-floating-footer-lift', '0px');
+      return;
+    }
+
+    const rect = footer.getBoundingClientRect();
+    const viewportH = window.innerHeight || document.documentElement.clientHeight || 0;
+    const isSmallScreen = window.matchMedia && window.matchMedia('(max-width: 576px)').matches;
+    const baseBottom = isSmallScreen ? 18 : 22;
+    const gapAboveFooter = isSmallScreen ? 14 : 18;
+
+    const requiredBottom = viewportH - rect.top + gapAboveFooter;
+    const maxBottom = Math.max(baseBottom, viewportH - (btn.offsetHeight || 56) - 14);
+    const finalBottom = Math.min(Math.max(baseBottom, requiredBottom), maxBottom);
+    const lift = Math.max(0, Math.ceil(finalBottom - baseBottom));
+
+    btn.style.setProperty('--taldo-inbox-floating-footer-lift', lift + 'px');
+  }
+
+  function requestInboxFloatingFooterStopUpdate() {
+    if (inboxFooterStopRaf) cancelAnimationFrame(inboxFooterStopRaf);
+
+    inboxFooterStopRaf = requestAnimationFrame(function() {
+      inboxFooterStopRaf = null;
+      updateInboxFloatingFooterStop();
+    });
+  }
+
+  function installInboxFloatingFooterStop() {
+    if (inboxFooterStopListenersInstalled) {
+      requestInboxFloatingFooterStopUpdate();
+      return;
+    }
+
+    inboxFooterStopListenersInstalled = true;
+
+    window.addEventListener('scroll', requestInboxFloatingFooterStopUpdate, { passive: true });
+    window.addEventListener('resize', requestInboxFloatingFooterStopUpdate);
+    window.addEventListener('orientationchange', requestInboxFloatingFooterStopUpdate);
+
+    requestInboxFloatingFooterStopUpdate();
+    setTimeout(requestInboxFloatingFooterStopUpdate, 300);
+    setTimeout(requestInboxFloatingFooterStopUpdate, 1000);
   }
 
   function openTaldoInboxModal() {
@@ -1181,6 +1238,7 @@ window.showDashboardTab = function(tabName) {
     ensureThanksModal();
     ensureInboxFilterModal();
     ensureFloatingButton();
+    installInboxFloatingFooterStop();
     ensureDashboardInboxTab();
     updateDashboardInboxDot();
 
