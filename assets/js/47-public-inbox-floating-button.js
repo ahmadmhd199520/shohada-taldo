@@ -535,48 +535,55 @@ dash.insertAdjacentHTML('beforeend', `
     renderInboxTable();
   }
 
-  function renderInboxTable() {
-    const tbody = document.getElementById('inboxMessagesTableBody');
-    const count = document.getElementById('dashInboxCount');
+function renderInboxTable() {
+  const tbody = document.getElementById('inboxMessagesTableBody');
+  const count = document.getElementById('dashInboxCount');
 
-    const list = getVisibleInboxMessages();
+  const list = getFilteredInboxMessages();
 
-    if (count) count.textContent = list.length;
+  // الرقم بجانب صندوق الوارد وعلى أيقونة لوحة التحكم يبقى عدد غير المقروءة الحقيقي
+  if (count) count.textContent = unreadInboxCount();
 
-    if (!tbody) return;
+  if (!tbody) return;
 
-    if (!list.length) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="4" class="text-center text-muted py-4">
-            لا توجد رسائل واردة.
-          </td>
-        </tr>
-      `;
-      updateDashboardInboxDot();
-      return;
-    }
-
-    tbody.innerHTML = list.map(function(item) {
-      const messageId = item.message_id || '';
-
-      return `
-        <tr>
-          <td class="small text-muted">${safeHtml(item.created_at || '')}</td>
-          <td class="fw-bold">${safeHtml(item.sender_name || 'بدون اسم')}</td>
-          <td class="taldo-inbox-message-cell">${safeHtml(item.message_text || '')}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-danger" onclick="hideTaldoInboxMessage('${safeAttr(messageId)}')">
-              إخفاء
-            </button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-
+  if (!list.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="text-center text-muted py-4">
+          لا توجد رسائل مطابقة.
+        </td>
+      </tr>
+    `;
     updateDashboardInboxDot();
+    return;
   }
 
+  tbody.innerHTML = list.map(function(item) {
+    const messageId = item.message_id || '';
+    const isHidden = getInboxItemStatus(item) === 'hidden';
+
+    return `
+      <tr>
+        <td class="small text-muted">${safeHtml(item.created_at || '')}</td>
+        <td class="fw-bold">${safeHtml(item.sender_name || 'بدون اسم')}</td>
+        <td class="taldo-inbox-message-cell">${safeHtml(item.message_text || '')}</td>
+        <td>
+          ${
+            isHidden
+              ? `<span class="badge text-bg-secondary">مخفية</span>`
+              : `
+                <button class="btn btn-sm btn-outline-danger" onclick="hideTaldoInboxMessage('${safeAttr(messageId)}')">
+                  إخفاء
+                </button>
+              `
+          }
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  updateDashboardInboxDot();
+}
   window.renderInboxTable = renderInboxTable;
 
   window.hideTaldoInboxMessage = async function(messageId) {
