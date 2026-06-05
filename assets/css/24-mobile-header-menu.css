@@ -1562,7 +1562,7 @@ body.modal-open {
 .taldo-simple-search-inner {
   position: -webkit-sticky !important;
   position: sticky !important;
-  /* top: 10px !important; */
+  top: 0px !important;
   z-index: 1030 !important;
   align-self: flex-start !important;
   transform: translateZ(0) !important;
