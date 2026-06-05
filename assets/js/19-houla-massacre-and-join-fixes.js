@@ -124,10 +124,11 @@
             <div class="stat-icon bg-primary-subtle text-primary">
               <i class="fa-solid fa-circle-check"></i>
             </div>
-            <div>
+            <div class="flex-grow-1">
               <div class="stat-card-label">إحصائية الموثقين</div>
               <h3 class="fw-bold mb-0" id="verifiedCount">${verified}</h3>
             </div>
+            <i class="fa-solid fa-chevron-left text-muted stat-action-arrow" aria-hidden="true"></i>
           </div>
         </div>
       </div>
@@ -138,10 +139,11 @@
             <div class="stat-icon bg-warning-subtle text-warning">
               <i class="fa-solid fa-clock"></i>
             </div>
-            <div>
+            <div class="flex-grow-1">
               <div class="stat-card-label">إحصائية بانتظار التوثق</div>
               <h3 class="fw-bold mb-0" id="pendingCount">${pending}</h3>
             </div>
+            <i class="fa-solid fa-chevron-left text-muted stat-action-arrow" aria-hidden="true"></i>
           </div>
         </div>
       </div>
