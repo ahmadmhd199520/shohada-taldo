@@ -149,7 +149,7 @@
 .taldo-about-sections-help {
   border-radius: 16px;
   background: rgba(5, 66, 57, 0.07);
-  color: #054239;
+  /* color: #054239; */
   padding: 12px 14px;
   font-size: 14px;
   line-height: 1.8;
@@ -288,7 +288,7 @@
   text-align: right !important;
   direction: rtl !important;
   padding: 0 !important;
-  color: #054239 !important;
+  /* color: #054239 !important; */
   font-weight: 800 !important;
 }
 
