@@ -310,6 +310,82 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
     return getVisibleInboxMessages().length;
   }
 
+  function normalizeInboxText(value) {
+  if (typeof normalizeText === 'function') {
+    return normalizeText(value || '');
+  }
+
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[أإآا]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/[ًٌٍَُِّْ]/g, '');
+}
+
+function getInboxItemStatus(item) {
+  const status = String(item.status || 'active').trim();
+  return status === 'hidden' ? 'hidden' : 'active';
+}
+
+function getFilteredInboxMessages() {
+  const search = normalizeInboxText(
+    document.getElementById('inboxMessagesSearchInput')?.value || ''
+  );
+
+  const statusFilter =
+    document.getElementById('inboxMessagesStatusFilter')?.value ?? 'active';
+
+  const sortBy =
+    document.getElementById('inboxMessagesSortSelect')?.value || 'newest';
+
+  let list = getInboxMessages().slice();
+
+  if (statusFilter === 'active') {
+    list = list.filter(function(item) {
+      return getInboxItemStatus(item) === 'active';
+    });
+  } else if (statusFilter === 'hidden') {
+    list = list.filter(function(item) {
+      return getInboxItemStatus(item) === 'hidden';
+    });
+  }
+
+  if (search) {
+    list = list.filter(function(item) {
+      const content = normalizeInboxText([
+        item.sender_name,
+        item.message_text,
+        item.created_at,
+        item.message_id
+      ].join(' '));
+
+      return content.includes(search);
+    });
+  }
+
+  if (sortBy === 'oldest') {
+    list.sort(function(a, b) {
+      return String(a.created_at || '').localeCompare(String(b.created_at || ''));
+    });
+  } else if (sortBy === 'sender') {
+    list.sort(function(a, b) {
+      return String(a.sender_name || '').localeCompare(String(b.sender_name || ''), 'ar');
+    });
+  } else {
+    list.sort(function(a, b) {
+      return String(b.created_at || '').localeCompare(String(a.created_at || ''));
+    });
+  }
+
+  return list;
+}
+
+window.resetInboxMessagesAndRender = function() {
+  renderInboxTable();
+};
+
   function findDashboardButtons() {
     return Array.from(document.querySelectorAll('button, a')).filter(function(el) {
       const text = String(el.textContent || '').trim();
