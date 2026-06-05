@@ -153,6 +153,36 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
         box-shadow: 0 0 0 4px rgba(66, 129, 119, .14);
       }
 
+      #inboxMessagesControls .taldo-inbox-search-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #inboxMessagesControls .taldo-inbox-search-line .form-control {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      #inboxMessagesControls .taldo-inbox-filter-toggle {
+        display: none;
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        border: 0;
+        border-radius: 14px;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        background: linear-gradient(135deg, #168754, #0f6f47);
+        box-shadow: 0 8px 18px rgba(22, 135, 84, .25);
+      }
+
+      #inboxMessagesControls .taldo-inbox-filter-toggle i {
+        font-size: 15px;
+        line-height: 1;
+      }
+
       body.dark-mode #inboxMessagesControls,
       [data-theme="dark"] #inboxMessagesControls {
         background: linear-gradient(180deg, rgba(15, 35, 31, .96), rgba(8, 24, 22, .94));
@@ -181,13 +211,25 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
 
       @media (max-width: 768px) {
         #inboxMessagesControls {
-          border-radius: 20px;
-          padding: 10px;
+          background: transparent;
+          border: 0;
+          box-shadow: none;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          border-radius: 0;
+          padding: 0;
           margin: 0 0 12px 0 !important;
         }
 
-        #inboxMessagesControls .row {
-          --bs-gutter-x: 8px;
+        body.dark-mode #inboxMessagesControls,
+        [data-theme="dark"] #inboxMessagesControls {
+          background: transparent;
+          border: 0;
+          box-shadow: none;
+        }
+
+        #inboxMessagesControls .taldo-inbox-controls-grid {
+          --bs-gutter-x: 0;
           --bs-gutter-y: 8px;
         }
 
@@ -195,19 +237,53 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
           display: none;
         }
 
-        #inboxMessagesControls .col-md-4 {
+        #inboxMessagesControls .taldo-inbox-search-col {
           width: 100%;
+          flex: 0 0 100%;
+        }
+
+        #inboxMessagesControls .taldo-inbox-search-line {
+          flex-direction: row-reverse;
+          gap: 8px;
+          width: 100%;
+        }
+
+        #inboxMessagesControls .taldo-inbox-filter-toggle {
+          display: inline-flex;
+        }
+
+        #inboxMessagesControls .taldo-inbox-filter-col {
+          display: none;
+          width: 100%;
+          flex: 0 0 100%;
+        }
+
+        #inboxMessagesControls.taldo-inbox-filters-open .taldo-inbox-filter-col {
+          display: block;
         }
 
         #inboxMessagesControls .form-control,
         #inboxMessagesControls .form-select {
-          min-height: 44px;
-          border-radius: 16px;
+          min-height: 42px;
+          border-radius: 14px;
           font-size: 14px;
+          background-color: rgba(255,255,255,.96);
+          border-color: rgba(15, 23, 42, .12);
+          color: #334155;
         }
 
         #inboxMessagesControls #inboxMessagesSearchInput {
           font-weight: 600;
+          text-align: right;
+        }
+
+        body.dark-mode #inboxMessagesControls .form-control,
+        body.dark-mode #inboxMessagesControls .form-select,
+        [data-theme="dark"] #inboxMessagesControls .form-control,
+        [data-theme="dark"] #inboxMessagesControls .form-select {
+          background-color: rgba(255,255,255,.09);
+          border-color: rgba(237, 235, 224, .18);
+          color: #ffffff;
         }
       }
 
@@ -479,6 +555,15 @@ window.resetInboxMessagesAndRender = function() {
   renderInboxTable();
 };
 
+window.toggleInboxMessagesFilters = function() {
+  const controls = document.getElementById('inboxMessagesControls');
+  if (!controls) return;
+
+  const isOpen = controls.classList.toggle('taldo-inbox-filters-open');
+  const btn = controls.querySelector('.taldo-inbox-filter-toggle');
+  if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+};
+
   function findDashboardButtons() {
     return Array.from(document.querySelectorAll('button, a')).filter(function(el) {
       const text = String(el.textContent || '').trim();
@@ -567,19 +652,30 @@ window.resetInboxMessagesAndRender = function() {
         <div id="dashboardInboxTab" class="dashboard-tab-pane d-none">
 
           <div class="dashboard-controls-row mb-2" id="inboxMessagesControls">
-            <div class="row g-2 align-items-end">
-              <div class="col-md-4">
+            <div class="row g-2 align-items-end taldo-inbox-controls-grid">
+              <div class="col-md-4 taldo-inbox-search-col">
                 <label class="form-label fw-bold">بحث</label>
-                <input
-                  class="form-control"
-                  id="inboxMessagesSearchInput"
-                  type="search"
-                  placeholder="بحث باسم المرسل أو نص الرسالة..."
-                  oninput="resetInboxMessagesAndRender()"
-                >
+                <div class="taldo-inbox-search-line">
+                  <button
+                    type="button"
+                    class="taldo-inbox-filter-toggle"
+                    onclick="toggleInboxMessagesFilters()"
+                    aria-label="إظهار الفلاتر"
+                  >
+                    <i class="fa-solid fa-filter"></i>
+                  </button>
+
+                  <input
+                    class="form-control"
+                    id="inboxMessagesSearchInput"
+                    type="search"
+                    placeholder="بحث باسم المرسل أو نص الرسالة..."
+                    oninput="resetInboxMessagesAndRender()"
+                  >
+                </div>
               </div>
 
-              <div class="col-md-4">
+              <div class="col-md-4 taldo-inbox-filter-col">
                 <label class="form-label fw-bold">الحالة</label>
                 <select
                   class="form-select"
@@ -592,7 +688,7 @@ window.resetInboxMessagesAndRender = function() {
                 </select>
               </div>
 
-              <div class="col-md-4">
+              <div class="col-md-4 taldo-inbox-filter-col">
                 <label class="form-label fw-bold">فرز</label>
                 <select
                   class="form-select"
