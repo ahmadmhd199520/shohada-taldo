@@ -221,6 +221,7 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
           margin: 0 0 12px 0 !important;
           position: sticky;
           top: 5px;
+          z-index: 1035;
         }
 
         body.dark-mode #inboxMessagesControls,
@@ -260,8 +261,9 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
           flex: 0 0 100%;
         }
 
+        /* على الجوال تظهر الفلاتر داخل مودال مستقل، وليس أسفل شريط البحث */
         #inboxMessagesControls.taldo-inbox-filters-open .taldo-inbox-filter-col {
-          display: block;
+          display: none;
         }
 
         #inboxMessagesControls .form-control,
@@ -286,6 +288,134 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
           background-color: rgba(255,255,255,.09);
           border-color: rgba(237, 235, 224, .18);
           color: #ffffff;
+        }
+      }
+
+
+      /* مودال فلترة صندوق الوارد في الجوال */
+      .taldo-inbox-filter-modal .modal-dialog {
+        max-width: 365px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .taldo-inbox-filter-modal .modal-content {
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 20px 55px rgba(15, 23, 42, .26);
+        overflow: hidden;
+      }
+
+      .taldo-inbox-filter-modal .modal-body {
+        padding: 22px 22px 20px;
+        position: relative;
+      }
+
+      .taldo-inbox-filter-modal-close {
+        position: absolute;
+        left: 18px;
+        top: 16px;
+        width: 28px;
+        height: 28px;
+        border: 0;
+        background: transparent;
+        color: #6b7280;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        line-height: 1;
+        z-index: 2;
+      }
+
+      .taldo-inbox-filter-modal-title {
+        text-align: center;
+        font-weight: 800;
+        font-size: 19px;
+        color: #1f2937;
+        margin-bottom: 28px;
+      }
+
+      .taldo-inbox-filter-modal-title i {
+        color: #0d6efd;
+        font-size: 17px;
+        margin-right: 5px;
+      }
+
+      .taldo-inbox-filter-field {
+        margin-bottom: 18px;
+      }
+
+      .taldo-inbox-filter-field label {
+        display: block;
+        font-weight: 800;
+        font-size: 15px;
+        color: #1f2937;
+        margin-bottom: 8px;
+        text-align: right;
+      }
+
+      .taldo-inbox-filter-modal .form-select {
+        min-height: 44px;
+        border-radius: 13px;
+        border: 1px solid rgba(15, 23, 42, .12);
+        box-shadow: none;
+        background-color: #ffffff;
+        color: #334155;
+        font-size: 14px;
+      }
+
+      .taldo-inbox-filter-modal .form-select:focus {
+        border-color: rgba(13, 110, 253, .45);
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, .12);
+      }
+
+      .taldo-inbox-filter-apply-btn {
+        width: 100%;
+        min-height: 42px;
+        border: 0;
+        border-radius: 11px;
+        color: #ffffff;
+        background: #0d6efd;
+        font-weight: 800;
+        font-size: 15px;
+        box-shadow: 0 10px 24px rgba(13, 110, 253, .24);
+      }
+
+      body.dark-mode .taldo-inbox-filter-modal .modal-content,
+      [data-theme="dark"] .taldo-inbox-filter-modal .modal-content {
+        background: #10231f;
+        color: #ffffff;
+        box-shadow: 0 20px 55px rgba(0, 0, 0, .45);
+      }
+
+      body.dark-mode .taldo-inbox-filter-modal-title,
+      body.dark-mode .taldo-inbox-filter-field label,
+      [data-theme="dark"] .taldo-inbox-filter-modal-title,
+      [data-theme="dark"] .taldo-inbox-filter-field label {
+        color: #edebe0;
+      }
+
+      body.dark-mode .taldo-inbox-filter-modal-close,
+      [data-theme="dark"] .taldo-inbox-filter-modal-close {
+        color: rgba(255,255,255,.72);
+      }
+
+      body.dark-mode .taldo-inbox-filter-modal .form-select,
+      [data-theme="dark"] .taldo-inbox-filter-modal .form-select {
+        background-color: rgba(255,255,255,.08);
+        border-color: rgba(237, 235, 224, .18);
+        color: #ffffff;
+      }
+
+      @media (max-width: 576px) {
+        .taldo-inbox-filter-modal .modal-dialog {
+          max-width: calc(100vw - 16px);
+          margin: .5rem auto;
+        }
+
+        .taldo-inbox-filter-modal .modal-content {
+          border-radius: 18px;
         }
       }
 
@@ -358,6 +488,52 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
             <div class="modal-footer border-0 pt-0 justify-content-center">
               <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">
                 موافق
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+  }
+
+
+  function ensureInboxFilterModal() {
+    if (document.getElementById('taldoInboxFilterModal')) return;
+
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="modal fade taldo-inbox-filter-modal" id="taldoInboxFilterModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0">
+            <div class="modal-body">
+              <button type="button" class="taldo-inbox-filter-modal-close" data-bs-dismiss="modal" aria-label="إغلاق">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+
+              <div class="taldo-inbox-filter-modal-title">
+                فلترة صندوق الوارد
+                <i class="fa-solid fa-filter"></i>
+              </div>
+
+              <div class="taldo-inbox-filter-field">
+                <label for="inboxMobileStatusFilter">حالة الرسالة</label>
+                <select class="form-select" id="inboxMobileStatusFilter">
+                  <option value="active">غير المقروءة</option>
+                  <option value="hidden">المخفية / المقروءة</option>
+                  <option value="">الكل</option>
+                </select>
+              </div>
+
+              <div class="taldo-inbox-filter-field">
+                <label for="inboxMobileSortSelect">الفرز</label>
+                <select class="form-select" id="inboxMobileSortSelect">
+                  <option value="newest">الأحدث أولًا</option>
+                  <option value="oldest">الأقدم أولًا</option>
+                  <option value="sender">أبجديًا حسب الاسم</option>
+                </select>
+              </div>
+
+              <button type="button" class="taldo-inbox-filter-apply-btn" onclick="applyInboxMessagesFiltersModal()">
+                تطبيق
               </button>
             </div>
           </div>
@@ -557,13 +733,60 @@ window.resetInboxMessagesAndRender = function() {
   renderInboxTable();
 };
 
-window.toggleInboxMessagesFilters = function() {
-  const controls = document.getElementById('inboxMessagesControls');
-  if (!controls) return;
+function syncInboxFilterModalFromControls() {
+  ensureInboxFilterModal();
 
-  const isOpen = controls.classList.toggle('taldo-inbox-filters-open');
-  const btn = controls.querySelector('.taldo-inbox-filter-toggle');
-  if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  const status = document.getElementById('inboxMessagesStatusFilter')?.value ?? 'active';
+  const sort = document.getElementById('inboxMessagesSortSelect')?.value || 'newest';
+
+  const mobileStatus = document.getElementById('inboxMobileStatusFilter');
+  const mobileSort = document.getElementById('inboxMobileSortSelect');
+
+  if (mobileStatus) mobileStatus.value = status;
+  if (mobileSort) mobileSort.value = sort;
+}
+
+function syncInboxControlsFromFilterModal() {
+  const mobileStatus = document.getElementById('inboxMobileStatusFilter');
+  const mobileSort = document.getElementById('inboxMobileSortSelect');
+
+  const status = document.getElementById('inboxMessagesStatusFilter');
+  const sort = document.getElementById('inboxMessagesSortSelect');
+
+  if (status && mobileStatus) status.value = mobileStatus.value;
+  if (sort && mobileSort) sort.value = mobileSort.value;
+}
+
+window.toggleInboxMessagesFilters = function() {
+  ensureInboxFilterModal();
+  syncInboxFilterModalFromControls();
+
+  const modalEl = document.getElementById('taldoInboxFilterModal');
+  if (!modalEl) return;
+
+  try {
+    bootstrap.Modal.getOrCreateInstance(modalEl).show();
+  } catch (e) {
+    modalEl.classList.add('show');
+    modalEl.style.display = 'block';
+    modalEl.removeAttribute('aria-hidden');
+  }
+};
+
+window.applyInboxMessagesFiltersModal = function() {
+  syncInboxControlsFromFilterModal();
+  renderInboxTable();
+
+  const modalEl = document.getElementById('taldoInboxFilterModal');
+  if (!modalEl) return;
+
+  try {
+    bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+  } catch (e) {
+    modalEl.classList.remove('show');
+    modalEl.style.display = 'none';
+    modalEl.setAttribute('aria-hidden', 'true');
+  }
 };
 
   function findDashboardButtons() {
@@ -956,6 +1179,7 @@ window.showDashboardTab = function(tabName) {
     installInboxCss();
     ensureInboxModal();
     ensureThanksModal();
+    ensureInboxFilterModal();
     ensureFloatingButton();
     ensureDashboardInboxTab();
     updateDashboardInboxDot();
