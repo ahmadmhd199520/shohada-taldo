@@ -1351,3 +1351,164 @@ body.modal-open #homePage {
   margin-left: 0 !important;
   transform: none !important;
 }
+
+
+
+/* تصحيح موضع الشريط */
+/* =========================================================
+   REQUIRED FIXES
+   1) Sticky search on mobile + laptop
+   2) 3-dots menu near its button
+   3) Remove extra blank scroll in dashboard mobile
+   ========================================================= */
+
+/* لا تجعل آباء شريط البحث Scroll containers لأن ذلك يكسر sticky */
+#homePage,
+#familiesPage,
+#familyMartyrsPage,
+#homePage .container,
+#familiesPage .container,
+#familyMartyrsPage .container {
+  overflow: visible !important;
+}
+
+/* تثبيت شريط البحث في الجوال واللابتوب */
+:root {
+  --taldo-sticky-search-top: 8px;
+}
+
+@media (min-width: 769px) {
+  :root {
+    --taldo-sticky-search-top: 12px;
+  }
+}
+
+#homePage .mobile-search-filter,
+.mobile-search-filter,
+.houla-compact-search-filter,
+.family-compact-search-filter,
+.join-compact-search-filter,
+.taldo-family-search-wrap,
+.taldo-family-page-search-wrap,
+.taldo-family-search-bar,
+.taldo-family-page-search-bar,
+.taldo-simple-search,
+.taldo-simple-search-inner {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: var(--taldo-sticky-search-top) !important;
+  z-index: 1020 !important;
+  align-self: flex-start !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+/* قائمة الثلاث نقاط: مكانها يتحدد من JS قرب الزر */
+#taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
+.taldo-mobile-header-menu-panel {
+  position: fixed !important;
+  top: var(--taldo-menu-top, 72px) !important;
+  left: var(--taldo-menu-left, max(8px, env(safe-area-inset-left))) !important;
+  right: auto !important;
+  width: auto !important;
+  min-width: min(205px, calc(100vw - 16px)) !important;
+  max-width: calc(100vw - 16px) !important;
+  margin: 0 !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+  z-index: 2147482700 !important;
+}
+
+#taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel.show,
+.taldo-mobile-header-menu-panel.show {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: clip !important;
+    overscroll-behavior-x: none !important;
+  }
+
+  .app-shell,
+  .hero,
+  .hero-layout,
+  .hero-top-row,
+  .page-section,
+  #homePage,
+  #detailsPage,
+  #familiesPage,
+  #familyMartyrsPage,
+  #dashboardPage {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  /* علاج السكرول الزائد والفراغ في لوحة التحكم */
+  #dashboardPage {
+    min-height: auto !important;
+    height: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    overflow: visible !important;
+  }
+
+  #dashboardPage .dashboard-tab-pane,
+  #dashboardPage .tab-pane,
+  #dashboardPage .dashboard-section-card,
+  #dashboardPage .dashboard-table-card,
+  #dashboardPage .dashboard-card {
+    min-height: 0 !important;
+    height: auto !important;
+    margin-bottom: 12px !important;
+  }
+
+  #dashboardPage .table-responsive {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .taldo-mobile-header-menu-panel,
+  .taldo-mobile-header-menu-panel * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .taldo-mobile-menu-item {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+/* عند فتح مودال لا تظهر القائمة أو شريط البحث فوقه */
+body.modal-open #taldoMobileHeaderMenuPanel.taldo-mobile-header-menu-panel,
+body.modal-open .taldo-mobile-header-menu-panel,
+body.modal-open #homePage .mobile-search-filter,
+body.modal-open .mobile-search-filter,
+body.modal-open .houla-compact-search-filter,
+body.modal-open .family-compact-search-filter,
+body.modal-open .join-compact-search-filter,
+body.modal-open .taldo-family-search-wrap,
+body.modal-open .taldo-family-page-search-wrap,
+body.modal-open .taldo-family-search-bar,
+body.modal-open .taldo-family-page-search-bar,
+body.modal-open .taldo-simple-search,
+body.modal-open .taldo-simple-search-inner {
+  z-index: 1 !important;
+}
+
+html {
+  scrollbar-gutter: stable !important;
+}
+
+body.modal-open {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+}
