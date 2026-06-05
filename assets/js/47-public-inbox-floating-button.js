@@ -219,6 +219,8 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
           border-radius: 0;
           padding: 0;
           margin: 0 0 12px 0 !important;
+          position: sticky;
+          top: 5px;
         }
 
         body.dark-mode #inboxMessagesControls,
