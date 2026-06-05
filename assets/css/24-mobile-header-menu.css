@@ -1648,3 +1648,22 @@ body.modal-open {
     box-sizing: border-box !important;
   }
 }
+
+
+/* إصلاح انزياح التطبيق عند فتح المودالات على اللابتوب */
+@media (min-width: 769px) {
+  html {
+    overflow-y: scroll !important;
+    scrollbar-gutter: stable both-edges !important;
+  }
+
+  body.modal-open {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  body.modal-open .app-shell {
+    margin-inline: auto !important;
+    transform: none !important;
+  }
+}
