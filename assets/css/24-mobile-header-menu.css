@@ -1582,7 +1582,7 @@ body.modal-open {
     right: max(10px, env(safe-area-inset-right)) !important;
     width: auto !important;
     max-width: none !important;
-    margin: 0 !important;
+    margin-bottom: 7px !important;
     z-index: 1030 !important;
     box-sizing: border-box !important;
   }
