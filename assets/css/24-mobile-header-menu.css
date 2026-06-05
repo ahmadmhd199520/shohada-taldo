@@ -1302,7 +1302,7 @@ body.modal-open .taldo-mobile-header-menu-panel {
   body {
     width: 100% !important;
     max-width: 100% !important;
-    overflow-x: hidden !important;
+    /* overflow-x: hidden !important; */
   }
 
   .app-shell,
