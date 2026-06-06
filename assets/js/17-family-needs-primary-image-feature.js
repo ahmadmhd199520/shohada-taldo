@@ -268,34 +268,107 @@
     return !!imgUrl && !!itemUrl && imgUrl === itemUrl;
   }
 
-  function featureApplyPrimaryImageLocally(item, img) {
-    if (!item || !img) return;
+function featureGetPrimaryImageSnapshot(item) {
+  if (!item) return null;
 
-    const selectedFileId =
-      featureExtractDriveId(img.image_file_id) ||
-      featureExtractDriveId(img.image_url) ||
-      featureExtractDriveId(img.src) ||
-      img.image_file_id ||
-      '';
+  const fileId =
+    featureExtractDriveId(item.image_file_id) ||
+    featureExtractDriveId(item.image_url) ||
+    item.image_file_id ||
+    '';
 
-    item.image_file_id = selectedFileId || item.image_file_id || '';
-    item.image_url = img.image_url || img.src || item.image_url || '';
+  const imageUrl = String(item.image_url || '').trim();
+  if (!fileId && !imageUrl) return null;
 
-    ['position_x', 'position_y', 'card_position_x', 'card_position_y', 'detail_position_x', 'detail_position_y', 'card_zoom', 'detail_zoom'].forEach(key => {
-      if (img[key]) item[key] = img[key];
-    });
+  return {
+    image_id: '',
+    image_file_id: fileId,
+    image_url: imageUrl,
+    src: fileId
+      ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w1000`
+      : imageUrl,
+    is_primary: 'لا',
+    source_type: 'gallery',
+    position_x: item.position_x || item.image_position_x || item.detail_position_x || '50',
+    position_y: item.position_y || item.image_position_y || item.detail_position_y || '50',
+    card_position_x: item.card_position_x || item.image_position_x || item.position_x || '50',
+    card_position_y: item.card_position_y || item.image_position_y || item.position_y || '50',
+    detail_position_x: item.detail_position_x || item.position_x || item.image_position_x || '50',
+    detail_position_y: item.detail_position_y || item.position_y || item.image_position_y || '50',
+    card_zoom: item.card_zoom || item.image_zoom || '1',
+    detail_zoom: item.detail_zoom || item.image_zoom || '1'
+  };
+}
 
-    if (Array.isArray(item.images)) {
-      const selectedKey = featureImageKey(img);
-      item.images = item.images.map(old => {
-        const copy = Object.assign({}, old);
-        copy.is_primary = featureImageKey(copy) === selectedKey ? 'نعم' : 'لا';
-        return copy;
-      });
-    }
+function featureEnsureImageInGallery(item, image, selectedKey) {
+  if (!item || !image) return;
+  if (!Array.isArray(item.images)) item.images = [];
 
-    currentGalleryIndex = 0;
-  }
+  const imageKey = featureImageKey(image);
+  if (!imageKey || imageKey === selectedKey) return;
+
+  const exists = item.images.some(old => featureImageKey(old) === imageKey);
+  if (exists) return;
+
+  item.images.unshift(Object.assign({}, image, { is_primary: 'لا', source_type: 'gallery' }));
+}
+
+function featureSyncPrimaryImageAcrossCaches(sourceItem) {
+  if (!sourceItem || !sourceItem.martyr_id) return;
+
+  [window.allMartyrs, window.dashboardData].forEach(list => {
+    if (!Array.isArray(list)) return;
+    const target = list.find(row => String(row.martyr_id || '') === String(sourceItem.martyr_id || ''));
+    if (!target || target === sourceItem) return;
+
+    target.image_file_id = sourceItem.image_file_id || '';
+    target.image_url = sourceItem.image_url || '';
+    target.position_x = sourceItem.position_x || target.position_x || '';
+    target.position_y = sourceItem.position_y || target.position_y || '';
+    target.card_position_x = sourceItem.card_position_x || target.card_position_x || '';
+    target.card_position_y = sourceItem.card_position_y || target.card_position_y || '';
+    target.detail_position_x = sourceItem.detail_position_x || target.detail_position_x || '';
+    target.detail_position_y = sourceItem.detail_position_y || target.detail_position_y || '';
+    target.card_zoom = sourceItem.card_zoom || target.card_zoom || '';
+    target.detail_zoom = sourceItem.detail_zoom || target.detail_zoom || '';
+    target.images = Array.isArray(sourceItem.images)
+      ? sourceItem.images.map(image => Object.assign({}, image))
+      : target.images;
+  });
+}
+
+function featureApplyPrimaryImageLocally(item, img, oldPrimaryImage) {
+  if (!item || !img) return;
+
+  const selectedFileId =
+    featureExtractDriveId(img.image_file_id) ||
+    featureExtractDriveId(img.image_url) ||
+    featureExtractDriveId(img.src) ||
+    img.image_file_id ||
+    '';
+
+  const selectedKey = featureImageKey(img);
+
+  featureEnsureImageInGallery(item, oldPrimaryImage, selectedKey);
+
+  item.image_file_id = selectedFileId || item.image_file_id || '';
+  item.image_url = img.image_url || img.src || item.image_url || '';
+
+  ['position_x', 'position_y', 'card_position_x', 'card_position_y', 'detail_position_x', 'detail_position_y', 'card_zoom', 'detail_zoom'].forEach(key => {
+    if (img[key]) item[key] = img[key];
+  });
+
+  if (!Array.isArray(item.images)) item.images = [];
+
+  item.images = item.images.map(old => {
+    const copy = Object.assign({}, old);
+    copy.is_primary = featureImageKey(copy) === selectedKey ? 'نعم' : 'لا';
+    return copy;
+  });
+
+  featureSyncPrimaryImageAcrossCaches(item);
+  currentGalleryIndex = 0;
+}
 
   async function featureCallPrimaryImageApi(payload) {
     const actions = ['setPrimaryMartyrImage', 'setMartyrPrimaryImage', 'setPrimaryImage'];
@@ -352,19 +425,29 @@
       featureExtractDriveId(img.src) ||
       img.image_file_id ||
       '';
+    const oldPrimaryImage = featureGetPrimaryImageSnapshot(currentDetailsItem);
 
-    const payload = {
-      martyrId: currentDetailsItem.martyr_id,
-      martyr_id: currentDetailsItem.martyr_id,
-      imageId: img.image_id || '',
-      image_id: img.image_id || '',
-      imageFileId: selectedFileId || '',
-      image_file_id: selectedFileId || '',
-      imageUrl: img.image_url || img.src || '',
-      image_url: img.image_url || img.src || '',
-      src: img.src || img.image_url || ''
-    };
-
+const payload = {
+  martyrId: currentDetailsItem.martyr_id,
+  martyr_id: currentDetailsItem.martyr_id,
+  imageId: img.image_id || '',
+  image_id: img.image_id || '',
+  imageFileId: selectedFileId || '',
+  image_file_id: selectedFileId || '',
+  imageUrl: img.image_url || img.src || '',
+  image_url: img.image_url || img.src || '',
+  src: img.src || img.image_url || '',
+  keepOldPrimary: true,
+  preserveOldPrimary: true,
+  previousImageFileId: oldPrimaryImage?.image_file_id || '',
+  previous_image_file_id: oldPrimaryImage?.image_file_id || '',
+  previousImageUrl: oldPrimaryImage?.image_url || oldPrimaryImage?.src || '',
+  previous_image_url: oldPrimaryImage?.image_url || oldPrimaryImage?.src || '',
+  oldPrimaryImageFileId: oldPrimaryImage?.image_file_id || '',
+  old_primary_image_file_id: oldPrimaryImage?.image_file_id || '',
+  oldPrimaryImageUrl: oldPrimaryImage?.image_url || oldPrimaryImage?.src || '',
+  old_primary_image_url: oldPrimaryImage?.image_url || oldPrimaryImage?.src || ''
+};
     showGlobalSpinner(true);
 
     try {
@@ -375,7 +458,7 @@
         return;
       }
 
-      featureApplyPrimaryImageLocally(currentDetailsItem, img);
+      featureApplyPrimaryImageLocally(currentDetailsItem, img, oldPrimaryImage);
 
       const holder = document.querySelector('#detailsContainer .col-lg-5');
       if (holder) holder.innerHTML = renderImageGallery(currentDetailsItem || {});
