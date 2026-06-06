@@ -5,7 +5,7 @@
     let dataUpdateRequests = [];
     let joinRequests = [];
     let viewMode = 'cards';
-    let currentStatusFilter = 'موثق';
+    let currentStatusFilter = '';
     let lastPageBeforeDetails = 'homePage';
     let isAdminLoggedIn = false;
     let currentAdmin = null;
@@ -471,7 +471,7 @@
       currentStatusFilter = document.getElementById('statusFilter').value;
       currentMartyrsPage = 1;
 
-      if (currentStatusFilter === 'بانتظار التوثيق' && !isAdminLoggedIn) {
+      if ((currentStatusFilter === 'بانتظار التوثيق' || !currentStatusFilter) && !isAdminLoggedIn) {
         apiRequest('getMartyrsPublicData', { statusFilter: 'بانتظار التوثيق' })
           .then(rows => {
             const pending = Array.isArray(rows) ? rows : [];
@@ -483,6 +483,9 @@
             showToast(err.message || 'تعذر تحميل الأسماء المنتظرة.');
           });
       } else if (!currentStatusFilter && isAdminLoggedIn && dashboardData.length) {
+        allMartyrs = dashboardData.filter(x => x.verification_status !== 'مرفوض');
+        renderMartyrs();
+      } else if (currentStatusFilter === 'مرفوض' && isAdminLoggedIn && dashboardData.length) {
         allMartyrs = dashboardData.slice();
         renderMartyrs();
       } else {
