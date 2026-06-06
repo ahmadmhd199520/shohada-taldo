@@ -26,7 +26,8 @@
     'submitMessageReply',
     'deleteMartyrImage',
     'updateMartyrImagePosition',
-    'setHoulaMassacreStatus'
+    'setHoulaMassacreStatus',
+    'setMartyrImageUploadBlocked'
   ]);
 
   function stableStringify(value) {
