@@ -234,6 +234,8 @@ function dashboardStatusClass(status) {
     statsData = res.stats || computeStats(dashboardData || []);
 
     if (Array.isArray(res.messages)) window.__adminMessages = res.messages;
+    if (Array.isArray(res.messageReplies)) window.__messageReplies = res.messageReplies;
+    if (!Array.isArray(window.__messageReplies)) window.__messageReplies = [];
     if (res.settings) {
       try { publicSettings = res.settings; } catch (e) {}
     }
