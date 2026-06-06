@@ -249,7 +249,7 @@
         <div>
           <span class="taldo-image-blocked-icon" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
           <div class="fw-bold">رفع الصور غير متاح لهذا السجل</div>
-          <div class="small mt-2 px-3">حفاظًا على الخصوصية ومراعاةً لمشاعر ذوي الشهيدة.</div>
+          // <div class="small mt-2 px-3">حفاظًا على الخصوصية ومراعاةً لمشاعر ذوي الشهيدة.</div>
         </div>
       </div>`;
   }
