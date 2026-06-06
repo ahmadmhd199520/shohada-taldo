@@ -936,3 +936,16 @@ body.taldo-modal-scroll-locked {
 .modal-body {
   overscroll-behavior: contain;
 }
+
+
+/* ضط لون الخط في مودال عن المشروع */
+/* نص مودال عن المشروع */
+#aboutProjectModal .about-project-text {
+  color: var(--bs-danger) !important;
+}
+
+/* في الوضع الليلي فقط */
+body.dark-mode #aboutProjectModal .about-project-text,
+html[data-theme="dark"] #aboutProjectModal .about-project-text {
+  color: var(--bs-warning) !important;
+}
