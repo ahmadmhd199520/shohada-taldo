@@ -21,16 +21,10 @@
   box-shadow: 0 12px 26px rgba(13, 110, 253, 0.17) !important;
 }
 
-/* حركة تلميح التمرير: نحرّك البطاقات نفسها فقط، لا الحاوية ولا شريط التمرير */
-.home-stats-row.taldo-stats-scroll-hint .stat-card {
-  animation: taldoStatsCardScrollHint 1.15s ease-in-out 0.25s 2;
-  will-change: transform;
-}
-
-@keyframes taldoStatsCardScrollHint {
-  0%, 100% { transform: translateX(0); }
-  35% { transform: translateX(22px); }
-  70% { transform: translateX(-8px); }
+/* تلميح التمرير صار عبر JavaScript بتحريك scrollLeft للحاوية نفسها،
+   لذلك لا نطبّق أي transform أو animation على الديف أو البطاقات. */
+.home-stats-row.taldo-stats-scroll-hint {
+  scroll-behavior: smooth;
 }
 
 body.dark-mode .home-stats-row .home-stats-filter-active,
@@ -42,7 +36,7 @@ html[data-theme="dark"] .home-stats-row .taldo-extra-stat-card.home-stats-filter
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-stats-row.taldo-stats-scroll-hint .stat-card {
-    animation: none !important;
+  .home-stats-row.taldo-stats-scroll-hint {
+    scroll-behavior: auto !important;
   }
 }
