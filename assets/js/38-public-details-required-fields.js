@@ -8,6 +8,10 @@
       label: 'اسم الأب',
       field: 'father_name'
     },
+      {
+    label: 'المواليد',
+    field: 'birth_year'
+    },
     {
       label: 'استشهد بـ',
       field: 'martyrdom_type'
