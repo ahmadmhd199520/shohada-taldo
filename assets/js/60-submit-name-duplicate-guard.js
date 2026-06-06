@@ -274,6 +274,11 @@
     if (status === REJECTED_STATUS || status === 'rejected') return 'text-bg-danger';
     return 'text-bg-secondary';
   }
+  
+  function shouldShowStatusBadge(row) {
+  const status = rowStatus(row);
+  return !(status === REJECTED_STATUS || status === 'rejected');
+}
 
   function getSubmitNameInput() {
     return document.querySelector('#martyrForm input[name="full_name"]');
@@ -355,9 +360,8 @@
       option.className = 'family-option martyr-name-duplicate-option';
       option.innerHTML = `
         <span class="martyr-name-duplicate-main">${safeText(row.full_name || '')}</span>
-        <span class="badge ${getStatusBadgeClass(row)} martyr-name-duplicate-status">${safeText(rowStatus(row) || 'مسجل')}</span>
+        ${shouldShowStatusBadge(row) ? `<span class="badge ${getStatusBadgeClass(row)} martyr-name-duplicate-status">${safeText(rowStatus(row) || 'مسجل')}</span>` : ''}
       `;
-
       option.addEventListener('click', function() {
         selectDuplicateName(row);
       });
@@ -481,7 +485,7 @@
         return `
           <div class="possible-duplicate-item">
             <span class="fw-bold">${safeText(row.full_name || '')}</span>
-            <span class="badge ${getStatusBadgeClass(row)}">${safeText(rowStatus(row) || 'مسجل')}</span>
+            ${shouldShowStatusBadge(row) ? `<span class="badge ${getStatusBadgeClass(row)}">${safeText(rowStatus(row) || 'مسجل')}</span>` : ''}
           </div>
         `;
       }).join('');
