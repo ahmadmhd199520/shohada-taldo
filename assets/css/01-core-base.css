@@ -298,6 +298,7 @@
     .modal-footer {
       border-top: 0;
       box-shadow: 0px -1px 20px #00000040;
+    z-index: 9;
     }
 
     .intro-icon {
