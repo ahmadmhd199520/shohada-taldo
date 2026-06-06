@@ -29,7 +29,8 @@
     'deleteMartyrImage',
     'setPrimaryMartyrImage',
     'updateMartyrImagePosition',
-    'setHoulaMassacreStatus'
+    'setHoulaMassacreStatus',
+    'setMartyrImageUploadBlocked'
   ]);
 
   const state = {
