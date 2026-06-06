@@ -383,14 +383,53 @@
     const hasOverflow = row.scrollWidth > row.clientWidth + 8;
     if (!hasOverflow) return;
 
+    const prefersReducedMotion = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) return;
+
     hintPlayed = true;
-    row.classList.remove('taldo-stats-scroll-hint');
-    void row.offsetWidth;
+
+    const originalScrollLeft = row.scrollLeft;
+    const distance = Math.min(120, Math.max(60, Math.round(row.clientWidth * 0.28)));
+
     row.classList.add('taldo-stats-scroll-hint');
+
+    function smoothScrollTo(left) {
+      try {
+        row.scrollTo({ left, behavior: 'smooth' });
+      } catch (error) {
+        row.scrollLeft = left;
+      }
+    }
+
+    function smoothScrollBy(left) {
+      try {
+        row.scrollBy({ left, behavior: 'smooth' });
+      } catch (error) {
+        row.scrollLeft += left;
+      }
+    }
+
+    // في RTL غالبًا المحتوى التالي موجود باتجاه اليسار، لذلك نجرّب السالب أولًا.
+    // إن لم يتحرك المتصفح بسبب اختلاف نموذج scrollLeft، نجرّب الاتجاه المعاكس.
+    setTimeout(function () {
+      smoothScrollBy(-distance);
+    }, 250);
+
+    setTimeout(function () {
+      if (Math.abs(row.scrollLeft - originalScrollLeft) < 2) {
+        smoothScrollBy(distance);
+      }
+    }, 650);
+
+    setTimeout(function () {
+      smoothScrollTo(originalScrollLeft);
+    }, 1350);
 
     setTimeout(function () {
       row.classList.remove('taldo-stats-scroll-hint');
-    }, 2600);
+    }, 2100);
   }
 
   document.addEventListener('click', function (event) {
