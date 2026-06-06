@@ -24,7 +24,16 @@
 /* تلميح التمرير صار عبر JavaScript بتحريك scrollLeft للحاوية نفسها،
    لذلك لا نطبّق أي transform أو animation على الديف أو البطاقات. */
 .home-stats-row.taldo-stats-scroll-hint {
-  scroll-behavior: smooth;
+  scroll-behavior: auto !important;
+}
+
+.home-stats-row.taldo-stats-scroll-hint-fade {
+  opacity: 0.72;
+  transition: opacity 0.45s ease;
+}
+
+.home-stats-row {
+  transition: opacity 0.45s ease;
 }
 
 body.dark-mode .home-stats-row .home-stats-filter-active,
@@ -37,6 +46,15 @@ html[data-theme="dark"] .home-stats-row .taldo-extra-stat-card.home-stats-filter
 
 @media (prefers-reduced-motion: reduce) {
   .home-stats-row.taldo-stats-scroll-hint {
-    scroll-behavior: auto !important;
-  }
+  scroll-behavior: auto !important;
+}
+
+.home-stats-row.taldo-stats-scroll-hint-fade {
+  opacity: 0.72;
+  transition: opacity 0.45s ease;
+}
+
+.home-stats-row {
+  transition: opacity 0.45s ease;
+}
 }
