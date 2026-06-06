@@ -1,0 +1,88 @@
+/* منع وتفادي تكرار أسماء الشهداء في مودال إضافة شهيد */
+.martyr-name-duplicate-dropdown {
+  right: 12px;
+  left: 12px;
+}
+
+.martyr-name-duplicate-option {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.martyr-name-duplicate-main {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.martyr-name-duplicate-status {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+}
+
+.possible-duplicate-list {
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(248, 249, 250, 0.8);
+}
+
+.possible-duplicate-item {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.possible-duplicate-item:last-child {
+  border-bottom: 0;
+}
+
+body.dark-mode .martyr-name-duplicate-dropdown,
+body.theme-dark .martyr-name-duplicate-dropdown,
+.dark-mode .martyr-name-duplicate-dropdown,
+.theme-dark .martyr-name-duplicate-dropdown {
+  background: #101f1c;
+  border-color: rgba(255,255,255,0.14);
+  color: #f8fafc;
+}
+
+body.dark-mode .martyr-name-duplicate-option,
+body.theme-dark .martyr-name-duplicate-option,
+.dark-mode .martyr-name-duplicate-option,
+.theme-dark .martyr-name-duplicate-option {
+  color: #f8fafc;
+  border-bottom-color: rgba(255,255,255,0.10);
+}
+
+body.dark-mode .martyr-name-duplicate-option:hover,
+body.theme-dark .martyr-name-duplicate-option:hover,
+.dark-mode .martyr-name-duplicate-option:hover,
+.theme-dark .martyr-name-duplicate-option:hover {
+  background: rgba(66, 129, 119, 0.25);
+  color: #ffffff;
+}
+
+body.dark-mode .possible-duplicate-list,
+body.theme-dark .possible-duplicate-list,
+.dark-mode .possible-duplicate-list,
+.theme-dark .possible-duplicate-list {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.12);
+}
+
+body.dark-mode .possible-duplicate-item,
+body.theme-dark .possible-duplicate-item,
+.dark-mode .possible-duplicate-item,
+.theme-dark .possible-duplicate-item {
+  border-bottom-color: rgba(255,255,255,0.10);
+}
