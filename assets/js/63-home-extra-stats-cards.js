@@ -374,64 +374,75 @@
     });
   }
 
-  function runStatsScrollHintOnce() {
-    if (hintPlayed) return;
+function runStatsScrollHintOnce() {
+  const row =
+    document.querySelector('.home-stats-row') ||
+    document.querySelector('.stats-row') ||
+    document.querySelector('.home-stats-cards');
 
-    const row = document.querySelector('.home-stats-row');
-    if (!row) return;
+  if (!row) return;
+  if (row.dataset.taldoScrollHintDone === '1') return;
+  if (row.scrollWidth <= row.clientWidth + 10) return;
 
-    const hasOverflow = row.scrollWidth > row.clientWidth + 8;
-    if (!hasOverflow) return;
+  row.dataset.taldoScrollHintDone = '1';
 
-    const prefersReducedMotion = window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const original = row.scrollLeft;
 
-    if (prefersReducedMotion) return;
+  // في RTL الاتجاه المفيد غالبًا يكون بالسالب حتى تظهر البطاقات الموجودة يسارًا
+  const distance = Math.min(110, Math.max(60, row.clientWidth * 0.28));
+  const target = original - distance;
 
-    hintPlayed = true;
-
-    const originalScrollLeft = row.scrollLeft;
-    const distance = Math.min(120, Math.max(60, Math.round(row.clientWidth * 0.28)));
-
-    row.classList.add('taldo-stats-scroll-hint');
-
-    function smoothScrollTo(left) {
-      try {
-        row.scrollTo({ left, behavior: 'smooth' });
-      } catch (error) {
-        row.scrollLeft = left;
-      }
-    }
-
-    function smoothScrollBy(left) {
-      try {
-        row.scrollBy({ left, behavior: 'smooth' });
-      } catch (error) {
-        row.scrollLeft += left;
-      }
-    }
-
-    // في RTL غالبًا المحتوى التالي موجود باتجاه اليسار، لذلك نجرّب السالب أولًا.
-    // إن لم يتحرك المتصفح بسبب اختلاف نموذج scrollLeft، نجرّب الاتجاه المعاكس.
-    setTimeout(function () {
-      smoothScrollBy(-distance);
-    }, 250);
-
-    setTimeout(function () {
-      if (Math.abs(row.scrollLeft - originalScrollLeft) < 2) {
-        smoothScrollBy(distance);
-      }
-    }, 650);
-
-    setTimeout(function () {
-      smoothScrollTo(originalScrollLeft);
-    }, 1350);
-
-    setTimeout(function () {
-      row.classList.remove('taldo-stats-scroll-hint');
-    }, 2100);
+  function easeInOut(t) {
+    return t < 0.5
+      ? 2 * t * t
+      : 1 - Math.pow(-2 * t + 2, 2) / 2;
   }
 
+  function animateScroll(from, to, duration, done) {
+    const start = performance.now();
+
+    function frame(now) {
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = easeInOut(progress);
+
+      row.scrollLeft = from + (to - from) * eased;
+
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      } else if (typeof done === 'function') {
+        done();
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  setTimeout(() => {
+    row.classList.add('taldo-stats-scroll-hint');
+    row.classList.add('taldo-stats-scroll-hint-fade');
+
+    // fade in
+    setTimeout(() => {
+      row.classList.remove('taldo-stats-scroll-hint-fade');
+
+      // حركة خروج ناعمة
+      animateScroll(original, target, 850, () => {
+        setTimeout(() => {
+          // حركة رجوع ناعمة
+          animateScroll(target, original, 850, () => {
+            // fade out خفيف في النهاية
+            row.classList.add('taldo-stats-scroll-hint-fade');
+
+            setTimeout(() => {
+              row.classList.remove('taldo-stats-scroll-hint');
+              row.classList.remove('taldo-stats-scroll-hint-fade');
+            }, 420);
+          });
+        }, 180);
+      });
+    }, 180);
+  }, 650);
+}
   document.addEventListener('click', function (event) {
     const cancelBtn = event.target.closest?.('button[data-taldo-special-stats-cancel="1"]');
     if (!cancelBtn) return;
