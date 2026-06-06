@@ -340,7 +340,7 @@ if (list[currentDynamicMessageIndex]) {
     }
 
     list.innerHTML = messages.map(msg => {
-      const msgReplies = replies.filter(r => r.message_id === msg.message_id);
+      const msgReplies = replies.filter(r => String(r.message_id || '') === String(msg.message_id || ''));
       const isLinked = !!msg.martyr_id;
       const canViewReplies = !isLinked && canReplyToMessage(msg);
 
