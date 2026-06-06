@@ -89,6 +89,90 @@
     } catch (error) {}
   }
 
+  function getApiUrlForPrivacyRequest() {
+    try {
+      if (typeof API_URL !== 'undefined' && API_URL) return API_URL;
+    } catch (error) {}
+
+    try {
+      if (window.API_URL) return window.API_URL;
+    } catch (error) {}
+
+    return '';
+  }
+
+  async function apiRequestWithTimeout(action, data, timeoutMs) {
+    timeoutMs = Number(timeoutMs || 15000);
+
+    const url = getApiUrlForPrivacyRequest();
+    const payload = { action, data: data || {} };
+
+    if (!url || typeof AbortController === 'undefined') {
+      return await Promise.race([
+        apiRequest(action, data || {}),
+        new Promise(resolve => {
+          setTimeout(() => resolve({
+            success: false,
+            timeout: true,
+            message: 'انتهت مهلة الاتصال بالخادم. أعد المحاولة بعد قليل.'
+          }), timeoutMs);
+        })
+      ]);
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+
+      const text = await res.text();
+
+      if (!res.ok) {
+        return {
+          success: false,
+          message: 'تعذر الاتصال بالخادم. كود الخطأ: ' + res.status
+        };
+      }
+
+      try {
+        return JSON.parse(text);
+      } catch (error) {
+        return {
+          success: false,
+          message: 'الخادم لم يرجع بيانات JSON صالحة.'
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        timeout: error && error.name === 'AbortError',
+        message: (error && error.name === 'AbortError')
+          ? 'انتهت مهلة الاتصال بالخادم. أعد المحاولة بعد قليل.'
+          : (error.message || 'تعذر الاتصال بالخادم.')
+      };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  function forceHideGlobalSpinner() {
+    try { if (typeof hideGlobalSpinner === 'function') hideGlobalSpinner(); } catch (error) {}
+
+    try {
+      const overlay = document.getElementById('globalLoadingOverlay');
+      if (overlay) overlay.classList.remove('show');
+    } catch (error) {}
+  }
+
   function normalizeBlockedFlag(value) {
     const text = clean(value).toLowerCase()
       .replace(/[أإآٱ]/g, 'ا')
@@ -292,17 +376,24 @@
     if (!martyrId) return;
 
     const checkbox = document.getElementById('imageUploadBlockedSwitch');
+    const label = checkbox ? document.querySelector('label[for="imageUploadBlockedSwitch"]') : null;
+    const oldLabelHtml = label ? label.innerHTML : '';
+
     if (checkbox) checkbox.disabled = true;
+    if (label) label.innerHTML = '<span class="spinner-border spinner-border-sm ms-1"></span> جاري الحفظ...';
+
+    // هذا الإجراء صغير، لذلك لا نستخدم السبينر العام حتى لا يحجب الصفحة إذا علّق طلب الشبكة.
+    forceHideGlobalSpinner();
 
     try {
-      if (typeof showGlobalSpinner === 'function') showGlobalSpinner(true);
-
-      const res = await apiRequest('setMartyrImageUploadBlocked', {
+      const res = await apiRequestWithTimeout('setMartyrImageUploadBlocked', {
         martyrId,
         martyr_id: martyrId,
         blocked: blocked ? 'نعم' : 'لا',
-        imageUploadBlocked: blocked ? 'نعم' : 'لا'
-      });
+        imageUploadBlocked: blocked ? 'نعم' : 'لا',
+        __cacheBust: Date.now(),
+        forceFresh: true
+      }, 15000);
 
       if (!res || res.success === false) {
         if (checkbox) checkbox.checked = !blocked;
@@ -329,7 +420,10 @@
       if (typeof showToast === 'function') showToast(error.message || 'تعذر حفظ خيار منع رفع الصور.');
     } finally {
       if (checkbox) checkbox.disabled = false;
-      if (typeof hideGlobalSpinner === 'function') hideGlobalSpinner();
+      if (label) label.innerHTML = oldLabelHtml || 'منع رفع صور جديدة لهذا الشهيد';
+      forceHideGlobalSpinner();
+      setTimeout(forceHideGlobalSpinner, 250);
+      setTimeout(forceHideGlobalSpinner, 1000);
     }
   };
 
@@ -435,7 +529,7 @@
     if (!blocked && hint) hint.remove();
 
     const holder = document.querySelector('#detailsContainer .col-lg-5');
-    if (holder && blocked && !hasAnyImage(item)) {
+    if (holder && blocked && !hasAnyImage(item) && !holder.querySelector('.taldo-image-blocked-placeholder')) {
       holder.innerHTML = renderImageGallery(item);
     }
     if (holder && !blocked && holder.querySelector('.taldo-image-blocked-placeholder')) {
@@ -473,8 +567,11 @@
       if (hasAnyImage(item)) return;
 
       card.querySelectorAll('.martyr-placeholder').forEach(placeholder => {
+        if (placeholder.dataset.taldoImageBlockPatched === '1') return;
+
         placeholder.classList.add('taldo-image-blocked-placeholder-card');
         placeholder.innerHTML = `<span class="taldo-image-blocked-icon" aria-hidden="true"><i class="fa-solid fa-user"></i></span>`;
+        placeholder.dataset.taldoImageBlockPatched = '1';
       });
     });
   }
@@ -511,9 +608,19 @@
   setTimeout(installAll, 400);
   setTimeout(installAll, 1200);
 
-  const observer = new MutationObserver(function () {
-    patchBlockedPlaceholdersInDom();
-  });
+  let imageBlockObserverQueued = false;
+
+  function queueBlockedPlaceholderPatch() {
+    if (imageBlockObserverQueued) return;
+    imageBlockObserverQueued = true;
+
+    requestAnimationFrame(function () {
+      imageBlockObserverQueued = false;
+      patchBlockedPlaceholdersInDom();
+    });
+  }
+
+  const observer = new MutationObserver(queueBlockedPlaceholderPatch);
 
   if (document.body) {
     observer.observe(document.body, { childList: true, subtree: true });
