@@ -890,3 +890,26 @@
 }
 
   
+/* ===== شارة البلدة بجانب حالة الشهيد في الصفحة الشخصية ===== */
+.taldo-detail-status-town {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.taldo-detail-town-badge {
+  background: #f3f6f9 !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  font-weight: 800 !important;
+  padding: 0.45rem 0.65rem !important;
+}
+
+body.dark-mode .taldo-detail-town-badge,
+html[data-theme="dark"] .taldo-detail-town-badge {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
