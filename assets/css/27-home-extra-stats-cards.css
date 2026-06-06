@@ -41,11 +41,6 @@ html[data-theme="dark"] .home-stats-row .taldo-extra-stat-card.home-stats-filter
   box-shadow: 0 12px 28px rgba(255, 193, 7, 0.16) !important;
 }
 
-body.dark-mode .home-stats-row.taldo-stats-scroll-hint,
-html[data-theme="dark"] .home-stats-row.taldo-stats-scroll-hint {
-  animation-name: taldoStatsScrollHint;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .home-stats-row.taldo-stats-scroll-hint .stat-card {
     animation: none !important;
