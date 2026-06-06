@@ -1,0 +1,52 @@
+/* ===== بطاقات إضافية في الصفحة الرئيسية: يحتاج لاستكمال + يحتاج لصورة ===== */
+.home-stats-row .taldo-extra-stat-card {
+  cursor: pointer;
+}
+
+.home-stats-row .taldo-extra-stat-card .stat-action-arrow {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-inline-start: auto !important;
+}
+
+.home-stats-row .taldo-extra-stat-card:focus-visible {
+  outline: 3px solid rgba(13, 110, 253, 0.35) !important;
+  outline-offset: 3px !important;
+}
+
+.home-stats-row .home-stats-filter-active,
+.home-stats-row .taldo-extra-stat-card.home-stats-filter-active {
+  border: 2px solid rgba(13, 110, 253, 0.55) !important;
+  box-shadow: 0 12px 26px rgba(13, 110, 253, 0.17) !important;
+}
+
+.home-stats-row.taldo-stats-scroll-hint {
+  animation: taldoStatsScrollHint 1.15s ease-in-out 0.25s 2;
+  will-change: transform;
+}
+
+@keyframes taldoStatsScrollHint {
+  0%, 100% { transform: translateX(0); }
+  35% { transform: translateX(-20px); }
+  70% { transform: translateX(10px); }
+}
+
+body.dark-mode .home-stats-row .home-stats-filter-active,
+html[data-theme="dark"] .home-stats-row .home-stats-filter-active,
+body.dark-mode .home-stats-row .taldo-extra-stat-card.home-stats-filter-active,
+html[data-theme="dark"] .home-stats-row .taldo-extra-stat-card.home-stats-filter-active {
+  border-color: rgba(255, 193, 7, 0.75) !important;
+  box-shadow: 0 12px 28px rgba(255, 193, 7, 0.16) !important;
+}
+
+body.dark-mode .home-stats-row.taldo-stats-scroll-hint,
+html[data-theme="dark"] .home-stats-row.taldo-stats-scroll-hint {
+  animation-name: taldoStatsScrollHint;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-stats-row.taldo-stats-scroll-hint {
+    animation: none !important;
+  }
+}
