@@ -219,16 +219,22 @@ window.forceTaldoPublicFreshData = function() {
     return true;
   }
 
-  if (typeof window.loadInitialData === 'function') {
-    window.loadInitialData = function() {
-      const loadingBox = document.getElementById('loadingBox');
-      if (loadingBox) loadingBox.style.display = 'block';
+if (typeof window.loadInitialData === 'function') {
+  window.loadInitialData = function() {
+    window.__taldoInitialDataLoading = true;
 
-      return apiRequest('getInitialData')
-        .then(res => {
-          const ok = applyInitialData(res);
-          if (loadingBox) loadingBox.style.display = 'none';
+    const loadingBox = document.getElementById('loadingBox');
+    const container = document.getElementById('martyrsContainer');
 
+    if (loadingBox) loadingBox.style.display = 'block';
+    if (container) container.innerHTML = '';
+
+    return apiRequest('getInitialData')
+.then(res => {
+  const ok = applyInitialData(res);
+  window.__taldoInitialDataLoading = false;
+  if (loadingBox) loadingBox.style.display = 'none';
+  
           const container = document.getElementById('martyrsContainer');
           if (container && res && res.__fromClientCache) {
             let note = document.getElementById('perfCacheNote');
@@ -246,12 +252,13 @@ window.forceTaldoPublicFreshData = function() {
 
           return ok;
         })
-        .catch(err => {
-          if (loadingBox) loadingBox.style.display = 'none';
-          showToast(err.message || 'حدث خطأ أثناء تحميل البيانات.');
-          return false;
-        });
-    };
+.catch(err => {
+  window.__taldoInitialDataLoading = false;
+  if (loadingBox) loadingBox.style.display = 'none';
+  showToast(err.message || 'حدث خطأ أثناء تحميل البيانات.');
+  return false;
+});
+  };
 
     try {
       loadInitialData = window.loadInitialData;
@@ -352,10 +359,15 @@ window.forceTaldoPublicFreshData = function() {
 
   if (typeof window.renderMartyrs === 'function') {
     window.renderMartyrs = function(customList) {
-      const container = document.getElementById('martyrsContainer');
-      if (!container) return;
+const container = document.getElementById('martyrsContainer');
+if (!container) return;
 
-      const search = normalizeFast(document.getElementById('searchInput')?.value || '');
+if (window.__taldoInitialDataLoading && !customList && (!Array.isArray(allMartyrs) || !allMartyrs.length)) {
+  container.innerHTML = '';
+  return;
+}
+
+const search = normalizeFast(document.getElementById('searchInput')?.value || '');
       const family = document.getElementById('familyFilter')?.value || '';
       const sortBy = document.getElementById('sortSelect')?.value || 'name';
       const completion = document.getElementById('completionFilter')?.value || '';
