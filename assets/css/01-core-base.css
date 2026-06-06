@@ -896,7 +896,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .taldo-detail-town-badge {
