@@ -229,6 +229,14 @@
               <option value="بانتظار التوثيق">أسماء بانتظار التوثق</option>
             </select>
           </div>
+          <div class="col-lg-2 col-md-6">
+            <label class="form-label fw-bold">الجنس</label>
+            <select id="genderFilter" class="form-select" onchange="resetMartyrsPageAndRender()">
+              <option value="" selected>الكل</option>
+              <option value="ذكر">الذكور</option>
+              <option value="أنثى">الإناث</option>
+            </select>
+          </div>
 
           <div class="col-lg-2 col-md-6">
             <label class="form-label fw-bold">الاستكمال</label>
@@ -811,6 +819,15 @@
               <option value="" selected>الكل</option>
               <option value="موثق">الأسماء الموثقة</option>
               <option value="بانتظار التوثيق">أسماء بانتظار التوثق</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-bold">الجنس</label>
+            <select id="mobileGenderFilter" class="form-select">
+              <option value="" selected>الكل</option>
+              <option value="ذكر">الذكور</option>
+              <option value="أنثى">الإناث</option>
             </select>
           </div>
 
