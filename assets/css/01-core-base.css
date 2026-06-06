@@ -913,3 +913,26 @@ html[data-theme="dark"] .taldo-detail-town-badge {
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
 }
+
+
+
+/* منع السكرول عند فتح مودال */
+
+html.taldo-modal-scroll-locked,
+body.taldo-modal-scroll-locked {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
+body.taldo-modal-scroll-locked {
+  touch-action: none;
+}
+
+.modal,
+.modal * {
+  touch-action: auto;
+}
+
+.modal-body {
+  overscroll-behavior: contain;
+}
