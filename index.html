@@ -224,9 +224,9 @@
           <div class="col-lg-2 col-md-6">
             <label class="form-label fw-bold">الحالة</label>
             <select id="statusFilter" class="form-select" onchange="changeStatusFilter()">
-              <option value="موثق" selected>الأسماء الموثقة</option>
+              <option value="" selected>الكل</option>
+              <option value="موثق">الأسماء الموثقة</option>
               <option value="بانتظار التوثيق">أسماء بانتظار التوثق</option>
-              <option value="">الكل</option>
             </select>
           </div>
 
@@ -792,9 +792,9 @@
           <div class="mb-3">
             <label class="form-label fw-bold">الحالة</label>
             <select id="mobileStatusFilter" class="form-select">
+              <option value="" selected>الكل</option>
               <option value="موثق">الأسماء الموثقة</option>
               <option value="بانتظار التوثيق">أسماء بانتظار التوثق</option>
-              <option value="">الكل</option>
             </select>
           </div>
 
@@ -1509,6 +1509,9 @@
 
   <!-- قائمة الهيدر في الجوال: ثلاث نقاط + دخول/عن المشروع/الوضع الليلي -->
   <script id="taldo-mobile-header-menu-js" src="./assets/js/58-mobile-header-menu.js?v=20260604_mobile_header_v6"></script>
+
+  <!-- ضبط فلتر الصفحة الرئيسية: الكل افتراضيًا + المرفوض للأدمن فقط -->
+  <script id="taldo-home-default-filter-and-admin-rejected-js" src="./assets/js/59-home-default-filter-and-admin-rejected.js"></script>
 
   <!-- عرض إحصائيات الموقع -->
   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b960583967e343d19f1bbaa7fd9cec6b"}'></script><!-- End Cloudflare Web Analytics -->
