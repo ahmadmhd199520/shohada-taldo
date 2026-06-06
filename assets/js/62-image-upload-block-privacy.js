@@ -76,6 +76,19 @@
     window.publicSettings[SETTING_KEY] = JSON.stringify(unique);
   }
 
+  function clearImageBlockRelatedClientCache() {
+    try {
+      Object.keys(localStorage || {}).forEach(key => {
+        if (
+          key.indexOf('taldo_api_cache') === 0 ||
+          key === 'taldo_admin_dashboard_cache_v2'
+        ) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {}
+  }
+
   function normalizeBlockedFlag(value) {
     const text = clean(value).toLowerCase()
       .replace(/[أإآٱ]/g, 'ا')
@@ -305,8 +318,12 @@
         showToast(res.message || (blocked ? 'تم منع رفع الصور لهذا السجل.' : 'تم السماح برفع الصور لهذا السجل.'));
       }
 
-      try { if (typeof refreshDashboardData === 'function') refreshDashboardData(false); } catch (error) {}
-      try { if (typeof loadInitialData === 'function') loadInitialData(); } catch (error) {}
+      clearImageBlockRelatedClientCache();
+      try {
+        window.dispatchEvent(new CustomEvent('taldo:image-upload-block-changed', {
+          detail: { martyrId, blocked: !!blocked }
+        }));
+      } catch (error) {}
     } catch (error) {
       if (checkbox) checkbox.checked = !blocked;
       if (typeof showToast === 'function') showToast(error.message || 'تعذر حفظ خيار منع رفع الصور.');
