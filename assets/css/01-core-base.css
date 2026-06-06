@@ -901,10 +901,10 @@
 
 .taldo-detail-town-badge {
   background: #f3f6f9 !important;
-  color: #0f172a !important;
+  color: var(--bs-warning); !important;
   border: 1px solid rgba(15, 23, 42, 0.12) !important;
   font-weight: 800 !important;
-  padding: 0.45rem 0.65rem !important;
+  /* padding: 0.45rem 0.65rem !important; */
 }
 
 body.dark-mode .taldo-detail-town-badge,
