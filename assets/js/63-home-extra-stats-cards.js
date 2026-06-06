@@ -4,13 +4,37 @@
   const VERIFIED_STATUS = 'موثق';
   const PENDING_STATUS = 'بانتظار التوثيق';
   const REJECTED_STATUS = 'مرفوض';
-  const SPECIAL_NEEDS_COMPLETION = 'needs_completion';
-  const SPECIAL_NEEDS_IMAGE = 'needs_image';
+const SPECIAL_NEEDS_COMPLETION = 'needs_completion';
+const SPECIAL_NEEDS_IMAGE = 'needs_image';
+const TALDO_EXTRA_STATS_FILTER_STORAGE_KEY = 'taldo_active_extra_stats_filter';
 
-  let activeSpecialFilter = '';
-  let applyingSpecialFilter = false;
+let activeSpecialFilter = getStoredSpecialFilter();  let applyingSpecialFilter = false;
   let hintPlayed = false;
   const filterButtonOriginalHtml = new WeakMap();
+  function isAllowedSpecialFilter(type) {
+  return type === SPECIAL_NEEDS_COMPLETION || type === SPECIAL_NEEDS_IMAGE;
+}
+
+function getStoredSpecialFilter() {
+  try {
+    const stored = sessionStorage.getItem(TALDO_EXTRA_STATS_FILTER_STORAGE_KEY) || '';
+    return isAllowedSpecialFilter(stored) ? stored : '';
+  } catch (error) {
+    return '';
+  }
+}
+
+function setActiveSpecialFilter(type) {
+  activeSpecialFilter = isAllowedSpecialFilter(type) ? type : '';
+
+  try {
+    if (activeSpecialFilter) {
+      sessionStorage.setItem(TALDO_EXTRA_STATS_FILTER_STORAGE_KEY, activeSpecialFilter);
+    } else {
+      sessionStorage.removeItem(TALDO_EXTRA_STATS_FILTER_STORAGE_KEY);
+    }
+  } catch (error) {}
+}
 
   function clean(value) {
     return String(value || '').trim();
@@ -279,10 +303,10 @@
   }
 
   function applySpecialFilter(type) {
-    if (!type) return;
+   if (!isAllowedSpecialFilter(type)) return;
 
-    activeSpecialFilter = type;
-    applyingSpecialFilter = true;
+  setActiveSpecialFilter(type);
+  applyingSpecialFilter = true;
 
     if (activePageId() !== 'homePage' && typeof showPage === 'function') {
       showPage('homePage');
@@ -313,7 +337,7 @@
     options = options || {};
     if (!activeSpecialFilter) return;
 
-    activeSpecialFilter = '';
+    setActiveSpecialFilter('');
     if (!options.keepStatus) {
       setStatusFilterValue('');
     }
@@ -501,11 +525,22 @@ function runStatsScrollHintOnce() {
 
   if (typeof oldShowPage === 'function' && !oldShowPage.__taldoExtraStatsWrapped) {
     window.showPage = function (pageId) {
-      if (pageId && pageId !== 'homePage' && !applyingSpecialFilter) {
-        clearSpecialFilter({ silent: true, render: false });
-      }
+  const keepSpecialFilterPages = [
+    'detailsPage',
+    'martyrDetailsPage',
+    'martyrDetailPage'
+  ];
 
-      const result = oldShowPage.apply(this, arguments);
+  if (
+    pageId &&
+    pageId !== 'homePage' &&
+    !keepSpecialFilterPages.includes(pageId) &&
+    !applyingSpecialFilter
+  ) {
+    clearSpecialFilter({ silent: true, render: false });
+  }
+
+  const result = oldShowPage.apply(this, arguments);
 
       if (pageId === 'homePage') {
         setTimeout(function () {
