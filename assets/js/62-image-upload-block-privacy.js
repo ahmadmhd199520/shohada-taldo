@@ -2,7 +2,7 @@
   'use strict';
 
   const SETTING_KEY = 'image_upload_blocked_martyrs_json';
-  const BLOCKED_UPLOAD_MESSAGE = 'لا يمكن رفع صور لهذا السجل حفاظًا على خصوصية ذوي الشهيدة.';
+  const BLOCKED_UPLOAD_MESSAGE = 'لا يمكن رفع صور لهذا السجل.';
 
   function clean(value) {
     return String(value || '').trim();
