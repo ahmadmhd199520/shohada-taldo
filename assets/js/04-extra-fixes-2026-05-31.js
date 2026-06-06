@@ -309,6 +309,32 @@
     });
   };
 
+function detailTownBadge(item) {
+  const town = String(
+    item?.town_name ||
+    item?.town ||
+    item?.village_name ||
+    item?.place_name ||
+    ''
+  ).trim();
+
+  if (!town) return '';
+
+  return `
+    <span class="badge taldo-detail-town-badge" title="البلدة">
+      <i class="fa-solid fa-location-dot ms-1"></i>
+      ${escapeHtml(town)}
+    </span>`;
+}
+
+function detailStatusTownHtml(item) {
+  return `
+    <div class="taldo-detail-status-town">
+      ${statusBadge(item.verification_status)}
+      ${detailTownBadge(item)}
+    </div>`;
+}
+  
   window.openMartyrDetails = function(martyrId, fromPage, noRoute) {
     const source = isAdminLoggedIn && dashboardData.length ? dashboardData : allMartyrs;
     const item = source.find(x => x.martyr_id === martyrId);
@@ -351,7 +377,7 @@
                 <h2 class="fw-bold mb-1">${escapeHtml(item.full_name || '')} ${adminEditBtn('full_name')}</h2>
                 <div class="text-muted">عائلة ${escapeHtml(item.family_name || '')} ${adminEditBtn('family_name')}</div>
               </div>
-              ${statusBadge(item.verification_status)}
+              ${detailStatusTownHtml(item)}
             </div>
             <div class="row g-3">
               ${detailItemEditable('اسم الأب', item.father_name, 'father_name')}
