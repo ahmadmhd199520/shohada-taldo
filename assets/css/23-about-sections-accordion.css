@@ -120,7 +120,7 @@
   color: #161616 !important;
   line-height: 1.9 !important;
   font-size: 15px !important;
-  white-space: normal !important;
+  white-space: pre-line !important;
   background: #fff !important;
   text-align: right !important;
   overflow-wrap: anywhere !important;
