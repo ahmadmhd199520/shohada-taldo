@@ -426,10 +426,10 @@ function runStatsScrollHintOnce() {
       row.classList.remove('taldo-stats-scroll-hint-fade');
 
       // حركة خروج ناعمة
-      animateScroll(original, target, 850, () => {
+      animateScroll(original, target, 550, () => {
         setTimeout(() => {
           // حركة رجوع ناعمة
-          animateScroll(target, original, 850, () => {
+          animateScroll(target, original, 550, () => {
             // fade out خفيف في النهاية
             row.classList.add('taldo-stats-scroll-hint-fade');
 
