@@ -641,6 +641,14 @@
           <form id="martyrForm">
             <div class="row g-3">
 
+              <div class="col-md-12">
+                <label class="form-label fw-bold">البلدة <span class="text-danger">*</span></label>
+                <select class="form-select" name="town_name" id="martyrTownSelect" required>
+                  <option value="" disabled>سيتم إضافة قرى وبلدات الحولة تباعًا إن شاء الله</option>
+                  <option value="تلدو" selected>تلدو</option>
+                </select>
+              </div>
+
               <div class="col-md-6">
                 <label class="form-label fw-bold">الاسم والكنية <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" name="full_name" required>
@@ -666,6 +674,14 @@
                 <div class="form-text">
                   اكتب اسم العائلة، وإن ظهرت لك في القائمة فاخترها لتفادي التكرار الإملائي.
                 </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">الجنس <span class="text-danger">*</span></label>
+                <select class="form-select" name="gender" id="martyrGenderSelect" required>
+                  <option value="ذكر" selected>ذكر</option>
+                  <option value="أنثى">أنثى</option>
+                </select>
               </div>
 
               <div class="col-md-6">
