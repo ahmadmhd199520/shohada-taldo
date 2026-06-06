@@ -28,7 +28,7 @@
 
 @keyframes taldoStatsScrollHint {
   0%, 100% { transform: translateX(0); }
-  35% { transform: translateX(-20px); }
+  35% { transform: translateX(20px); }
   70% { transform: translateX(10px); }
 }
 
