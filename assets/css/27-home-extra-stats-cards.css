@@ -21,15 +21,16 @@
   box-shadow: 0 12px 26px rgba(13, 110, 253, 0.17) !important;
 }
 
-.home-stats-row.taldo-stats-scroll-hint {
-  animation: taldoStatsScrollHint 1.15s ease-in-out 0.25s 2;
+/* حركة تلميح التمرير: نحرّك البطاقات نفسها فقط، لا الحاوية ولا شريط التمرير */
+.home-stats-row.taldo-stats-scroll-hint .stat-card {
+  animation: taldoStatsCardScrollHint 1.15s ease-in-out 0.25s 2;
   will-change: transform;
 }
 
-@keyframes taldoStatsScrollHint {
+@keyframes taldoStatsCardScrollHint {
   0%, 100% { transform: translateX(0); }
-  35% { transform: translateX(20px); }
-  70% { transform: translateX(10px); }
+  35% { transform: translateX(22px); }
+  70% { transform: translateX(-8px); }
 }
 
 body.dark-mode .home-stats-row .home-stats-filter-active,
@@ -46,7 +47,7 @@ html[data-theme="dark"] .home-stats-row.taldo-stats-scroll-hint {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-stats-row.taldo-stats-scroll-hint {
+  .home-stats-row.taldo-stats-scroll-hint .stat-card {
     animation: none !important;
   }
 }
