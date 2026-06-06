@@ -17,6 +17,13 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
   }
+  function formatMultilineText(value) {
+  return escapeHtml(value)
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\n/g, '<br>');
+}
 
   function escapeAttr(value) {
     return escapeHtml(value).replace(/`/g, '&#096;');
@@ -322,7 +329,7 @@
                   </button>
                 </h2>
                 <div id="${collapseId}" class="accordion-collapse collapse ${show}" aria-labelledby="${collapseId}_heading" data-bs-parent="#taldoAboutAccordion">
-                  <div class="accordion-body">${escapeHtml(section.body).replace(/\n/g, '<br>')}</div>
+                  <div class="accordion-body">${formatMultilineText(section.body)}</div>
                 </div>
               </div>`;
           }).join('')}
