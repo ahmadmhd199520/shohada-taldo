@@ -385,7 +385,7 @@ if (list[currentDynamicMessageIndex]) {
   };
 
   window.renderMessageRepliesHtml = function(messageId) {
-    const replies = (window.__messageReplies || []).filter(r => r.message_id === messageId);
+    const replies = (window.__messageReplies || []).filter(r => String(r.message_id || '') === String(messageId || ''));
 
     if (!replies.length) {
       return `<div class="text-muted small">لا توجد ردود على هذه الرسالة بعد.</div>`;
