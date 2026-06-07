@@ -38,6 +38,10 @@
     return `<span class="public-missing-field">${PUBLIC_MISSING_TEXT}</span>`;
   }
 
+  function noneValueHtml() {
+  return `<span class="public-none-field">لا يوجد</span>`;
+}
+
   function findDetailsRow() {
     return document.querySelector('#detailsContainer .detail-box .row.g-3');
   }
@@ -63,21 +67,31 @@
     return item ? item[field] : '';
   }
 
-  function makeOrderedDetailItem(label, value, field) {
-    const missing = isEmptyValue(value);
+function makeOrderedDetailItem(label, value, field) {
+  const missing = isEmptyValue(value);
+  const fieldName = String(field || '').trim();
 
-    return `
-      <div class="col-md-6 public-ordered-detail-item" data-public-label="${escapeAttr(label)}" data-public-field="${escapeAttr(field || '')}">
-        <div class="p-3 rounded-4 bg-light h-100">
-          <div class="text-muted small mb-1">${escapeHtml(label)}</div>
-          <div class="fw-bold">
-            ${missing ? missingValueHtml() : escapeHtml(value)}
-          </div>
-        </div>
-      </div>
-    `;
+  let valueHtml = '';
+
+  if (missing && fieldName === 'nickname') {
+    valueHtml = noneValueHtml();
+  } else if (missing) {
+    valueHtml = missingValueHtml();
+  } else {
+    valueHtml = escapeHtml(value);
   }
 
+  return `
+    <div class="col-md-6 public-ordered-detail-item" data-public-label="${escapeAttr(label)}" data-public-field="${escapeAttr(field || '')}">
+      <div class="p-3 rounded-4 bg-light h-100">
+        <div class="text-muted small mb-1">${escapeHtml(label)}</div>
+        <div class="fw-bold">
+          ${valueHtml}
+        </div>
+      </div>
+    </div>
+  `;
+}
   function getOrderedDetailDefinitions(item) {
     const type = String(item?.martyrdom_type || '').trim();
 
