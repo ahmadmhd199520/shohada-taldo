@@ -245,34 +245,49 @@
     });
   }
 
-  function getAboutRawValue() {
-    if (typeof window.__taldoAboutRawValue === 'string' && window.__taldoAboutRawValue.trim()) {
-      return window.__taldoAboutRawValue;
-    }
-
-    if (window.publicSettings && typeof window.publicSettings.about_us_text === 'string' && window.publicSettings.about_us_text.trim()) {
-      return window.publicSettings.about_us_text;
-    }
-
+  function readAboutValueFromSettings() {
     try {
       if (typeof publicSettings !== 'undefined' && publicSettings && typeof publicSettings.about_us_text === 'string' && publicSettings.about_us_text.trim()) {
         return publicSettings.about_us_text;
       }
     } catch (error) {}
 
-    const hidden = document.getElementById('aboutUsAdminText');
-    if (hidden && String(hidden.value || '').trim()) return hidden.value;
-
-    const local = getLocalAboutValue();
-    if (local && local.trim()) return local;
-
-    const current = document.getElementById('aboutUsText');
-    if (current) {
-      const text = String(current.textContent || '').trim();
-      if (text && !current.querySelector('.taldo-about-accordion')) return text;
+    if (window.publicSettings && typeof window.publicSettings.about_us_text === 'string' && window.publicSettings.about_us_text.trim()) {
+      return window.publicSettings.about_us_text;
     }
 
     return '';
+  }
+
+  function syncAboutRawValue(value) {
+    value = String(value || '');
+    if (!value.trim()) return;
+
+    window.__taldoAboutRawValue = value;
+
+    try {
+      if (typeof publicSettings !== 'undefined') {
+        publicSettings = publicSettings || {};
+        publicSettings.about_us_text = value;
+      }
+    } catch (error) {}
+
+    if (!window.publicSettings) window.publicSettings = {};
+    window.publicSettings.about_us_text = value;
+
+    setLocalAboutValue(value);
+  }
+
+  function getAboutRawValue() {
+    const candidates = [
+      readAboutValueFromSettings(),
+      (typeof window.__taldoAboutRawValue === 'string' ? window.__taldoAboutRawValue : ''),
+      (document.getElementById('aboutUsAdminText')?.value || ''),
+      getLocalAboutValue()
+    ].map(value => String(value || '').trim()).filter(Boolean);
+
+    const structured = candidates.find(isStructuredAboutValue);
+    return structured || candidates[0] || '';
   }
 
   function ensureAboutContainer() {
@@ -303,8 +318,8 @@
       const rawValue = getAboutRawValue();
       const sections = parseAboutSections(rawValue);
 
-      // نحفظ الخام للمرات القادمة كي لا نقرأ النص بعد تحويله إلى أكورديون.
-      if (rawValue) window.__taldoAboutRawValue = rawValue;
+      // نحفظ الخام للمرات القادمة من مصدر الإعدادات لا من HTML المعروض.
+      if (rawValue) syncAboutRawValue(rawValue);
 
       container.innerHTML = `
         <div class="taldo-about-hero">
@@ -482,13 +497,18 @@
           if (typeof publicSettings !== 'undefined' && publicSettings) publicSettings.about_us_text = value;
         } catch (error) {}
 
-        window.__taldoAboutRawValue = value;
-        setLocalAboutValue(value);
-
         const hidden = document.getElementById('aboutUsAdminText');
+        const currentRaw = String(hidden?.value || window.__taldoAboutRawValue || '').trim();
+        const adminIsEditing = !!document.querySelector('.taldo-about-row-editing');
+
+        syncAboutRawValue(value);
+
         if (hidden) hidden.value = value;
 
-        rebuildAboutAdminBuilderFromRaw(value);
+        // لا نعيد بناء الحقول أثناء التعديل حتى لا تضيع الأسطر التي يكتبها الأدمن.
+        if (!adminIsEditing && currentRaw !== String(value || '').trim()) {
+          rebuildAboutAdminBuilderFromRaw(value);
+        }
       })
       .catch(() => {})
       .finally(() => {
@@ -519,7 +539,7 @@
         أضف الأقسام التي تريد ظهورها في نافذة <strong>من نحن</strong>. كل قسم يحتوي على عنوان ونص، وسيظهر للزائر بشكل أكورديون منسق.
       </div>
 
-      <input type="hidden" id="aboutUsAdminText" value="${escapeAttr(raw)}">
+      <textarea id="aboutUsAdminText" class="d-none" aria-hidden="true">${escapeHtml(raw)}</textarea>
       <div id="aboutSectionsBuilder" class="taldo-about-sections-admin"></div>
 
       <div class="d-flex gap-2 flex-wrap mt-3">
@@ -551,11 +571,10 @@
     const wrapped = function () {
       const result = current.apply(this, arguments);
 
-      const el = document.getElementById('aboutUsText');
-      if (el) {
-        const raw = String(el.textContent || '').trim();
-        if (raw) window.__taldoAboutRawValue = raw;
-      }
+      // لا نأخذ النص الخام من محتوى المودال بعد عرضه، لأن المودال قد يكون حوّل النص إلى HTML/أكورديون.
+      // نأخذه من إعدادات الموقع أو الكاش المحلي، وبذلك تبقى الأسطر كما حُفظت.
+      const raw = readAboutValueFromSettings() || getLocalAboutValue() || window.__taldoAboutRawValue || '';
+      syncAboutRawValue(raw);
 
       renderAboutSectionsSoon();
       return result;
@@ -695,6 +714,7 @@
 
   window.taldoRenderAboutSectionsPublic = renderAboutSectionsPublic;
   window.taldoParseAboutSections = parseAboutSections;
+  window.taldoSyncAboutRawValue = syncAboutRawValue;
 
   document.addEventListener('DOMContentLoaded', () => {
     bootAboutSections();
