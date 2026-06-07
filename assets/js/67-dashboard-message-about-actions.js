@@ -5,10 +5,10 @@
   const REQUEST_TIMEOUT_MS = 22000;
 
   function readMultilineValue(el) {
-  return String(el?.value || '')
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n');
-}
+    return String(el?.value || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n');
+  }
 
   function clean(value) {
     return String(value || '').trim();
@@ -25,6 +25,54 @@
 
   function escapeAttr(value) {
     return escapeHtml(value).replace(/`/g, '&#096;');
+  }
+
+
+  function readAboutSectionsPreservingMultiline() {
+    const rows = Array.from(document.querySelectorAll('.taldo-about-section-admin-item'));
+
+    return rows
+      .map(row => {
+        const titleEl = row.querySelector('.taldo-about-section-title');
+        const bodyEl = row.querySelector('.taldo-about-section-body');
+
+        return {
+          title: clean(titleEl?.value || ''),
+          body: readMultilineValue(bodyEl).trim()
+        };
+      })
+      .filter(section => section.title || section.body)
+      .map(section => ({
+        title: section.title || 'قسم بدون عنوان',
+        body: section.body || ''
+      }));
+  }
+
+  function stringifyAboutSectionsPreservingMultiline(sections) {
+    return JSON.stringify({
+      type: 'about_sections_v1',
+      sections: Array.isArray(sections) ? sections : []
+    });
+  }
+
+  function setAboutValueEverywhere(value) {
+    window.__taldoAboutRawValue = value;
+
+    if (!window.publicSettings) window.publicSettings = {};
+    window.publicSettings.about_us_text = value;
+
+    try {
+      if (typeof publicSettings !== 'undefined' && publicSettings) {
+        publicSettings.about_us_text = value;
+      }
+    } catch (error) {}
+
+    const hidden = document.getElementById('aboutUsAdminText');
+    if (hidden) hidden.value = value;
+
+    try {
+      localStorage.setItem('taldo_about_us_text_cache', value);
+    } catch (error) {}
   }
 
   function getAdminMessagesList() {
@@ -662,6 +710,72 @@ const payload = {
     window.removeAboutSectionRow.__taldoRemoveSpinnerWrapped = true;
   }
 
+
+  function installAboutSavePreservingMultiline() {
+    if (typeof window.saveAboutUsText !== 'function') return;
+    if (window.saveAboutUsText.__taldoPreserveMultilineWrapped) return;
+
+    const oldSaveAboutUsText = window.saveAboutUsText;
+
+    window.saveAboutUsText = function () {
+      const rows = getAboutRows();
+      const hasBuilder = !!rows.length;
+
+      if (!hasBuilder) {
+        return oldSaveAboutUsText.apply(this, arguments);
+      }
+
+      const sections = readAboutSectionsPreservingMultiline();
+
+      if (!sections.length) {
+        showToast('يرجى إضافة عنوان أو نص واحد على الأقل في قسم من نحن.');
+        return;
+      }
+
+      const value = stringifyAboutSectionsPreservingMultiline(sections);
+      const button = findAboutSaveButton();
+
+      setAboutValueEverywhere(value);
+      setButtonLoading(button, true, 'جاري حفظ قسم من نحن...');
+
+      return withTimeout(apiRequest('updateSettingValue', {
+        key: 'about_us_text',
+        value: value,
+        description: 'أقسام تظهر عند الضغط على زر من نحن'
+      }), REQUEST_TIMEOUT_MS, 'تعذر حفظ قسم من نحن.')
+        .then(res => {
+          if (!res || res.success === false) {
+            throw new Error(res?.message || 'تعذر حفظ قسم من نحن.');
+          }
+
+          setAboutValueEverywhere(value);
+          showToast(res.message || 'تم حفظ قسم من نحن.');
+
+          try {
+            if (typeof window.taldoRenderAboutSectionsPublic === 'function') {
+              window.taldoRenderAboutSectionsPublic();
+              setTimeout(window.taldoRenderAboutSectionsPublic, 120);
+            }
+          } catch (error) {}
+
+          patchAboutRowsEditButtons();
+          return res;
+        })
+        .catch(err => {
+          showToast(err.message || 'تعذر حفظ قسم من نحن.');
+        })
+        .finally(() => {
+          setButtonLoading(button, false);
+        });
+    };
+
+    window.saveAboutUsText.__taldoPreserveMultilineWrapped = true;
+
+    try {
+      saveAboutUsText = window.saveAboutUsText;
+    } catch (error) {}
+  }
+
   function installAboutSaveButtonSpinner() {
     const button = findAboutSaveButton();
     if (!button || button.dataset.taldoAboutSaveListener === '1') return;
@@ -707,6 +821,7 @@ const payload = {
 
   function patchAllDashboardEnhancements() {
     wrapApiRequestForButtonEvents();
+    installAboutSavePreservingMultiline();
     patchMessagesAdminActions();
     patchAboutRowsEditButtons();
     installAboutSaveButtonSpinner();
