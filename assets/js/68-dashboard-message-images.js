@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  const ADMIN_DASHBOARD_CACHE_KEY = 'taldo_admin_dashboard_cache_v2';
+
   function clean(value) {
     return String(value || '').trim();
   }
@@ -74,28 +76,55 @@
     });
   }
 
+  function readCachedDashboardPayload() {
+    try {
+      const raw = sessionStorage.getItem(ADMIN_DASHBOARD_CACHE_KEY);
+      if (!raw) return null;
+
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.value && typeof parsed.value === 'object') return parsed.value;
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
   function getAdminMessagesForImages() {
     const result = [];
 
+    /*
+      نعطي الأولوية لرسائل لوحة التحكم الكاملة.
+      siteMessages تستخدم فقط كاحتياط، لأنها قد تحتوي الرسائل المفعلة فقط.
+    */
     addMessageList(window.__adminMessages, result);
     addMessageList(window.adminMessages, result);
-    addMessageList(window.siteMessages, result);
-    addMessageList(window.__siteMessages, result);
 
-    try {
-      if (typeof siteMessages !== 'undefined') addMessageList(siteMessages, result);
-    } catch (error) {}
-
-    if (window.dashboardData && typeof window.dashboardData === 'object') {
+    if (window.dashboardData && typeof window.dashboardData === 'object' && !Array.isArray(window.dashboardData)) {
       addMessageList(window.dashboardData.messages, result);
       addMessageList(window.dashboardData.siteMessages, result);
       addMessageList(window.dashboardData.site_messages, result);
     }
 
-    if (window.adminDashboardData && typeof window.adminDashboardData === 'object') {
+    if (window.adminDashboardData && typeof window.adminDashboardData === 'object' && !Array.isArray(window.adminDashboardData)) {
       addMessageList(window.adminDashboardData.messages, result);
       addMessageList(window.adminDashboardData.siteMessages, result);
       addMessageList(window.adminDashboardData.site_messages, result);
+    }
+
+    const cached = readCachedDashboardPayload();
+    if (cached && typeof cached === 'object') {
+      addMessageList(cached.messages, result);
+      addMessageList(cached.siteMessages, result);
+      addMessageList(cached.site_messages, result);
+    }
+
+    if (!result.length) {
+      addMessageList(window.siteMessages, result);
+      addMessageList(window.__siteMessages, result);
+
+      try {
+        if (typeof siteMessages !== 'undefined') addMessageList(siteMessages, result);
+      } catch (error) {}
     }
 
     const seen = new Set();
@@ -131,13 +160,16 @@
   }
 
   function candidateMessageContainers() {
+    const list = document.getElementById('messagesAdminList');
+
+    if (list) {
+      return [list];
+    }
+
     return [
-      document.getElementById('messagesAdminList'),
       document.getElementById('dashboardSettingsTab'),
       document.getElementById('settingsTab'),
-      document.getElementById('settingsPage'),
-      document.getElementById('dashboardPage'),
-      document.body
+      document.getElementById('settingsPage')
     ].filter(Boolean);
   }
 
@@ -242,11 +274,16 @@
     messages.forEach(patchOneMessageImage);
   }
 
+  let patchTimer = 0;
+
+  function schedulePatch(delay) {
+    clearTimeout(patchTimer);
+    patchTimer = setTimeout(patchAdminMessageImages, delay || 80);
+  }
+
   function runSoon() {
-    setTimeout(patchAdminMessageImages, 0);
     requestAnimationFrame(patchAdminMessageImages);
-    setTimeout(patchAdminMessageImages, 200);
-    setTimeout(patchAdminMessageImages, 650);
+    schedulePatch(180);
   }
 
   const oldRenderSettingsTab =
@@ -267,20 +304,28 @@
     } catch (error) {}
   }
 
-  const observer = new MutationObserver(function () {
-    clearTimeout(observer._timer);
-    observer._timer = setTimeout(patchAdminMessageImages, 140);
-  });
+  let observer = null;
+
+  function startObserver() {
+    if (observer) return;
+
+    const target = document.getElementById('messagesAdminList') || document.getElementById('dashboardSettingsTab');
+    if (!target) return;
+
+    observer = new MutationObserver(function () {
+      schedulePatch(120);
+    });
+
+    observer.observe(target, {
+      childList: true,
+      subtree: true
+    });
+  }
 
   function boot() {
     runSoon();
-
-    if (document.body) {
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-    }
+    startObserver();
+    setTimeout(startObserver, 600);
   }
 
   if (document.readyState === 'loading') {
