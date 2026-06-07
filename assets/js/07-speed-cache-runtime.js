@@ -161,9 +161,24 @@ window.forceTaldoPublicFreshData = function() {
     if (typeof normalizeText === 'function') return normalizeText(value || '');
     return String(value || '').toLowerCase().trim();
   }
+  function taldoSearchTerms(value) {
+  return normalizeFast(value)
+    .split(/\s+/)
+    .map(term => term.trim())
+    .filter(Boolean);
+}
 
-  function prepareMartyrRecord(item) {
-    if (!item || item.__perfPrepared) return item;
+function taldoWordSearchMatch(content, terms) {
+  const text = normalizeFast(content || '');
+
+  if (!terms || !terms.length) return true;
+
+  return terms.every(term => text.includes(term));
+}
+
+function prepareMartyrRecord(item) {
+  if (!item) return item;
+  if (item.__perfPrepared && item.__searchText) return item;    
     const searchable = [
       item.full_name,
       item.family_name,
@@ -368,7 +383,7 @@ if (window.__taldoInitialDataLoading && !customList && (!Array.isArray(allMartyr
   return;
 }
 
-const search = normalizeFast(document.getElementById('searchInput')?.value || '');
+const searchTerms = taldoSearchTerms(document.getElementById('searchInput')?.value || '');
       const family = document.getElementById('familyFilter')?.value || '';
       const sortBy = document.getElementById('sortSelect')?.value || 'name';
       const completion = document.getElementById('completionFilter')?.value || '';
@@ -389,10 +404,12 @@ const search = normalizeFast(document.getElementById('searchInput')?.value || ''
         list = list.filter(item => completionFilterMatches(item, completion));
       }
 
-      if (search) {
-        list = list.filter(item => item.__searchText && item.__searchText.includes(search));
-      }
-
+if (searchTerms.length) {
+  list = list.filter(item => {
+    prepareMartyrRecord(item);
+    return taldoWordSearchMatch(item.__searchText, searchTerms);
+  });
+}
       sortListFast(list, sortBy);
 
       if (!list.length) {
