@@ -1,0 +1,53 @@
+/* ===== أزرار إجراءات الرسائل وقسم من نحن ===== */
+.taldo-btn-loading {
+  pointer-events: none !important;
+  opacity: 0.82 !important;
+}
+
+.taldo-message-admin-card {
+  position: relative;
+}
+
+.taldo-message-edit-btn,
+.taldo-message-delete-btn,
+.taldo-about-edit-section-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+}
+
+.taldo-editing-message-save-btn {
+  box-shadow: 0 10px 26px rgba(13, 110, 253, 0.18) !important;
+}
+
+.taldo-about-row-locked {
+  border-style: dashed !important;
+}
+
+.taldo-about-row-locked .taldo-about-readonly-field {
+  background: rgba(248, 249, 250, 0.88) !important;
+  cursor: default !important;
+}
+
+.taldo-about-row-locked .taldo-about-section-body,
+.taldo-about-row-locked .taldo-about-section-title {
+  color: #495057 !important;
+}
+
+.taldo-about-row-editing {
+  box-shadow: 0 12px 30px rgba(255, 193, 7, 0.12) !important;
+  border-color: rgba(255, 193, 7, 0.38) !important;
+}
+
+body.dark-mode .taldo-about-row-locked .taldo-about-readonly-field,
+html[data-theme="dark"] .taldo-about-row-locked .taldo-about-readonly-field {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+body.dark-mode .taldo-about-row-editing,
+html[data-theme="dark"] .taldo-about-row-editing {
+  box-shadow: 0 12px 30px rgba(255, 193, 7, 0.14) !important;
+  border-color: rgba(255, 193, 7, 0.55) !important;
+}
