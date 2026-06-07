@@ -124,35 +124,71 @@ function elementLooksLikeMessageCard(el, msg) {
 
   return true;
 }
-  function findMessageElement(msg) {
-    const id = clean(msg.message_id || msg.messageId);
-    if (!id) return null;
+function findMessageElement(msg) {
+  const id = clean(msg.message_id || msg.messageId);
+  if (!id) return findMessageElementByContent(msg);
 
-    const selectors = [
-      `[data-message-id="${cssEscape(id)}"]`,
-      `[data-msg-id="${cssEscape(id)}"]`,
-      `[data-taldo-message-id="${cssEscape(id)}"]`,
-      `[data-messageid="${cssEscape(id)}"]`
-    ];
+  const selectors = [
+    `[data-message-id="${cssEscape(id)}"]`,
+    `[data-msg-id="${cssEscape(id)}"]`,
+    `[data-taldo-message-id="${cssEscape(id)}"]`,
+    `[data-messageid="${cssEscape(id)}"]`
+  ];
 
-    for (const selector of selectors) {
-      const el = document.querySelector(selector);
-      if (el) {
-        return el.closest('.card, .list-group-item, tr, .message-card, .site-message-card, .admin-message-card') || el;
-      }
+  for (const selector of selectors) {
+    const el = document.querySelector(selector);
+    if (el) {
+      return el.closest('.card, .list-group-item, tr, .message-card, .site-message-card, .admin-message-card, .rounded-4, .border') || el;
     }
-
-    const actionButton = document.querySelector(
-      `[data-action][data-message-id="${cssEscape(id)}"], button[data-message-id="${cssEscape(id)}"], button[data-msg-id="${cssEscape(id)}"]`
-    );
-
-    if (actionButton) {
-      return actionButton.closest('.card, .list-group-item, tr, .message-card, .site-message-card, .admin-message-card') || actionButton.parentElement;
-    }
-
-    return null;
   }
 
+  const actionButton = document.querySelector(
+    `[data-action][data-message-id="${cssEscape(id)}"], button[data-message-id="${cssEscape(id)}"], button[data-msg-id="${cssEscape(id)}"]`
+  );
+
+  if (actionButton) {
+    return actionButton.closest('.card, .list-group-item, tr, .message-card, .site-message-card, .admin-message-card, .rounded-4, .border') || actionButton.parentElement;
+  }
+
+  return findMessageElementByContent(msg);
+}
+
+function findMessageElementByContent(msg) {
+  const containers = [
+    document.getElementById('siteMessagesList'),
+    document.getElementById('messagesList'),
+    document.getElementById('adminMessagesList'),
+    document.getElementById('settingsPage'),
+    document.getElementById('settingsTab'),
+    document.getElementById('dashboardPage'),
+    document.body
+  ].filter(Boolean);
+
+  const candidateSelector = [
+    '.site-message-card',
+    '.admin-message-card',
+    '.message-card',
+    '.card',
+    '.list-group-item',
+    'tr',
+    '.rounded-4.border',
+    '.border.rounded-4'
+  ].join(',');
+
+  for (const container of containers) {
+    const candidates = Array.from(container.querySelectorAll(candidateSelector));
+
+    for (const candidate of candidates) {
+      if (candidate.querySelector('.taldo-admin-message-image-preview')) continue;
+
+      if (elementLooksLikeMessageCard(candidate, msg)) {
+        return candidate;
+      }
+    }
+  }
+
+  return null;
+}
   function makePreviewHtml(src, title) {
     return `
       <div class="taldo-admin-message-image-preview" title="عرض صورة الرسالة">
