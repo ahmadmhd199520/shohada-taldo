@@ -507,6 +507,12 @@ return {
 
 const isEditingExistingMessage = !!String(messageId || '').trim();
 
+const messageType = document.getElementById('msgType')?.value || 'notice';
+const isImageOnlyMessage = messageType === 'image_only';
+
+const rawTitle = document.getElementById('msgTitle')?.value || '';
+const rawBody = document.getElementById('msgBody')?.value || '';
+
 const payload = {
   message_id: messageId,
   messageId: messageId,
@@ -517,25 +523,30 @@ const payload = {
   rotate_message_id: isEditingExistingMessage,
   rotateMessageId: isEditingExistingMessage,
 
-  title: document.getElementById('msgTitle')?.value || '',
-  body: document.getElementById('msgBody')?.value || '',
+  title: isImageOnlyMessage ? (rawTitle || 'إعلام سريع') : rawTitle,
+  body: isImageOnlyMessage ? (rawBody || 'إعلام سريع بصورة') : rawBody,
   status: document.getElementById('msgStatus')?.value || 'active',
   sort_order: document.getElementById('msgOrder')?.value || '100',
-  message_type: document.getElementById('msgType')?.value || 'notice',
-  allow_reply: document.getElementById('msgAllowReply')?.checked ? 'نعم' : 'لا',
-  martyr_id: martyrId,
-  martyr_name: martyrName
+  message_type: messageType,
+  allow_reply: isImageOnlyMessage ? 'لا' : (document.getElementById('msgAllowReply')?.checked ? 'نعم' : 'لا'),
+  martyr_id: isImageOnlyMessage ? '' : martyrId,
+  martyr_name: isImageOnlyMessage ? '' : martyrName
 };
-    
-    if (!clean(payload.title)) {
-      showToast('عنوان الرسالة مطلوب.');
-      return;
-    }
 
-    if (!clean(payload.body)) {
-      showToast('نص الرسالة مطلوب.');
-      return;
-    }
+if (isImageOnlyMessage && !isEditingExistingMessage && !file) {
+  showToast('يرجى رفع صورة للإعلام السريع.');
+  return;
+}
+    
+if (!isImageOnlyMessage && !clean(payload.title)) {
+  showToast('عنوان الرسالة مطلوب.');
+  return;
+}
+
+if (!isImageOnlyMessage && !clean(payload.body)) {
+  showToast('نص الرسالة مطلوب.');
+  return;
+}
 
     setButtonLoading(saveButton, true, messageId ? 'جاري حفظ التعديل...' : 'جاري حفظ الرسالة...');
 
