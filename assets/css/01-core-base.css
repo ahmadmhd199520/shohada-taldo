@@ -956,7 +956,7 @@ html[data-theme="dark"] #aboutProjectModal .about-project-text {
 .public-none-field {
   display: inline-flex;
   align-items: center;
-  padding: 0.35rem 0.7rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 999px;
   background: rgba(220, 53, 69, 0.10);
   color: var(--bs-danger) !important;
