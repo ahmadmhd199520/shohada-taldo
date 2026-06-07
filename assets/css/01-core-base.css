@@ -925,10 +925,6 @@ body.taldo-modal-scroll-locked {
   overscroll-behavior: none !important;
 }
 
-body.taldo-modal-scroll-locked {
-  touch-action: none;
-}
-
 .modal,
 .modal * {
   touch-action: auto;
