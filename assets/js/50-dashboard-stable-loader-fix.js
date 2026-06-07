@@ -238,6 +238,12 @@ function dashboardStatusClass(status) {
     if (!Array.isArray(window.__messageReplies)) window.__messageReplies = [];
     if (res.settings) {
       try { publicSettings = res.settings; } catch (e) {}
+      try { window.publicSettings = Object.assign({}, window.publicSettings || {}, res.settings || {}); } catch (e) {}
+      try {
+        if (res.settings.about_us_text && typeof window.taldoSyncAboutRawValue === 'function') {
+          window.taldoSyncAboutRawValue(res.settings.about_us_text);
+        }
+      } catch (e) {}
     }
 
     if (options.saveCache !== false) writeDashboardCache(res);
