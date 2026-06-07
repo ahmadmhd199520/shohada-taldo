@@ -1,0 +1,45 @@
+/* ===== علامة مائية فوق صور الشهداء ===== */
+:root {
+  --taldo-image-watermark-url: url("../watermark.png");
+
+  /* شفافية العلامة على صور البطاقات */
+  --taldo-card-watermark-opacity: 0.16;
+
+  /* شفافية العلامة على الصورة الكبيرة في صفحة الشهيد */
+  --taldo-detail-watermark-opacity: 0.18;
+
+  /* حجم العلامة على البطاقات */
+  --taldo-card-watermark-size: 72%;
+
+  /* حجم العلامة على الصورة الكبيرة */
+  --taldo-detail-watermark-size: 46%;
+}
+
+.martyr-image-wrap.taldo-image-watermarked,
+.gallery-main-frame.taldo-image-watermarked {
+  position: relative;
+}
+
+.martyr-image-wrap.taldo-image-watermarked::after,
+.gallery-main-frame.taldo-image-watermarked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  user-select: none;
+  background-image: var(--taldo-image-watermark-url);
+  background-repeat: no-repeat;
+  background-position: center;
+  mix-blend-mode: normal;
+}
+
+.martyr-image-wrap.taldo-image-watermarked::after {
+  opacity: var(--taldo-card-watermark-opacity);
+  background-size: var(--taldo-card-watermark-size);
+}
+
+.gallery-main-frame.taldo-image-watermarked::after {
+  opacity: var(--taldo-detail-watermark-opacity);
+  background-size: var(--taldo-detail-watermark-size);
+}
