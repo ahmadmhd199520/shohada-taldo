@@ -142,6 +142,18 @@ function setMissingValueInExistingDetailItem(itemEl) {
 
   valueEl.innerHTML = missingValueHtml();
 }
+  function setNoneValueInExistingDetailItem(itemEl) {
+  if (!itemEl) return;
+
+  const valueEl = itemEl.querySelector('.fw-bold');
+  if (!valueEl) return;
+
+  const currentText = String(valueEl.textContent || '').trim();
+
+  if (!currentText || currentText === '-' || currentText === '—') {
+    valueEl.textContent = 'لا يوجد';
+  }
+}
 
   function patchHeaderFields(item) {
     if (!item) return;
@@ -200,22 +212,17 @@ REQUIRED_PUBLIC_FIELDS.forEach(function(def) {
 });
   }
 
-  function patchEmptyAsNoneFields(item) {
-    const row = findDetailsRow();
+function patchEmptyAsNoneFields(item) {
+  const row = getDetailsInfoRow();
+  if (!row) return;
 
-    if (!row || !item) return;
+  const nicknameItem = findDetailItemByLabel(row, 'اللقب');
 
-    PUBLIC_EMPTY_AS_NONE_FIELDS.forEach(function(def) {
-      if (rowHasLabel(row, def.label)) return;
-      if (!isEmptyValue(item[def.field])) return;
-
-      row.insertAdjacentHTML(
-        'beforeend',
-        makePublicNoneDetailItem(def.label)
-      );
-    });
+  if (isEmptyValue(item.nickname)) {
+    setNoneValueInExistingDetailItem(nicknameItem);
   }
-
+}
+  
   function patchExtraInfoField(item) {
     if (!item) return;
 
