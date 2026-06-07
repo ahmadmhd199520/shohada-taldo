@@ -55,8 +55,8 @@
   .houla-page-header {
     background: linear-gradient(135deg, #fff7e6, #ffffff);
     border: 1px solid rgba(255, 193, 7, .35);
-    border-radius: 22px;
-    padding: 16px;
+    border-radius: 13px;
+    padding: 7px;
     box-shadow: var(--soft-shadow);
   }
 
