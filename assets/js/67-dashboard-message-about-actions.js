@@ -363,19 +363,28 @@
     const martyrId = martyrSelect?.value || '';
     const martyrName = martyrId ? (martyrSelect.options[martyrSelect.selectedIndex]?.text || '') : '';
 
-    const payload = {
-      message_id: messageId,
-      messageId: messageId,
-      title: document.getElementById('msgTitle')?.value || '',
-      body: document.getElementById('msgBody')?.value || '',
-      status: document.getElementById('msgStatus')?.value || 'active',
-      sort_order: document.getElementById('msgOrder')?.value || '100',
-      message_type: document.getElementById('msgType')?.value || 'notice',
-      allow_reply: document.getElementById('msgAllowReply')?.checked ? 'نعم' : 'لا',
-      martyr_id: martyrId,
-      martyr_name: martyrName
-    };
+const isEditingExistingMessage = !!String(messageId || '').trim();
 
+const payload = {
+  message_id: messageId,
+  messageId: messageId,
+
+  old_message_id: isEditingExistingMessage ? messageId : '',
+  oldMessageId: isEditingExistingMessage ? messageId : '',
+
+  rotate_message_id: isEditingExistingMessage,
+  rotateMessageId: isEditingExistingMessage,
+
+  title: document.getElementById('msgTitle')?.value || '',
+  body: document.getElementById('msgBody')?.value || '',
+  status: document.getElementById('msgStatus')?.value || 'active',
+  sort_order: document.getElementById('msgOrder')?.value || '100',
+  message_type: document.getElementById('msgType')?.value || 'notice',
+  allow_reply: document.getElementById('msgAllowReply')?.checked ? 'نعم' : 'لا',
+  martyr_id: martyrId,
+  martyr_name: martyrName
+};
+    
     if (!clean(payload.title)) {
       showToast('عنوان الرسالة مطلوب.');
       return;
