@@ -3,44 +3,6 @@
 
   const PUBLIC_MISSING_TEXT = 'بيانات تحتاج لاستكمال';
 
-  const REQUIRED_PUBLIC_FIELDS = [
-    {
-      label: 'اسم الأب',
-      field: 'father_name'
-    },
-      {
-    label: 'المواليد',
-    field: 'birth_year'
-    },
-    {
-      label: 'استشهد بـ',
-      field: 'martyrdom_type'
-    },
-    {
-      label: 'تاريخ الاستشهاد',
-      field: 'martyrdom_date'
-    },
-    {
-      label: 'مكان الاستشهاد',
-      field: 'martyrdom_place'
-    }
-  ];
-
-  const PUBLIC_EMPTY_AS_NONE_FIELDS = [
-    {
-      label: 'اللقب',
-      field: 'nickname'
-    }
-  ];
-
-  function isAdminMode() {
-    try {
-      return !!isAdminLoggedIn;
-    } catch (e) {
-      return false;
-    }
-  }
-
   function getCurrentDetailsItemSafe() {
     try {
       if (currentDetailsItem) return currentDetailsItem;
@@ -50,41 +12,20 @@
   }
 
   function isEmptyValue(value) {
-    return String(value || '').trim() === '';
+    return String(value || '').trim() === '' || String(value || '').trim() === '-' || String(value || '').trim() === '—';
   }
 
-  function missingValueHtml() {
-    return `<span class="public-missing-field">${PUBLIC_MISSING_TEXT}</span>`;
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
-  function noValueHtml() {
-    return '<span class="public-no-extra-info">لا يوجد</span>';
-  }
-
-  function makePublicNoneDetailItem(label) {
-    return `
-      <div class="col-md-6 public-none-detail-item" data-public-label="${escapeAttr(label)}">
-        <div class="p-3 rounded-4 bg-light h-100">
-          <div class="text-muted small mb-1">${escapeHtml(label)}</div>
-          <div class="fw-bold">
-            ${noValueHtml()}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function makePublicDetailItem(label, value, isMissing) {
-    return `
-      <div class="col-md-6 public-required-detail-item" data-public-label="${escapeAttr(label)}">
-        <div class="p-3 rounded-4 bg-light h-100">
-          <div class="text-muted small mb-1">${escapeHtml(label)}</div>
-          <div class="fw-bold">
-            ${isMissing ? missingValueHtml() : escapeHtml(value)}
-          </div>
-        </div>
-      </div>
-    `;
+  function escapeAttr(value) {
+    return escapeHtml(value).replace(/`/g, '&#096;');
   }
 
   function normalizeLabel(text) {
@@ -93,103 +34,83 @@
       .trim();
   }
 
+  function missingValueHtml() {
+    return `<span class="public-missing-field">${PUBLIC_MISSING_TEXT}</span>`;
+  }
+
   function findDetailsRow() {
     return document.querySelector('#detailsContainer .detail-box .row.g-3');
   }
 
-  function removeOldPublicInjectedItems(row) {
-    if (!row) return;
-
-    row.querySelectorAll('.public-required-detail-item, .public-none-detail-item').forEach(function(el) {
-      el.remove();
-    });
-  }
-
-  function rowHasLabel(row, label) {
-    if (!row) return false;
+  function findDetailItemByLabel(row, label) {
+    if (!row) return null;
 
     const wanted = normalizeLabel(label);
+    const labels = Array.from(row.querySelectorAll('.text-muted.small'));
 
-    return Array.from(row.querySelectorAll('.text-muted.small')).some(function(el) {
-      return normalizeLabel(el.textContent) === wanted;
-    });
-  }
+    for (const labelEl of labels) {
+      const current = normalizeLabel(labelEl.textContent || '');
 
-  function findDetailItemByLabel(row, label) {
-  if (!row) return null;
-
-  const wanted = normalizeLabel(label);
-  const labels = Array.from(row.querySelectorAll('.text-muted.small'));
-
-  for (const labelEl of labels) {
-    const current = normalizeLabel(labelEl.textContent || '');
-
-    if (current === wanted || current.startsWith(wanted)) {
-      return labelEl.closest('.col-md-6, .col-12') || labelEl.parentElement;
+      if (current === wanted || current.startsWith(wanted)) {
+        return labelEl.closest('.col-md-6, .col-12') || labelEl.parentElement;
+      }
     }
+
+    return null;
   }
 
-  return null;
-}
-
-function setMissingValueInExistingDetailItem(itemEl) {
-  if (!itemEl) return;
-
-  const valueEl = itemEl.querySelector('.fw-bold');
-  if (!valueEl) return;
-
-  if (valueEl.querySelector('.public-missing-field')) return;
-
-  valueEl.innerHTML = missingValueHtml();
-}
-  function getPublicNoneValueHtml() {
-  const temp = document.createElement('div');
-
-  temp.innerHTML = makePublicNoneDetailItem('حقل مؤقت');
-
-  const valueEl = temp.querySelector('.fw-bold');
-
-  if (valueEl && valueEl.innerHTML.trim()) {
-    return valueEl.innerHTML;
+  function getFieldValue(item, field) {
+    return item ? item[field] : '';
   }
 
-  return '<span class="public-none-field">لا يوجد</span>';
-}
+  function makeOrderedDetailItem(label, value, field) {
+    const missing = isEmptyValue(value);
 
-function setNoneValueInExistingDetailItem(itemEl) {
-  if (!itemEl) return;
-
-  const valueEl = itemEl.querySelector('.fw-bold');
-  if (!valueEl) return;
-
-  const currentText = String(valueEl.textContent || '').trim();
-
-  if (!currentText || currentText === '-' || currentText === '—') {
-    valueEl.innerHTML = getPublicNoneValueHtml();
+    return `
+      <div class="col-md-6 public-ordered-detail-item" data-public-label="${escapeAttr(label)}" data-public-field="${escapeAttr(field || '')}">
+        <div class="p-3 rounded-4 bg-light h-100">
+          <div class="text-muted small mb-1">${escapeHtml(label)}</div>
+          <div class="fw-bold">
+            ${missing ? missingValueHtml() : escapeHtml(value)}
+          </div>
+        </div>
+      </div>
+    `;
   }
-}
 
-  function insertNoneDetailItemInCorrectPlace(row, def) {
-  if (!row || !def) return;
+  function getOrderedDetailDefinitions(item) {
+    const type = String(item?.martyrdom_type || '').trim();
 
-  const html = makePublicNoneDetailItem(def.label);
+    const fields = [
+      { label: 'اسم الأب', field: 'father_name' },
+      { label: 'المواليد', field: 'birth_year' },
+      { label: 'اللقب', field: 'nickname' },
+      { label: 'استشهد بـ', field: 'martyrdom_type' }
+    ];
 
-  /*
-    حقل اللقب ترتيبه الطبيعي بعد المواليد.
-    عند الزائر لا يكون موجودًا أصلًا إذا كان فارغًا،
-    لذلك نضيفه بعد حقل المواليد بدل إضافته في آخر القائمة.
-  */
-  if (normalizeLabel(def.label) === normalizeLabel('اللقب')) {
-    const birthYearItem = findDetailItemByLabel(row, 'المواليد');
-
-    if (birthYearItem) {
-      birthYearItem.insertAdjacentHTML('afterend', html);
-      return;
+    if (type === 'المعارك') {
+      fields.push({ label: 'اسم المعركة', field: 'battle_name' });
     }
-  }
 
-  row.insertAdjacentHTML('beforeend', html);
-}
+    if (type === 'آخر') {
+      fields.push({ label: 'السبب', field: 'other_cause' });
+    }
+
+    if (type === 'تحت التعذيب' || type === 'معتقل') {
+      fields.push({ label: 'بيانات الفرع الأمني', field: 'security_branch' });
+    }
+
+    if (type === 'مفقود') {
+      fields.push({ label: 'آخر مكان شوهد فيه', field: 'last_seen_place' });
+    }
+
+    fields.push(
+      { label: 'تاريخ الاستشهاد', field: 'martyrdom_date' },
+      { label: 'مكان الاستشهاد', field: 'martyrdom_place' }
+    );
+
+    return fields;
+  }
 
   function patchHeaderFields(item) {
     if (!item) return;
@@ -212,73 +133,41 @@ function setNoneValueInExistingDetailItem(itemEl) {
     }
   }
 
-  function patchRequiredFieldsRow(item) {
+  function rebuildDetailsFieldsInCorrectOrder(item) {
     const row = findDetailsRow();
-
     if (!row || !item) return;
 
-    removeOldPublicInjectedItems(row);
-
-REQUIRED_PUBLIC_FIELDS.forEach(function(def) {
-  const value = item[def.field];
-  const missing = isEmptyValue(value);
-  const existingItem = findDetailItemByLabel(row, def.label);
-
-  /*
-    إذا كان الحقل موجودًا بالفعل، كما يحدث عند الأدمن،
-    ونفس الحقل فارغ، نستبدل الشرطة أو الفراغ بعبارة بيانات تحتاج لاستكمال.
-  */
-  if (existingItem) {
-    if (missing) {
-      setMissingValueInExistingDetailItem(existingItem);
-    }
-    return;
-  }
-
-  /*
-    إذا كان الحقل غير موجود أصلًا، كما يحدث عند الزائر،
-    نضيفه بالعبارة الصفراء.
-  */
-  if (missing) {
-    row.insertAdjacentHTML(
-      'beforeend',
-      makePublicDetailItem(def.label, '', true)
-    );
-  }
-});
-  }
-
-function patchEmptyAsNoneFields(item) {
-  const row = findDetailsRow();
-
-  if (!row || !item) return;
-
-  PUBLIC_EMPTY_AS_NONE_FIELDS.forEach(function(def) {
-    const existingItem = findDetailItemByLabel(row, def.label);
-
-    if (!isEmptyValue(item[def.field])) return;
+    const definitions = getOrderedDetailDefinitions(item);
 
     /*
-      إذا كان الحقل موجودًا أصلًا، كما عند الأدمن،
-      نستبدل الشرطة أو الفراغ بنفس تنسيق "لا يوجد" المستخدم للزائر.
+      نحذف فقط العناصر التي أضافها هذا الملف سابقًا،
+      ثم نعيد بناء الحقول بالترتيب الصحيح.
+      هذا يمنع خربطة الترتيب عند الزائر.
     */
-    if (existingItem) {
-      setNoneValueInExistingDetailItem(existingItem);
-      return;
-    }
+    row.querySelectorAll('.public-ordered-detail-item, .public-required-detail-item, .public-none-detail-item').forEach(function(el) {
+      el.remove();
+    });
 
     /*
-      إذا كان الحقل غير موجود، كما عند الزائر،
-      نضيفه في مكانه الصحيح.
+      نحذف الحقول الأصلية التي تحمل نفس العناوين المطلوبة،
+      سواء كانت ظاهرة للأدمن أو للزائر، ثم نعيد بناءها نحن بالترتيب الصحيح.
     */
-    insertNoneDetailItemInCorrectPlace(row, def);
-  });
-}
+    definitions.forEach(function(def) {
+      const existing = findDetailItemByLabel(row, def.label);
+      if (existing) existing.remove();
+    });
+
+    const html = definitions.map(function(def) {
+      return makeOrderedDetailItem(def.label, getFieldValue(item, def.field), def.field);
+    }).join('');
+
+    row.insertAdjacentHTML('afterbegin', html);
+  }
+
   function patchExtraInfoField(item) {
     if (!item) return;
 
     const detailBox = document.querySelector('#detailsContainer .detail-box');
-
     if (!detailBox) return;
 
     const existingExtraTitle = Array.from(detailBox.querySelectorAll('h6.fw-bold')).find(function(el) {
@@ -286,23 +175,19 @@ function patchEmptyAsNoneFields(item) {
     });
 
     if (existingExtraTitle) return;
-
     if (!isEmptyValue(item.extra_info)) return;
 
-    /*
-      إذا معلومات إضافية فارغة، نعرضها للزائر كحقل يحتاج استكمال.
-    */
     const actionsBar = detailBox.querySelector('.details-action-bar');
 
     const extraHtml = `
-  <hr class="public-extra-info-separator">
-  <div class="public-extra-info-missing">
-    <h6 class="fw-bold">معلومات إضافية</h6>
-    <p class="lh-lg mb-0">
-      <span class="public-no-extra-info">لا يوجد</span>
-    </p>
-  </div>
-`;
+      <hr class="public-extra-info-separator">
+      <div class="public-extra-info-missing">
+        <h6 class="fw-bold">معلومات إضافية</h6>
+        <p class="lh-lg mb-0">
+          <span class="public-no-extra-info">لا يوجد</span>
+        </p>
+      </div>
+    `;
 
     if (actionsBar) {
       actionsBar.insertAdjacentHTML('beforebegin', extraHtml);
@@ -311,18 +196,14 @@ function patchEmptyAsNoneFields(item) {
     }
   }
 
-  function patchPublicDetailsFields() {
-    // if (isAdminMode()) return;
-
+  function patchDetailsFields() {
     const item = getCurrentDetailsItemSafe();
 
     if (!item) return;
-
     if (!document.getElementById('detailsPage')?.classList.contains('active')) return;
 
     patchHeaderFields(item);
-    patchRequiredFieldsRow(item);
-    patchEmptyAsNoneFields(item);
+    rebuildDetailsFieldsInCorrectOrder(item);
     patchExtraInfoField(item);
   }
 
@@ -334,9 +215,10 @@ function patchEmptyAsNoneFields(item) {
     window.openMartyrDetails = function() {
       const result = oldOpenMartyrDetails.apply(this, arguments);
 
-      setTimeout(patchPublicDetailsFields, 0);
-      requestAnimationFrame(patchPublicDetailsFields);
-      setTimeout(patchPublicDetailsFields, 120);
+      setTimeout(patchDetailsFields, 0);
+      requestAnimationFrame(patchDetailsFields);
+      setTimeout(patchDetailsFields, 120);
+      setTimeout(patchDetailsFields, 350);
 
       return result;
     };
@@ -357,7 +239,8 @@ function patchEmptyAsNoneFields(item) {
       const result = oldRefreshCurrentDetailsPage.apply(this, arguments);
 
       Promise.resolve(result).finally(function() {
-        setTimeout(patchPublicDetailsFields, 120);
+        setTimeout(patchDetailsFields, 120);
+        setTimeout(patchDetailsFields, 350);
       });
 
       return result;
