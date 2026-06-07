@@ -4,6 +4,12 @@
   const DELETED_STATUS = 'deleted';
   const REQUEST_TIMEOUT_MS = 22000;
 
+  function readMultilineValue(el) {
+  return String(el?.value || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n');
+}
+
   function clean(value) {
     return String(value || '').trim();
   }
@@ -22,13 +28,73 @@
   }
 
   function getAdminMessagesList() {
-    if (Array.isArray(window.__adminMessages)) return window.__adminMessages;
-
-    try {
-      if (Array.isArray(siteMessages)) return siteMessages;
-    } catch (error) {}
+    /*
+      مهم:
+      لا نعتمد على siteMessages هنا؛ لأنها رسائل الواجهة العامة
+      وغالبًا تحتوي الرسائل المفعّلة فقط.
+      لوحة الإعدادات يجب أن تعتمد على window.__adminMessages
+      لأنها تأتي من getAdminDashboardData وتحتوي المفعّل وغير المفعّل.
+    */
+    if (Array.isArray(window.__adminMessages)) {
+      return window.__adminMessages;
+    }
 
     return [];
+  }
+
+  function ensureFullAdminMessagesLoaded() {
+    if (window.__taldoFullAdminMessagesLoading) {
+      return Promise.resolve(false);
+    }
+
+    /*
+      إذا كانت قائمة رسائل الأدمن موجودة، لا نحتاج جلبًا جديدًا.
+    */
+    if (Array.isArray(window.__adminMessages)) {
+      return Promise.resolve(true);
+    }
+
+    window.__taldoFullAdminMessagesLoading = true;
+
+    return withTimeout(
+      apiRequest('getAdminDashboardData', {
+        forceFresh: true,
+        reason: 'settingsFullMessages'
+      }),
+      REQUEST_TIMEOUT_MS,
+      'تعذر تحميل رسائل لوحة التحكم.'
+    )
+      .then(function (res) {
+        if (!res || res.success === false) {
+          throw new Error(res?.message || 'تعذر تحميل رسائل لوحة التحكم.');
+        }
+
+        window.__adminMessages = Array.isArray(res.messages) ? res.messages : [];
+        window.__messageReplies = Array.isArray(res.messageReplies) ? res.messageReplies : [];
+
+        try {
+          if (window.dashboardData && typeof window.dashboardData === 'object') {
+            window.dashboardData.messages = window.__adminMessages;
+            window.dashboardData.messageReplies = window.__messageReplies;
+          }
+        } catch (error) {}
+
+        try {
+          if (window.adminDashboardData && typeof window.adminDashboardData === 'object') {
+            window.adminDashboardData.messages = window.__adminMessages;
+            window.adminDashboardData.messageReplies = window.__messageReplies;
+          }
+        } catch (error) {}
+
+        return true;
+      })
+      .catch(function (err) {
+        console.warn('ensureFullAdminMessagesLoaded failed:', err);
+        return false;
+      })
+      .finally(function () {
+        window.__taldoFullAdminMessagesLoading = false;
+      });
   }
 
   function getMessageById(messageId) {
@@ -649,11 +715,30 @@ const payload = {
   const previousRenderSettingsTab = window.renderSettingsTab;
   if (typeof previousRenderSettingsTab === 'function' && !previousRenderSettingsTab.__taldoDashboardActionsWrapped) {
     window.renderSettingsTab = function () {
+      const hasFullAdminMessages = Array.isArray(window.__adminMessages);
       const result = previousRenderSettingsTab.apply(this, arguments);
 
       setTimeout(patchAllDashboardEnhancements, 0);
       setTimeout(patchAllDashboardEnhancements, 300);
       setTimeout(patchAllDashboardEnhancements, 900);
+
+      /*
+        إذا فتحت صفحة الإعدادات قبل تحميل رسائل الأدمن الكاملة،
+        فإن renderSettingsTab الأصلي قد يعرض siteMessages فقط،
+        وهي رسائل مفعّلة فقط.
+        لذلك نجلب رسائل الأدمن الكاملة ثم نعيد رسم التبويب مرة واحدة.
+      */
+      if (!hasFullAdminMessages) {
+        ensureFullAdminMessagesLoaded().then(function (loaded) {
+          if (!loaded) return;
+
+          previousRenderSettingsTab.call(window);
+
+          setTimeout(patchAllDashboardEnhancements, 0);
+          setTimeout(patchAllDashboardEnhancements, 300);
+          setTimeout(patchAllDashboardEnhancements, 900);
+        });
+      }
 
       return result;
     };
