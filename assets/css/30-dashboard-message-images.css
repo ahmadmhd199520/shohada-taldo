@@ -1,0 +1,35 @@
+/* صورة الرسالة داخل لوحة التحكم */
+.taldo-admin-message-image-preview {
+  float: inline-start;
+  width: 96px;
+  height: 96px;
+  margin-inline-end: 12px;
+  margin-bottom: 8px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #f8f9fa;
+  cursor: pointer;
+}
+
+.taldo-admin-message-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* في الجداول */
+tr .taldo-admin-message-image-preview {
+  float: none;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+}
+
+/* الوضع الليلي */
+body.dark-mode .taldo-admin-message-image-preview,
+html[data-theme="dark"] .taldo-admin-message-image-preview {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+}
