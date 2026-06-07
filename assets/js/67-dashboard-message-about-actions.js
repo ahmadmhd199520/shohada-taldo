@@ -38,10 +38,10 @@ function readMultilineValue(el) {
         const titleEl = row.querySelector('.taldo-about-section-title');
         const bodyEl = row.querySelector('.taldo-about-section-body');
 
-        return {
-          title: clean(titleEl?.value || ''),
-          body: readMultilineValue(bodyEl).trim()
-        };
+return {
+  title: clean(titleEl?.value || ''),
+  body: readMultilineValue(bodyEl).replace(/^\n+|\n+$/g, '')
+};
       })
       .filter(section => section.title || section.body)
       .map(section => ({
@@ -71,6 +71,11 @@ function readMultilineValue(el) {
 
     const hidden = document.getElementById('aboutUsAdminText');
     if (hidden) hidden.value = value;
+    try {
+      window.__taldoAboutRawValue = value;
+      sessionStorage.setItem('taldo_about_sections_last_saved', value);
+      localStorage.setItem('taldo_about_sections_last_saved', value);
+    } catch (error) {}
 
     try {
       localStorage.setItem('taldo_about_us_text_cache', value);
@@ -774,15 +779,19 @@ const payload = {
           setAboutValueEverywhere(value);
           showToast(res.message || 'تم حفظ قسم من نحن.');
 
-          try {
-            if (typeof window.taldoRenderAboutSectionsPublic === 'function') {
-              window.taldoRenderAboutSectionsPublic();
-              setTimeout(window.taldoRenderAboutSectionsPublic, 120);
-            }
-          } catch (error) {}
+try {
+  if (typeof window.taldoRenderAboutSectionsPublic === 'function') {
+    window.__taldoAboutRawValue = value;
+    window.taldoRenderAboutSectionsPublic();
+    setTimeout(function () {
+      window.__taldoAboutRawValue = value;
+      window.taldoRenderAboutSectionsPublic();
+    }, 120);
+  }
+} catch (error) {}
 
-          patchAboutRowsEditButtons();
-          return res;
+patchAboutRowsEditButtons();
+return res;
         })
         .catch(err => {
           showToast(err.message || 'تعذر حفظ قسم من نحن.');
