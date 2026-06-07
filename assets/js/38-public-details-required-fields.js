@@ -142,7 +142,21 @@ function setMissingValueInExistingDetailItem(itemEl) {
 
   valueEl.innerHTML = missingValueHtml();
 }
-  function setNoneValueInExistingDetailItem(itemEl) {
+  function getPublicNoneValueHtml() {
+  const temp = document.createElement('div');
+
+  temp.innerHTML = makePublicNoneDetailItem('حقل مؤقت');
+
+  const valueEl = temp.querySelector('.fw-bold');
+
+  if (valueEl && valueEl.innerHTML.trim()) {
+    return valueEl.innerHTML;
+  }
+
+  return '<span class="public-none-field">لا يوجد</span>';
+}
+
+function setNoneValueInExistingDetailItem(itemEl) {
   if (!itemEl) return;
 
   const valueEl = itemEl.querySelector('.fw-bold');
@@ -151,8 +165,30 @@ function setMissingValueInExistingDetailItem(itemEl) {
   const currentText = String(valueEl.textContent || '').trim();
 
   if (!currentText || currentText === '-' || currentText === '—') {
-    valueEl.textContent = 'لا يوجد';
+    valueEl.innerHTML = getPublicNoneValueHtml();
   }
+}
+
+  function insertNoneDetailItemInCorrectPlace(row, def) {
+  if (!row || !def) return;
+
+  const html = makePublicNoneDetailItem(def.label);
+
+  /*
+    حقل اللقب ترتيبه الطبيعي بعد المواليد.
+    عند الزائر لا يكون موجودًا أصلًا إذا كان فارغًا،
+    لذلك نضيفه بعد حقل المواليد بدل إضافته في آخر القائمة.
+  */
+  if (normalizeLabel(def.label) === normalizeLabel('اللقب')) {
+    const birthYearItem = findDetailItemByLabel(row, 'المواليد');
+
+    if (birthYearItem) {
+      birthYearItem.insertAdjacentHTML('afterend', html);
+      return;
+    }
+  }
+
+  row.insertAdjacentHTML('beforeend', html);
 }
 
   function patchHeaderFields(item) {
@@ -224,7 +260,7 @@ function patchEmptyAsNoneFields(item) {
 
     /*
       إذا كان الحقل موجودًا أصلًا، كما عند الأدمن،
-      نستبدل الشرطة أو الفراغ بكلمة: لا يوجد
+      نستبدل الشرطة أو الفراغ بنفس تنسيق "لا يوجد" المستخدم للزائر.
     */
     if (existingItem) {
       setNoneValueInExistingDetailItem(existingItem);
@@ -233,14 +269,11 @@ function patchEmptyAsNoneFields(item) {
 
     /*
       إذا كان الحقل غير موجود، كما عند الزائر،
-      نضيفه بصيغة: لا يوجد
+      نضيفه في مكانه الصحيح.
     */
-    row.insertAdjacentHTML(
-      'beforeend',
-      makePublicNoneDetailItem(def.label)
-    );
+    insertNoneDetailItemInCorrectPlace(row, def);
   });
-}  
+}
   function patchExtraInfoField(item) {
     if (!item) return;
 
