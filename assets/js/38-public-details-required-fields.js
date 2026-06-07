@@ -115,6 +115,34 @@
     });
   }
 
+  function findDetailItemByLabel(row, label) {
+  if (!row) return null;
+
+  const wanted = normalizeLabel(label);
+  const labels = Array.from(row.querySelectorAll('.text-muted.small'));
+
+  for (const labelEl of labels) {
+    const current = normalizeLabel(labelEl.textContent || '');
+
+    if (current === wanted || current.startsWith(wanted)) {
+      return labelEl.closest('.col-md-6, .col-12') || labelEl.parentElement;
+    }
+  }
+
+  return null;
+}
+
+function setMissingValueInExistingDetailItem(itemEl) {
+  if (!itemEl) return;
+
+  const valueEl = itemEl.querySelector('.fw-bold');
+  if (!valueEl) return;
+
+  if (valueEl.querySelector('.public-missing-field')) return;
+
+  valueEl.innerHTML = missingValueHtml();
+}
+
   function patchHeaderFields(item) {
     if (!item) return;
 
@@ -143,23 +171,33 @@
 
     removeOldPublicInjectedItems(row);
 
-    REQUIRED_PUBLIC_FIELDS.forEach(function(def) {
-      const value = item[def.field];
-      const missing = isEmptyValue(value);
+REQUIRED_PUBLIC_FIELDS.forEach(function(def) {
+  const value = item[def.field];
+  const missing = isEmptyValue(value);
+  const existingItem = findDetailItemByLabel(row, def.label);
 
-      /*
-        إذا الحقل موجود أصلًا لأن له قيمة، لا نكرره.
-        إذا غير موجود لأنه فارغ، نضيفه بالعبارة الصفراء.
-      */
-      if (rowHasLabel(row, def.label)) return;
+  /*
+    إذا كان الحقل موجودًا بالفعل، كما يحدث عند الأدمن،
+    ونفس الحقل فارغ، نستبدل الشرطة أو الفراغ بعبارة بيانات تحتاج لاستكمال.
+  */
+  if (existingItem) {
+    if (missing) {
+      setMissingValueInExistingDetailItem(existingItem);
+    }
+    return;
+  }
 
-      if (missing) {
-        row.insertAdjacentHTML(
-          'beforeend',
-          makePublicDetailItem(def.label, '', true)
-        );
-      }
-    });
+  /*
+    إذا كان الحقل غير موجود أصلًا، كما يحدث عند الزائر،
+    نضيفه بالعبارة الصفراء.
+  */
+  if (missing) {
+    row.insertAdjacentHTML(
+      'beforeend',
+      makePublicDetailItem(def.label, '', true)
+    );
+  }
+});
   }
 
   function patchEmptyAsNoneFields(item) {
@@ -216,7 +254,7 @@
   }
 
   function patchPublicDetailsFields() {
-    if (isAdminMode()) return;
+    // if (isAdminMode()) return;
 
     const item = getCurrentDetailsItemSafe();
 
