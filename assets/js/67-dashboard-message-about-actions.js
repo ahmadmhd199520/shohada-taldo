@@ -6,12 +6,12 @@
   const ADMIN_DASHBOARD_CACHE_KEY = 'taldo_admin_dashboard_cache_v2';
 
 
-  function readMultilineValue(el) {
-    return String(el?.value || '')
-      .replace(/\r\n/g, '\n')
-      .replace(/\r/g, '\n');
-  }
-
+function readMultilineValue(el) {
+  return String(el?.value || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[ \t]+$/gm, '');
+}
   function clean(value) {
     return String(value || '').trim();
   }
