@@ -213,16 +213,34 @@ REQUIRED_PUBLIC_FIELDS.forEach(function(def) {
   }
 
 function patchEmptyAsNoneFields(item) {
-  const row = getDetailsInfoRow();
-  if (!row) return;
+  const row = findDetailsRow();
 
-  const nicknameItem = findDetailItemByLabel(row, 'اللقب');
+  if (!row || !item) return;
 
-  if (isEmptyValue(item.nickname)) {
-    setNoneValueInExistingDetailItem(nicknameItem);
-  }
-}
-  
+  PUBLIC_EMPTY_AS_NONE_FIELDS.forEach(function(def) {
+    const existingItem = findDetailItemByLabel(row, def.label);
+
+    if (!isEmptyValue(item[def.field])) return;
+
+    /*
+      إذا كان الحقل موجودًا أصلًا، كما عند الأدمن،
+      نستبدل الشرطة أو الفراغ بكلمة: لا يوجد
+    */
+    if (existingItem) {
+      setNoneValueInExistingDetailItem(existingItem);
+      return;
+    }
+
+    /*
+      إذا كان الحقل غير موجود، كما عند الزائر،
+      نضيفه بصيغة: لا يوجد
+    */
+    row.insertAdjacentHTML(
+      'beforeend',
+      makePublicNoneDetailItem(def.label)
+    );
+  });
+}  
   function patchExtraInfoField(item) {
     if (!item) return;
 
