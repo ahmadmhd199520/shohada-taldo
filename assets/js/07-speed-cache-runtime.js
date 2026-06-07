@@ -416,7 +416,7 @@ const search = normalizeFast(document.getElementById('searchInput')?.value || ''
         ? `<div class="martyrs-grid">${pageList.map((item, index) => renderMartyrCard(item, index)).join('')}</div>`
         : `<div>${pageList.map(renderMartyrListItem).join('')}</div>`;
 
-      container.innerHTML = contentHtml + renderMartyrsPagination(totalPages, list.length);
+      container.innerHTML = contentHtml + renderMartyrsPaginationPerf(totalPages, list.length, pageSize);
     };
 
     try {
