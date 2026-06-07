@@ -3,6 +3,8 @@
 
   const DELETED_STATUS = 'deleted';
   const REQUEST_TIMEOUT_MS = 22000;
+  const ADMIN_DASHBOARD_CACHE_KEY = 'taldo_admin_dashboard_cache_v2';
+
 
   function readMultilineValue(el) {
     return String(el?.value || '')
@@ -75,14 +77,86 @@
     } catch (error) {}
   }
 
+  function addMessagesFromList(target, list) {
+    if (!Array.isArray(list)) return;
+
+    list.forEach(msg => {
+      if (!msg) return;
+      const id = clean(msg.message_id || msg.messageId || '');
+      const title = clean(msg.title || msg.message_title || '');
+      if (!id && !title) return;
+      target.push(msg);
+    });
+  }
+
+  function readCachedDashboardPayload() {
+    try {
+      const raw = sessionStorage.getItem(ADMIN_DASHBOARD_CACHE_KEY);
+      if (!raw) return null;
+
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.value && typeof parsed.value === 'object') {
+        return parsed.value;
+      }
+
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function hydrateAdminMessagesFromKnownSources() {
+    const found = [];
+
+    addMessagesFromList(found, window.__adminMessages);
+    addMessagesFromList(found, window.adminMessages);
+
+    if (window.dashboardData && typeof window.dashboardData === 'object' && !Array.isArray(window.dashboardData)) {
+      addMessagesFromList(found, window.dashboardData.messages);
+      addMessagesFromList(found, window.dashboardData.siteMessages);
+      addMessagesFromList(found, window.dashboardData.site_messages);
+    }
+
+    if (window.adminDashboardData && typeof window.adminDashboardData === 'object' && !Array.isArray(window.adminDashboardData)) {
+      addMessagesFromList(found, window.adminDashboardData.messages);
+      addMessagesFromList(found, window.adminDashboardData.siteMessages);
+      addMessagesFromList(found, window.adminDashboardData.site_messages);
+    }
+
+    const cached = readCachedDashboardPayload();
+    if (cached && typeof cached === 'object') {
+      addMessagesFromList(found, cached.messages);
+      addMessagesFromList(found, cached.siteMessages);
+      addMessagesFromList(found, cached.site_messages);
+
+      if (!Array.isArray(window.__messageReplies) && Array.isArray(cached.messageReplies)) {
+        window.__messageReplies = cached.messageReplies;
+      }
+    }
+
+    if (!found.length) return false;
+
+    const seen = new Set();
+    const unique = found.filter(msg => {
+      const key = clean(msg.message_id || msg.messageId || msg.title || msg.message_title || '');
+      if (!key) return false;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    window.__adminMessages = unique;
+    return true;
+  }
+
   function getAdminMessagesList() {
     /*
-      مهم:
-      لا نعتمد على siteMessages هنا؛ لأنها رسائل الواجهة العامة
-      وغالبًا تحتوي الرسائل المفعّلة فقط.
-      لوحة الإعدادات يجب أن تعتمد على window.__adminMessages
-      لأنها تأتي من getAdminDashboardData وتحتوي المفعّل وغير المفعّل.
+      لا نستخدم siteMessages هنا لأنها رسائل العرض العام وقد تحتوي المفعّل فقط.
+      نحاول أولًا تجميع رسائل لوحة التحكم من الذاكرة أو من كاش الداشبورد المحلي.
+      ولا نطلق طلب API جديد من هنا حتى لا تتكرر إعادة الرسم ولا يطول فتح صفحة الإعدادات.
     */
+    hydrateAdminMessagesFromKnownSources();
+
     if (Array.isArray(window.__adminMessages)) {
       return window.__adminMessages;
     }
@@ -91,58 +165,7 @@
   }
 
   function ensureFullAdminMessagesLoaded() {
-    if (window.__taldoFullAdminMessagesLoading) {
-      return Promise.resolve(false);
-    }
-
-    /*
-      إذا كانت قائمة رسائل الأدمن موجودة، لا نحتاج جلبًا جديدًا.
-    */
-    if (Array.isArray(window.__adminMessages)) {
-      return Promise.resolve(true);
-    }
-
-    window.__taldoFullAdminMessagesLoading = true;
-
-    return withTimeout(
-      apiRequest('getAdminDashboardData', {
-        forceFresh: true,
-        reason: 'settingsFullMessages'
-      }),
-      REQUEST_TIMEOUT_MS,
-      'تعذر تحميل رسائل لوحة التحكم.'
-    )
-      .then(function (res) {
-        if (!res || res.success === false) {
-          throw new Error(res?.message || 'تعذر تحميل رسائل لوحة التحكم.');
-        }
-
-        window.__adminMessages = Array.isArray(res.messages) ? res.messages : [];
-        window.__messageReplies = Array.isArray(res.messageReplies) ? res.messageReplies : [];
-
-        try {
-          if (window.dashboardData && typeof window.dashboardData === 'object') {
-            window.dashboardData.messages = window.__adminMessages;
-            window.dashboardData.messageReplies = window.__messageReplies;
-          }
-        } catch (error) {}
-
-        try {
-          if (window.adminDashboardData && typeof window.adminDashboardData === 'object') {
-            window.adminDashboardData.messages = window.__adminMessages;
-            window.adminDashboardData.messageReplies = window.__messageReplies;
-          }
-        } catch (error) {}
-
-        return true;
-      })
-      .catch(function (err) {
-        console.warn('ensureFullAdminMessagesLoaded failed:', err);
-        return false;
-      })
-      .finally(function () {
-        window.__taldoFullAdminMessagesLoading = false;
-      });
+    return Promise.resolve(hydrateAdminMessagesFromKnownSources());
   }
 
   function getMessageById(messageId) {
@@ -830,35 +853,27 @@ const payload = {
   const previousRenderSettingsTab = window.renderSettingsTab;
   if (typeof previousRenderSettingsTab === 'function' && !previousRenderSettingsTab.__taldoDashboardActionsWrapped) {
     window.renderSettingsTab = function () {
-      const hasFullAdminMessages = Array.isArray(window.__adminMessages);
+      /*
+        مهم جدًا:
+        نملأ window.__adminMessages قبل استدعاء renderSettingsTab الأصلي.
+        هكذا لا يعود renderSettingsTab إلى siteMessages التي تعرض الرسائل المفعلة فقط.
+        ولا نطلب getAdminDashboardData من هنا حتى لا تتكرر التحديثات ولا يقفز السكرول.
+      */
+      hydrateAdminMessagesFromKnownSources();
+
       const result = previousRenderSettingsTab.apply(this, arguments);
 
       setTimeout(patchAllDashboardEnhancements, 0);
-      setTimeout(patchAllDashboardEnhancements, 300);
-      setTimeout(patchAllDashboardEnhancements, 900);
-
-      /*
-        إذا فتحت صفحة الإعدادات قبل تحميل رسائل الأدمن الكاملة،
-        فإن renderSettingsTab الأصلي قد يعرض siteMessages فقط،
-        وهي رسائل مفعّلة فقط.
-        لذلك نجلب رسائل الأدمن الكاملة ثم نعيد رسم التبويب مرة واحدة.
-      */
-      if (!hasFullAdminMessages) {
-        ensureFullAdminMessagesLoaded().then(function (loaded) {
-          if (!loaded) return;
-
-          previousRenderSettingsTab.call(window);
-
-          setTimeout(patchAllDashboardEnhancements, 0);
-          setTimeout(patchAllDashboardEnhancements, 300);
-          setTimeout(patchAllDashboardEnhancements, 900);
-        });
-      }
+      setTimeout(patchAllDashboardEnhancements, 250);
 
       return result;
     };
 
     window.renderSettingsTab.__taldoDashboardActionsWrapped = true;
+
+    try {
+      renderSettingsTab = window.renderSettingsTab;
+    } catch (error) {}
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -870,5 +885,5 @@ const payload = {
     if (settingsTab && settingsTab.offsetParent !== null) {
       patchAllDashboardEnhancements();
     }
-  }, 1800);
+  }, 3000);
 })();
