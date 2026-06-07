@@ -103,16 +103,21 @@
     ].join(';') + ';';
   }
 
-  function renderDetailImagePlaceholderFix() {
-    return `
-      <div class="detail-image-placeholder">
-        <div>
-          <i class="fa-solid fa-user fa-4x text-secondary mb-3"></i>
-          <div>لا توجد صورة مرفقة</div>
+ function renderDetailImagePlaceholderFix() {
+  return `
+    <div class="detail-image-placeholder taldo-detail-image-needs-completion">
+      <div>
+        <i class="fa-solid fa-user fa-4x text-secondary mb-3"></i>
+        <div>لا توجد صورة مرفقة</div>
+        <div class="mt-2">
+          <span class="public-missing-field taldo-image-missing-label">
+            الصورة تحتاج لاستكمال
+          </span>
         </div>
       </div>
-    `;
-  }
+    </div>
+  `;
+}
 
   function rerenderDetailGalleryFix() {
     const holder = document.querySelector('#detailsContainer .col-lg-5');
