@@ -5,12 +5,25 @@
     return String(value || '').trim();
   }
 
-  function escapeAttr(value) {
+  function escapeHtml(value) {
     return clean(value)
       .replace(/&/g, '&amp;')
-      .replace(/"/g, '&quot;')
       .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function escapeAttr(value) {
+    return escapeHtml(value).replace(/`/g, '&#096;');
+  }
+
+  function cssEscape(value) {
+    if (window.CSS && typeof window.CSS.escape === 'function') {
+      return window.CSS.escape(String(value || ''));
+    }
+
+    return String(value || '').replace(/(["\\])/g, '\\$1');
   }
 
   function extractDriveId(value) {
@@ -31,174 +44,172 @@
     return '';
   }
 
-  function getMessageImageSrc(msg) {
+  function imageSrcFromMessage(msg, size) {
     if (!msg) return '';
 
     const fileId =
       extractDriveId(msg.image_file_id) ||
       extractDriveId(msg.imageFileId) ||
+      extractDriveId(msg.file_id) ||
       extractDriveId(msg.image_url) ||
       extractDriveId(msg.imageUrl);
 
     if (fileId) {
-      return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w500`;
+      return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w${size || 500}`;
     }
 
     return clean(msg.image_url || msg.imageUrl || '');
   }
 
-function getAdminMessages() {
-  const result = [];
-
-  function addList(list) {
+  function addMessageList(list, target) {
     if (!Array.isArray(list)) return;
 
-    list.forEach(function (msg) {
+    list.forEach(msg => {
       if (!msg) return;
 
-      const id = clean(msg.message_id || msg.messageId || '');
-      const title = clean(msg.title || msg.message_title || '');
+      const hasIdentity = clean(msg.message_id || msg.messageId || msg.title || msg.message_title);
+      const hasImage = imageSrcFromMessage(msg, 500);
 
-      if (!id && !title) return;
-
-      result.push(msg);
+      if (hasIdentity && hasImage) target.push(msg);
     });
   }
 
-  addList(window.__adminMessages);
-  addList(window.adminMessages);
-  addList(window.siteMessages);
-  addList(window.__siteMessages);
+  function getAdminMessagesForImages() {
+    const result = [];
 
-  if (window.dashboardData && typeof window.dashboardData === 'object') {
-    addList(window.dashboardData.messages);
-    addList(window.dashboardData.siteMessages);
-    addList(window.dashboardData.site_messages);
+    addMessageList(window.__adminMessages, result);
+    addMessageList(window.adminMessages, result);
+    addMessageList(window.siteMessages, result);
+    addMessageList(window.__siteMessages, result);
+
+    try {
+      if (typeof siteMessages !== 'undefined') addMessageList(siteMessages, result);
+    } catch (error) {}
+
+    if (window.dashboardData && typeof window.dashboardData === 'object') {
+      addMessageList(window.dashboardData.messages, result);
+      addMessageList(window.dashboardData.siteMessages, result);
+      addMessageList(window.dashboardData.site_messages, result);
+    }
+
+    if (window.adminDashboardData && typeof window.adminDashboardData === 'object') {
+      addMessageList(window.adminDashboardData.messages, result);
+      addMessageList(window.adminDashboardData.siteMessages, result);
+      addMessageList(window.adminDashboardData.site_messages, result);
+    }
+
+    const seen = new Set();
+
+    return result.filter(msg => {
+      const key = clean(msg.message_id || msg.messageId || msg.title || msg.message_title || imageSrcFromMessage(msg, 500));
+      if (!key) return false;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }
 
-  if (window.adminDashboardData && typeof window.adminDashboardData === 'object') {
-    addList(window.adminDashboardData.messages);
-    addList(window.adminDashboardData.siteMessages);
-    addList(window.adminDashboardData.site_messages);
+  function normalizeTextForSearch(value) {
+    return clean(value).replace(/\s+/g, ' ');
   }
 
-  const seen = new Set();
+  function elementLooksLikeMessageCard(el, msg) {
+    if (!el || !msg) return false;
 
-  return result.filter(function (msg) {
-    const key = clean(msg.message_id || msg.messageId || msg.title || msg.message_title || '');
-    if (!key) return false;
-    if (seen.has(key)) return false;
-    seen.add(key);
+    const title = normalizeTextForSearch(msg.title || msg.message_title || '');
+    const body = normalizeTextForSearch(msg.body || msg.message_body || '');
+    const text = normalizeTextForSearch(el.textContent || '');
+
+    if (!title || !text.includes(title)) return false;
+
+    if (body) {
+      const bodyPart = body.slice(0, 40);
+      if (bodyPart && !text.includes(bodyPart)) return false;
+    }
+
     return true;
-  });
-}
-  function cssEscape(value) {
-    if (window.CSS && typeof window.CSS.escape === 'function') {
-      return window.CSS.escape(value);
-    }
-
-    return String(value || '').replace(/"/g, '\\"');
-  }
-function normalizeTextForSearch(value) {
-  return clean(value)
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function elementLooksLikeMessageCard(el, msg) {
-  if (!el || !msg) return false;
-
-  const title = normalizeTextForSearch(msg.title || msg.message_title || '');
-  const body = normalizeTextForSearch(msg.body || msg.message_body || '');
-
-  if (!title) return false;
-
-  const text = normalizeTextForSearch(el.textContent || '');
-
-  if (!text.includes(title)) return false;
-
-  if (body) {
-    const bodyPart = body.slice(0, 40);
-    if (bodyPart && !text.includes(bodyPart)) return false;
   }
 
-  return true;
-}
-function findMessageElement(msg) {
-  const id = clean(msg.message_id || msg.messageId);
-  if (!id) return findMessageElementByContent(msg);
-
-  const selectors = [
-    `[data-message-id="${cssEscape(id)}"]`,
-    `[data-msg-id="${cssEscape(id)}"]`,
-    `[data-taldo-message-id="${cssEscape(id)}"]`,
-    `[data-messageid="${cssEscape(id)}"]`
-  ];
-
-  for (const selector of selectors) {
-    const el = document.querySelector(selector);
-    if (el) {
-      return el.closest('.card, .list-group-item, tr, .message-card, .site-message-card, .admin-message-card, .rounded-4, .border') || el;
-    }
+  function candidateMessageContainers() {
+    return [
+      document.getElementById('messagesAdminList'),
+      document.getElementById('dashboardSettingsTab'),
+      document.getElementById('settingsTab'),
+      document.getElementById('settingsPage'),
+      document.getElementById('dashboardPage'),
+      document.body
+    ].filter(Boolean);
   }
 
-  const actionButton = document.querySelector(
-    `[data-action][data-message-id="${cssEscape(id)}"], button[data-message-id="${cssEscape(id)}"], button[data-msg-id="${cssEscape(id)}"]`
-  );
+  function findMessageElementByContent(msg) {
+    const selector = [
+      '.taldo-message-admin-card',
+      '.site-message-card',
+      '.admin-message-card',
+      '.message-card',
+      '.card',
+      '.list-group-item',
+      '.border.rounded-4',
+      '.rounded-4.border',
+      'tr'
+    ].join(',');
 
-  if (actionButton) {
-    return actionButton.closest('.card, .list-group-item, tr, .message-card, .site-message-card, .admin-message-card, .rounded-4, .border') || actionButton.parentElement;
-  }
+    for (const container of candidateMessageContainers()) {
+      const candidates = Array.from(container.querySelectorAll(selector));
 
-  return findMessageElementByContent(msg);
-}
-
-function findMessageElementByContent(msg) {
-  const containers = [
-    document.getElementById('siteMessagesList'),
-    document.getElementById('messagesList'),
-    document.getElementById('adminMessagesList'),
-    document.getElementById('settingsPage'),
-    document.getElementById('settingsTab'),
-    document.getElementById('dashboardPage'),
-    document.body
-  ].filter(Boolean);
-
-  const candidateSelector = [
-    '.site-message-card',
-    '.admin-message-card',
-    '.message-card',
-    '.card',
-    '.list-group-item',
-    'tr',
-    '.rounded-4.border',
-    '.border.rounded-4'
-  ].join(',');
-
-  for (const container of containers) {
-    const candidates = Array.from(container.querySelectorAll(candidateSelector));
-
-    for (const candidate of candidates) {
-      if (candidate.querySelector('.taldo-admin-message-image-preview')) continue;
-
-      if (elementLooksLikeMessageCard(candidate, msg)) {
-        return candidate;
+      for (const candidate of candidates) {
+        if (candidate.querySelector('.taldo-admin-message-image-preview')) continue;
+        if (elementLooksLikeMessageCard(candidate, msg)) return candidate;
       }
     }
+
+    return null;
   }
 
-  return null;
-}
-  function makePreviewHtml(src, title) {
+  function findMessageElement(msg) {
+    const id = clean(msg.message_id || msg.messageId);
+
+    if (id) {
+      const selectors = [
+        `[data-message-id="${cssEscape(id)}"]`,
+        `[data-msg-id="${cssEscape(id)}"]`,
+        `[data-taldo-message-id="${cssEscape(id)}"]`,
+        `[data-messageid="${cssEscape(id)}"]`,
+        `[data-message-id='${cssEscape(id)}']`,
+        `[data-msg-id='${cssEscape(id)}']`
+      ];
+
+      for (const selector of selectors) {
+        const el = document.querySelector(selector);
+        if (el) {
+          return el.closest('.taldo-message-admin-card, .card, .list-group-item, tr, .message-card, .site-message-card, .admin-message-card, .rounded-4, .border') || el;
+        }
+      }
+
+      const onclickButtons = Array.from(document.querySelectorAll('#messagesAdminList button[onclick], #dashboardSettingsTab button[onclick]'));
+      const relatedButton = onclickButtons.find(btn => String(btn.getAttribute('onclick') || '').includes(id));
+
+      if (relatedButton) {
+        return relatedButton.closest('.taldo-message-admin-card, .card, .list-group-item, tr, .message-card, .site-message-card, .admin-message-card, .rounded-4, .border') || relatedButton.parentElement;
+      }
+    }
+
+    return findMessageElementByContent(msg);
+  }
+
+  function makePreviewHtml(src, msg) {
+    const bigSrc = src.replace(/&sz=w\d+/g, '&sz=w1200').replace(/\?sz=w\d+/g, '?sz=w1200');
+    const title = msg.title || msg.message_title || 'صورة الرسالة';
+
     return `
-      <div class="taldo-admin-message-image-preview" title="عرض صورة الرسالة">
-        <img src="${escapeAttr(src)}" alt="${escapeAttr(title || 'صورة الرسالة')}" loading="lazy">
-      </div>
+      <a class="taldo-admin-message-image-preview" href="${escapeAttr(bigSrc)}" target="_blank" rel="noopener" title="عرض صورة الرسالة">
+        <img src="${escapeAttr(src)}" alt="${escapeAttr(title)}" loading="lazy">
+      </a>
     `;
   }
 
   function patchOneMessageImage(msg) {
-    const src = getMessageImageSrc(msg);
+    const src = imageSrcFromMessage(msg, 500);
     if (!src) return;
 
     const root = findMessageElement(msg);
@@ -206,60 +217,50 @@ function findMessageElementByContent(msg) {
 
     if (root.querySelector('.taldo-admin-message-image-preview')) return;
 
-    const html = makePreviewHtml(src, msg.title || '');
+    const html = makePreviewHtml(src, msg);
 
     if (root.tagName === 'TR') {
       const firstCell = root.querySelector('td');
-      if (firstCell) {
-        firstCell.insertAdjacentHTML('afterbegin', html);
-      }
+      if (firstCell) firstCell.insertAdjacentHTML('afterbegin', html);
       return;
     }
 
-    const body =
+    const target =
       root.querySelector('.card-body') ||
       root.querySelector('.message-body') ||
+      root.querySelector(':scope > .d-flex') ||
       root;
 
-    body.insertAdjacentHTML('afterbegin', html);
+    target.insertAdjacentHTML('afterbegin', html);
+    root.classList.add('taldo-message-has-image-preview');
   }
 
   function patchAdminMessageImages() {
-    const messages = getAdminMessages();
-
+    const messages = getAdminMessagesForImages();
     if (!messages.length) return;
 
     messages.forEach(patchOneMessageImage);
   }
 
-  document.addEventListener('click', function (event) {
-    const box = event.target.closest('.taldo-admin-message-image-preview');
-    if (!box) return;
-
-    const img = box.querySelector('img');
-    const src = img?.getAttribute('src');
-
-    if (src) {
-      window.open(src.replace(/&sz=w\d+/, '&sz=w1200'), '_blank');
-    }
-  });
+  function runSoon() {
+    setTimeout(patchAdminMessageImages, 0);
+    requestAnimationFrame(patchAdminMessageImages);
+    setTimeout(patchAdminMessageImages, 200);
+    setTimeout(patchAdminMessageImages, 650);
+  }
 
   const oldRenderSettingsTab =
     window.renderSettingsTab ||
     (typeof renderSettingsTab === 'function' ? renderSettingsTab : null);
 
-  if (typeof oldRenderSettingsTab === 'function' && !oldRenderSettingsTab.__messageImagesWrapped) {
+  if (typeof oldRenderSettingsTab === 'function' && !oldRenderSettingsTab.__taldoMessageImagesWrapped) {
     window.renderSettingsTab = function () {
       const result = oldRenderSettingsTab.apply(this, arguments);
-
-      setTimeout(patchAdminMessageImages, 0);
-      requestAnimationFrame(patchAdminMessageImages);
-      setTimeout(patchAdminMessageImages, 250);
-
+      runSoon();
       return result;
     };
 
-    window.renderSettingsTab.__messageImagesWrapped = true;
+    window.renderSettingsTab.__taldoMessageImagesWrapped = true;
 
     try {
       renderSettingsTab = window.renderSettingsTab;
@@ -268,11 +269,11 @@ function findMessageElementByContent(msg) {
 
   const observer = new MutationObserver(function () {
     clearTimeout(observer._timer);
-    observer._timer = setTimeout(patchAdminMessageImages, 120);
+    observer._timer = setTimeout(patchAdminMessageImages, 140);
   });
 
-  document.addEventListener('DOMContentLoaded', function () {
-    patchAdminMessageImages();
+  function boot() {
+    runSoon();
 
     if (document.body) {
       observer.observe(document.body, {
@@ -280,7 +281,13 @@ function findMessageElementByContent(msg) {
         subtree: true
       });
     }
-  });
+  }
 
-  setTimeout(patchAdminMessageImages, 800);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+  window.taldoPatchAdminMessageImages = patchAdminMessageImages;
 })();
