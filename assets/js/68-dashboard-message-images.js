@@ -99,7 +99,31 @@ function getAdminMessages() {
 
     return String(value || '').replace(/"/g, '\\"');
   }
+function normalizeTextForSearch(value) {
+  return clean(value)
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
+function elementLooksLikeMessageCard(el, msg) {
+  if (!el || !msg) return false;
+
+  const title = normalizeTextForSearch(msg.title || msg.message_title || '');
+  const body = normalizeTextForSearch(msg.body || msg.message_body || '');
+
+  if (!title) return false;
+
+  const text = normalizeTextForSearch(el.textContent || '');
+
+  if (!text.includes(title)) return false;
+
+  if (body) {
+    const bodyPart = body.slice(0, 40);
+    if (bodyPart && !text.includes(bodyPart)) return false;
+  }
+
+  return true;
+}
   function findMessageElement(msg) {
     const id = clean(msg.message_id || msg.messageId);
     if (!id) return null;
