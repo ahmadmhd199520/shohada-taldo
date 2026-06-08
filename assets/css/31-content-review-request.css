@@ -1,0 +1,233 @@
+/* 31-content-review-request.css
+   طلب مراجعة المحتوى - ملف مستقل يمكن تعطيله بتعليق استدعائه من index.html
+*/
+
+.taldo-content-review-btn {
+  border-radius: 16px !important;
+  font-weight: 800 !important;
+}
+
+.taldo-content-review-btn i {
+  color: currentColor;
+}
+
+#taldoContentReviewModal .modal-content,
+#taldoContentReviewReasonInfoModal .modal-content,
+#taldoContentReviewActionModal .modal-content {
+  border: 0;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+}
+
+#taldoContentReviewModal .modal-body,
+#taldoContentReviewReasonInfoModal .modal-body,
+#taldoContentReviewActionModal .modal-body {
+  padding: 24px;
+}
+
+.taldo-content-review-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 2rem;
+  margin-bottom: 14px;
+  background: rgba(107, 31, 42, 0.10);
+  color: #6b1f2a;
+}
+
+.taldo-content-review-warning {
+  border: 1px solid rgba(107, 31, 42, 0.16);
+  background: linear-gradient(135deg, rgba(107, 31, 42, 0.07), rgba(237, 235, 224, 0.55));
+  border-radius: 18px;
+  padding: 12px 14px;
+  line-height: 1.9;
+}
+
+.taldo-content-review-step {
+  display: none;
+}
+
+.taldo-content-review-step.active {
+  display: block;
+}
+
+.taldo-content-review-step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: rgba(13, 110, 253, 0.08);
+  color: #0d6efd;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.taldo-content-review-required::after {
+  content: ' *';
+  color: #dc3545;
+}
+
+.taldo-review-reasons-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.taldo-review-reason-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px solid rgba(13, 110, 253, 0.13);
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.taldo-review-reason-card:hover,
+.taldo-review-reason-card:focus-within {
+  border-color: rgba(13, 110, 253, 0.36);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(13, 110, 253, 0.10);
+}
+
+.taldo-review-reason-card input {
+  margin-top: 4px;
+  flex: 0 0 auto;
+}
+
+.taldo-review-reason-card-title {
+  font-weight: 800;
+}
+
+.taldo-review-reason-card-note {
+  color: var(--bs-secondary-color, #6c757d);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.taldo-content-review-error {
+  border-radius: 16px;
+  margin-top: 12px;
+}
+
+.taldo-content-review-success-box {
+  text-align: center;
+  border: 1px solid rgba(25, 135, 84, 0.20);
+  background: rgba(25, 135, 84, 0.06);
+  border-radius: 22px;
+  padding: 20px;
+  line-height: 2;
+}
+
+.taldo-content-review-success-box i {
+  font-size: 2.4rem;
+  color: #198754;
+  margin-bottom: 12px;
+}
+
+#contentReviewRequestsControls {
+  border-radius: 22px;
+}
+
+.taldo-review-request-cell {
+  max-width: 340px;
+  min-width: 220px;
+  white-space: pre-wrap;
+  line-height: 1.85;
+}
+
+.taldo-review-relation-badge,
+.taldo-review-reason-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  background: rgba(13, 110, 253, 0.08);
+  color: #0d6efd;
+}
+
+.taldo-review-reason-badge.is-danger {
+  background: rgba(220, 53, 69, 0.09);
+  color: #b02a37;
+}
+
+.taldo-review-action-btn {
+  min-width: 82px;
+  border-radius: 14px !important;
+  font-weight: 800 !important;
+}
+
+body.dark-mode #taldoContentReviewModal .modal-content,
+body.dark-mode #taldoContentReviewReasonInfoModal .modal-content,
+body.dark-mode #taldoContentReviewActionModal .modal-content,
+html[data-theme="dark"] #taldoContentReviewModal .modal-content,
+html[data-theme="dark"] #taldoContentReviewReasonInfoModal .modal-content,
+html[data-theme="dark"] #taldoContentReviewActionModal .modal-content {
+  background: #102522 !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode .taldo-content-review-warning,
+html[data-theme="dark"] .taldo-content-review-warning {
+  background: rgba(255, 193, 7, 0.10) !important;
+  border-color: rgba(255, 193, 7, 0.28) !important;
+  color: #fff8dd !important;
+}
+
+body.dark-mode .taldo-review-reason-card,
+html[data-theme="dark"] .taldo-review-reason-card {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.13) !important;
+  color: #f4faf8 !important;
+}
+
+body.dark-mode .taldo-review-reason-card-note,
+html[data-theme="dark"] .taldo-review-reason-card-note {
+  color: rgba(244, 250, 248, 0.74) !important;
+}
+
+body.dark-mode .taldo-content-review-step-badge,
+html[data-theme="dark"] .taldo-content-review-step-badge,
+body.dark-mode .taldo-review-relation-badge,
+body.dark-mode .taldo-review-reason-badge,
+html[data-theme="dark"] .taldo-review-relation-badge,
+html[data-theme="dark"] .taldo-review-reason-badge {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #eaf7f3 !important;
+}
+
+body.dark-mode .taldo-content-review-success-box,
+html[data-theme="dark"] .taldo-content-review-success-box {
+  background: rgba(25, 135, 84, 0.13) !important;
+  border-color: rgba(25, 135, 84, 0.32) !important;
+}
+
+@media (max-width: 768px) {
+  #taldoContentReviewModal .modal-dialog,
+  #taldoContentReviewReasonInfoModal .modal-dialog,
+  #taldoContentReviewActionModal .modal-dialog {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  #taldoContentReviewModal .modal-body,
+  #taldoContentReviewReasonInfoModal .modal-body,
+  #taldoContentReviewActionModal .modal-body {
+    padding: 18px;
+  }
+
+  .taldo-content-review-btn {
+    width: 100%;
+  }
+
+  .taldo-review-request-cell {
+    min-width: 240px;
+  }
+}
