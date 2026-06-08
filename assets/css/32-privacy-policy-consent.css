@@ -1,0 +1,318 @@
+/* ===== مودال الموافقة على سياسة الخصوصية والنشر + إدارة النص من لوحة التحكم ===== */
+#taldoPrivacyConsentModal {
+  z-index: 10990 !important;
+}
+
+#taldoPrivacyConsentModal .modal-backdrop,
+.modal-backdrop.show + #taldoPrivacyConsentModal {
+  z-index: 10990 !important;
+}
+
+#taldoPrivacyConsentModal .modal-dialog {
+  max-width: min(94vw, 720px) !important;
+  margin-inline: auto !important;
+}
+
+#taldoPrivacyConsentModal .modal-content {
+  border: 0 !important;
+  border-radius: 28px !important;
+  overflow: hidden !important;
+  box-shadow: 0 26px 70px rgba(0, 38, 35, 0.28) !important;
+  background: #ffffff !important;
+}
+
+#taldoPrivacyConsentModal .modal-body {
+  padding: 0 !important;
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+.taldo-privacy-consent-hero {
+  position: relative !important;
+  overflow: hidden !important;
+  padding: 22px 22px 18px !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #002623, #054239 58%, #428177) !important;
+}
+
+.taldo-privacy-consent-hero::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background:
+    radial-gradient(circle at top right, rgba(237, 235, 224, 0.22), transparent 42%),
+    radial-gradient(circle at bottom left, rgba(185, 167, 121, 0.24), transparent 46%) !important;
+  pointer-events: none !important;
+}
+
+.taldo-privacy-consent-hero > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.taldo-privacy-consent-icon {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  color: #edebe0 !important;
+  font-size: 24px !important;
+  margin-bottom: 10px !important;
+}
+
+.taldo-privacy-consent-title {
+  margin: 0 !important;
+  font-size: clamp(19px, 4vw, 27px) !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+}
+
+.taldo-privacy-consent-subtitle {
+  margin: 8px 0 0 !important;
+  color: rgba(255, 255, 255, 0.90) !important;
+  line-height: 1.9 !important;
+  font-size: 14.5px !important;
+}
+
+.taldo-privacy-consent-body {
+  padding: 18px 20px 16px !important;
+}
+
+.taldo-privacy-policy-scroll {
+  max-height: min(54vh, 440px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-inline-end: 6px !important;
+}
+
+.taldo-privacy-policy-accordion .accordion-item {
+  border: 1px solid rgba(5, 66, 57, 0.13) !important;
+  border-radius: 17px !important;
+  overflow: hidden !important;
+  margin-bottom: 10px !important;
+  background: #ffffff !important;
+  box-shadow: 0 8px 18px rgba(22, 22, 22, 0.04) !important;
+}
+
+.taldo-privacy-policy-accordion .accordion-button {
+  direction: rtl !important;
+  text-align: right !important;
+  gap: 10px !important;
+  color: #054239 !important;
+  background: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+  box-shadow: none !important;
+}
+
+.taldo-privacy-policy-accordion .accordion-button:not(.collapsed) {
+  color: #6b1f2a !important;
+  background: rgba(5, 66, 57, 0.055) !important;
+}
+
+.taldo-privacy-policy-accordion .accordion-button::after {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+.taldo-privacy-policy-accordion .accordion-body {
+  color: #161616 !important;
+  background: #ffffff !important;
+  line-height: 1.95 !important;
+  font-size: 14.7px !important;
+  text-align: right !important;
+  overflow-wrap: anywhere !important;
+}
+
+.taldo-privacy-consent-footer {
+  border-top: 1px solid rgba(5, 66, 57, 0.10) !important;
+  padding-top: 14px !important;
+  margin-top: 14px !important;
+}
+
+.taldo-privacy-consent-check {
+  padding: 11px 13px !important;
+  border-radius: 16px !important;
+  background: rgba(5, 66, 57, 0.055) !important;
+  border: 1px solid rgba(5, 66, 57, 0.10) !important;
+  margin-bottom: 12px !important;
+}
+
+.taldo-privacy-consent-check .form-check-input {
+  float: right !important;
+  margin-left: 8px !important;
+  margin-right: 0 !important;
+}
+
+.taldo-privacy-consent-check .form-check-label {
+  color: #3d3a3b !important;
+  line-height: 1.7 !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.taldo-privacy-consent-agree-btn {
+  width: 100% !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  padding: 12px 16px !important;
+  font-weight: 800 !important;
+  background: linear-gradient(135deg, #054239, #428177) !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 26px rgba(5, 66, 57, 0.22) !important;
+}
+
+.taldo-privacy-policy-admin-help {
+  border-radius: 16px !important;
+  background: rgba(5, 66, 57, 0.07) !important;
+  padding: 12px 14px !important;
+  font-size: 14px !important;
+  line-height: 1.85 !important;
+  color: #054239 !important;
+}
+
+.taldo-privacy-policy-admin .taldo-privacy-policy-section-admin-item {
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(5, 66, 57, 0.13) !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  margin-bottom: 12px !important;
+}
+
+.taldo-privacy-policy-section-admin-head {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  padding: 10px !important;
+  background: rgba(5, 66, 57, 0.045) !important;
+}
+
+.taldo-privacy-policy-section-admin-toggle {
+  flex: 1 1 auto !important;
+  border: 0 !important;
+  background: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-align: right !important;
+  direction: rtl !important;
+  padding: 0 !important;
+  font-weight: 800 !important;
+  color: #054239 !important;
+}
+
+.taldo-privacy-policy-section-number {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(5, 66, 57, 0.10) !important;
+  color: #054239 !important;
+  font-weight: 800 !important;
+  flex: 0 0 auto !important;
+}
+
+.taldo-privacy-policy-section-title-preview {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.taldo-privacy-policy-section-chevron {
+  color: #6b1f2a !important;
+  transition: transform .2s ease !important;
+}
+
+.taldo-privacy-policy-section-admin-toggle:not(.collapsed) .taldo-privacy-policy-section-chevron {
+  transform: rotate(180deg) !important;
+}
+
+.taldo-privacy-policy-section-admin-collapse {
+  padding: 0 14px 14px !important;
+}
+
+.taldo-privacy-policy-save-row .btn {
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+}
+
+.taldo-privacy-btn-loading {
+  pointer-events: none !important;
+  opacity: .82 !important;
+}
+
+body.dark-mode #taldoPrivacyConsentModal .modal-content,
+html[data-theme="dark"] #taldoPrivacyConsentModal .modal-content,
+body.dark-mode .taldo-privacy-policy-accordion .accordion-item,
+html[data-theme="dark"] .taldo-privacy-policy-accordion .accordion-item,
+body.dark-mode .taldo-privacy-policy-accordion .accordion-body,
+html[data-theme="dark"] .taldo-privacy-policy-accordion .accordion-body,
+body.dark-mode .taldo-privacy-policy-admin .taldo-privacy-policy-section-admin-item,
+html[data-theme="dark"] .taldo-privacy-policy-admin .taldo-privacy-policy-section-admin-item {
+  background: #0f1816 !important;
+  color: rgba(255, 255, 255, 0.90) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.dark-mode .taldo-privacy-policy-accordion .accordion-button,
+html[data-theme="dark"] .taldo-privacy-policy-accordion .accordion-button {
+  background: #111f1c !important;
+  color: #edebe0 !important;
+}
+
+body.dark-mode .taldo-privacy-policy-accordion .accordion-button:not(.collapsed),
+html[data-theme="dark"] .taldo-privacy-policy-accordion .accordion-button:not(.collapsed),
+body.dark-mode .taldo-privacy-consent-check,
+html[data-theme="dark"] .taldo-privacy-consent-check,
+body.dark-mode .taldo-privacy-policy-admin-help,
+html[data-theme="dark"] .taldo-privacy-policy-admin-help,
+body.dark-mode .taldo-privacy-policy-section-admin-head,
+html[data-theme="dark"] .taldo-privacy-policy-section-admin-head {
+  background: rgba(255, 255, 255, 0.075) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+body.dark-mode .taldo-privacy-consent-check .form-check-label,
+html[data-theme="dark"] .taldo-privacy-consent-check .form-check-label,
+body.dark-mode .taldo-privacy-policy-section-admin-toggle,
+html[data-theme="dark"] .taldo-privacy-policy-section-admin-toggle {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+@media (max-width: 576px) {
+  #taldoPrivacyConsentModal .modal-dialog {
+    max-width: 94vw !important;
+    margin: 10px auto !important;
+  }
+
+  .taldo-privacy-consent-hero {
+    padding: 18px 16px 15px !important;
+  }
+
+  .taldo-privacy-consent-body {
+    padding: 15px 14px 13px !important;
+  }
+
+  .taldo-privacy-policy-scroll {
+    max-height: 56vh !important;
+  }
+
+  .taldo-privacy-policy-accordion .accordion-button {
+    font-size: 14.2px !important;
+    padding: 13px !important;
+  }
+
+  .taldo-privacy-policy-accordion .accordion-body {
+    font-size: 13.8px !important;
+    padding: 13px !important;
+  }
+}
