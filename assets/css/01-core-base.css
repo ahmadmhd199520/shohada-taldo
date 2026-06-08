@@ -534,7 +534,7 @@
       flex-wrap: wrap;
     }
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
   .site-footer {
     margin-bottom: 42px;
   }
