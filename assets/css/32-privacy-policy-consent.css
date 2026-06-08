@@ -33,6 +33,7 @@
   padding: 22px 22px 18px !important;
   color: #ffffff !important;
   background: linear-gradient(135deg, #002623, #054239 58%, #428177) !important;
+  text-align: center;
 }
 
 .taldo-privacy-consent-hero::before {
