@@ -316,3 +316,16 @@ html[data-theme="dark"] .taldo-privacy-policy-section-admin-toggle {
     padding: 13px !important;
   }
 }
+
+
+
+/* ضبط توزيع الأزارا */
+@media (max-width: 768px) {
+  .site-footer > button,
+  .site-footer > a {
+    width: auto !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+}
