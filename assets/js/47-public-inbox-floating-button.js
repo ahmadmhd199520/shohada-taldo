@@ -564,30 +564,55 @@ body.dark-mode .taldo-dashboard-inbox-count-bubble,
     return document.querySelector('footer, #footer, .site-footer, .main-footer, .app-footer, .taldo-footer, [role="contentinfo"]');
   }
 
-  function updateInboxFloatingFooterStop() {
-    const btn = document.getElementById('taldoPublicInboxFloatingBtn');
-    if (!btn) return;
+function updateInboxFloatingFooterStop() {
+  const btn = document.getElementById('taldoPublicInboxFloatingBtn');
+  if (!btn) return;
 
-    const footer = getInboxFooterElement();
-    if (!footer) {
-      btn.style.setProperty('--taldo-inbox-floating-footer-lift', '0px');
-      return;
-    }
+  const footer = getInboxFooterElement();
 
-    const rect = footer.getBoundingClientRect();
-    const viewportH = window.innerHeight || document.documentElement.clientHeight || 0;
-    const isSmallScreen = window.matchMedia && window.matchMedia('(max-width: 576px)').matches;
-    const baseBottom = isSmallScreen ? 18 : 22;
-    const gapAboveFooter = isSmallScreen ? 14 : 18;
-
-    const requiredBottom = viewportH - rect.top + gapAboveFooter;
-    const maxBottom = Math.max(baseBottom, viewportH - (btn.offsetHeight || 56) - 14);
-    const finalBottom = Math.min(Math.max(baseBottom, requiredBottom), maxBottom);
-    const lift = Math.max(0, Math.ceil(finalBottom - baseBottom));
-
-    btn.style.setProperty('--taldo-inbox-floating-footer-lift', lift + 'px');
+  if (!footer) {
+    btn.style.position = 'fixed';
+    btn.style.removeProperty('top');
+    btn.style.removeProperty('bottom');
+    btn.style.setProperty('--taldo-inbox-floating-footer-lift', '0px');
+    return;
   }
 
+  const footerRect = footer.getBoundingClientRect();
+  const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+  const viewportH = window.innerHeight || document.documentElement.clientHeight || 0;
+
+  const isSmallScreen = window.matchMedia && window.matchMedia('(max-width: 576px)').matches;
+
+  const baseBottom = isSmallScreen ? 18 : 22;
+  const gapAboveFooter = isSmallScreen ? 10 : 14;
+  const btnHeight = btn.offsetHeight || 56;
+
+  /*
+    نحسب رأس الفوتر بالنسبة للصفحة نفسها، وليس بالنسبة لنهاية الصفحة.
+    بهذه الطريقة يتوقف الزر فوق الفوتر مباشرة، ولا يتأثر بوجود فراغ أسفل الفوتر.
+  */
+  const footerTopInPage = footerRect.top + scrollY;
+  const stopTopInPage = Math.max(0, footerTopInPage - btnHeight - gapAboveFooter);
+
+  /*
+    هذا هو مكان الزر الطبيعي عندما يكون fixed أسفل الشاشة.
+    إذا وصل هذا المكان إلى رأس الفوتر، نحوله إلى absolute ونثبته فوق الفوتر.
+  */
+  const fixedTopInPage = scrollY + viewportH - btnHeight - baseBottom;
+
+  if (fixedTopInPage >= stopTopInPage) {
+    btn.style.position = 'absolute';
+    btn.style.top = Math.round(stopTopInPage) + 'px';
+    btn.style.bottom = 'auto';
+    btn.style.setProperty('--taldo-inbox-floating-footer-lift', '0px');
+  } else {
+    btn.style.position = 'fixed';
+    btn.style.removeProperty('top');
+    btn.style.removeProperty('bottom');
+    btn.style.setProperty('--taldo-inbox-floating-footer-lift', '0px');
+  }
+}
   function requestInboxFloatingFooterStopUpdate() {
     if (inboxFooterStopRaf) cancelAnimationFrame(inboxFooterStopRaf);
 
