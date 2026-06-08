@@ -324,7 +324,7 @@ html[data-theme="dark"] .taldo-privacy-policy-section-admin-toggle {
   .site-footer > button,
   .site-footer > a {
     width: auto !important;
-    flex: 1 1 0 !important;
+    /* flex: 1 1 0 !important; */
     min-width: 0 !important;
     white-space: nowrap !important;
   }
