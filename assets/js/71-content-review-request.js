@@ -366,14 +366,44 @@
   function installApiPatch() {
     const oldApi = window.apiRequest || (typeof apiRequest === 'function' ? apiRequest : null);
     if (typeof oldApi !== 'function' || oldApi.__contentReviewWrapped) return;
-    window.apiRequest = function (actionOrPayload) {
-      return oldApi.apply(this, arguments).then(res => {
-        const action = typeof actionOrPayload === 'string' ? actionOrPayload : (actionOrPayload && typeof actionOrPayload === 'object' ? actionOrPayload.action || '' : '');
-        if (action === 'getAdminDashboardData' && res && res.success !== false) { const list = responseRequests(res); if (Array.isArray(list)) { setRequests(list); setTimeout(() => { ensureDashboardTab(); window.renderContentReviewRequestsTable(); }, 60); } }
+
+    window.apiRequest = function (actionOrPayload, data, options) {
+      const result = oldApi.apply(this, arguments);
+
+      // حماية مهمة: لا نكسر تحميل التطبيق إذا كانت إحدى التغليفات القديمة لا تعيد Promise.
+      if (!result || typeof result.then !== 'function') {
+        return result;
+      }
+
+      return result.then(res => {
+        try {
+          const action = typeof actionOrPayload === 'string'
+            ? actionOrPayload
+            : (actionOrPayload && typeof actionOrPayload === 'object' ? actionOrPayload.action || '' : '');
+
+          if (action === 'getAdminDashboardData' && res && res.success !== false) {
+            const list = responseRequests(res);
+            if (Array.isArray(list)) {
+              setRequests(list);
+              setTimeout(() => {
+                ensureDashboardTab();
+                if (typeof window.renderContentReviewRequestsTable === 'function') {
+                  window.renderContentReviewRequestsTable();
+                }
+              }, 80);
+            }
+          }
+        } catch (error) {
+          // لا نسمح لإضافة طلبات الخصوصية أن تعطل طلبات التطبيق الأساسية.
+          console.warn('content review api patch skipped:', error);
+        }
+
         return res;
       });
     };
-    window.apiRequest.__contentReviewWrapped = true; try { apiRequest = window.apiRequest; } catch (e) {}
+
+    window.apiRequest.__contentReviewWrapped = true;
+    try { apiRequest = window.apiRequest; } catch (e) {}
   }
   function installRefreshPatch() {
     const oldRefresh = window.refreshDashboardData || (typeof refreshDashboardData === 'function' ? refreshDashboardData : null);
@@ -405,13 +435,47 @@
     window.openDashboardPage.__contentReviewWrapped = true; try { openDashboardPage = window.openDashboardPage; } catch (e) {}
   }
 
+  let bootedOnce = false;
   function boot() {
-    ensureRequestModal(); ensureInfoModal(); ensureActionModal(); ensureDashboardTab(); installApiPatch(); installDetailsPatch(); installRefreshPatch(); installShowTabPatch(); installOpenDashboardPatch();
-    setTimeout(() => { ensureDetailsButton(currentMartyrId()); ensureDashboardTab(); window.renderContentReviewRequestsTable(); }, 400);
+    // لا ننشئ المودالات ولا جدول لوحة التحكم أثناء تحميل الصفحة العامة.
+    // الإنشاء صار كسولًا عند الحاجة حتى لا يؤثر الملف على تحميل البيانات الأساسي.
+    installApiPatch();
+    installDetailsPatch();
+    installRefreshPatch();
+    installShowTabPatch();
+    installOpenDashboardPatch();
+
+    if (!bootedOnce) {
+      bootedOnce = true;
+      setTimeout(() => {
+        ensureDetailsButton(currentMartyrId());
+        ensureDashboardTab();
+        if (typeof window.renderContentReviewRequestsTable === 'function') {
+          window.renderContentReviewRequestsTable();
+        }
+      }, 900);
+    }
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
-  setTimeout(boot, 1200);
-  const observer = new MutationObserver(() => { ensureDetailsButton(currentMartyrId()); ensureDashboardTab(); });
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+
+  // محاولة ثانية بعد اكتمال بقية ملفات المشروع، بدون تكرار إنشاء العناصر.
+  setTimeout(boot, 1800);
+
+  // مراقبة خفيفة ومؤجلة بدل مراقبة مباشرة لكل تغيير في DOM.
+  // النسخة السابقة كانت تستدعي الدوال مع كل Mutation أثناء رسم الصفحة، وهذا قد يعلّق التحميل على بعض الأجهزة.
+  let observerTimer = null;
+  const onDomChanged = () => {
+    if (observerTimer) return;
+    observerTimer = setTimeout(() => {
+      observerTimer = null;
+      try { ensureDetailsButton(currentMartyrId()); } catch (e) {}
+      try { ensureDashboardTab(); } catch (e) {}
+    }, 180);
+  };
+
+  const observer = new MutationObserver(onDomChanged);
   if (document.body) observer.observe(document.body, { childList: true, subtree: true });
   else document.addEventListener('DOMContentLoaded', () => observer.observe(document.body, { childList: true, subtree: true }));
 })();
