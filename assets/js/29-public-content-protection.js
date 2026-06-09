@@ -4,6 +4,7 @@
 const PROTECTION_CLASS = 'taldo-public-protection';
 const ADMIN_CLASS = 'taldo-admin-mode';
 const SCREEN_GUARD_CLASS = 'taldo-screen-guard-active';
+const PROTECTION_TITLE = 'تنبيه حماية المحتوى';
 const PROTECTION_MESSAGE = 'هذا الإجراء غير متاح';
 
 let lastProtectionToastTime = 0;
@@ -70,6 +71,16 @@ function notifyProtection() {
   } catch (e) {}
 }
 
+function stopProtectionEventOnly(event) {
+  try {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+  } catch (e) {}
+
+  return true;
+}
+
 function blockEvent(event) {
   if (isProtectionAdmin()) return false;
 
@@ -99,13 +110,12 @@ function blockEvent(event) {
     img.setAttribute('oncontextmenu', 'return false');
   }
 
-  function ensureScreenGuardOverlay() {
-  if (document.getElementById('taldoScreenGuardOverlay')) return;
+  function renderScreenGuardOverlayContent(overlay) {
+  if (!overlay) return;
 
-  const overlay = document.createElement('div');
-  overlay.id = 'taldoScreenGuardOverlay';
   overlay.className = 'taldo-screen-guard-overlay';
   overlay.setAttribute('aria-hidden', 'true');
+  overlay.dataset.taldoUnifiedProtection = '1';
 
   overlay.innerHTML = `
     <div class="taldo-screen-guard-overlay-inner">
@@ -113,11 +123,28 @@ function blockEvent(event) {
         <i class="fa-solid fa-shield-halved"></i>
       </div>
       <div class="taldo-screen-guard-overlay-title">
+        ${PROTECTION_TITLE}
+      </div>
+      <div class="taldo-screen-guard-overlay-message" style="margin-top:8px;font-weight:700;font-size:1rem;line-height:1.8;">
         ${PROTECTION_MESSAGE}
       </div>
     </div>
   `;
+}
 
+function ensureScreenGuardOverlay() {
+  let overlay = document.getElementById('taldoScreenGuardOverlay');
+
+  if (overlay) {
+    if (overlay.dataset.taldoUnifiedProtection !== '1') {
+      renderScreenGuardOverlayContent(overlay);
+    }
+    return;
+  }
+
+  overlay = document.createElement('div');
+  overlay.id = 'taldoScreenGuardOverlay';
+  renderScreenGuardOverlayContent(overlay);
   document.body.appendChild(overlay);
 }
 
@@ -272,7 +299,7 @@ document.addEventListener('keydown', function(event) {
   if (keyRaw === 'PrintScreen' || key === 'printscreen') {
     activateScreenGuard(2600);
     clearClipboardIfPossible();
-    blockEvent(event);
+    stopProtectionEventOnly(event);
     return;
   }
 
@@ -289,13 +316,13 @@ document.addEventListener('keydown', function(event) {
 
     if (key === 's' || key === 'p' || key === 'u') {
       activateScreenGuard(2200);
-      blockEvent(event);
+      stopProtectionEventOnly(event);
       return;
     }
 
     if (event.shiftKey && key === 's') {
       activateScreenGuard(2200);
-      blockEvent(event);
+      stopProtectionEventOnly(event);
       return;
     }
   }
@@ -309,7 +336,6 @@ document.addEventListener('keydown', function(event) {
   if (keyRaw === 'PrintScreen' || key === 'printscreen') {
     activateScreenGuard(2600);
     clearClipboardIfPossible();
-    notifyProtection();
   }
 }, true);
 
@@ -346,7 +372,7 @@ window.addEventListener('beforeprint', function(event) {
     event.preventDefault();
   } catch (e) {}
 
-  notifyProtection();
+  // لا نظهر toast هنا حتى لا تتكرر الرسالة مع لوحة الحماية.
 }, true);
 
 window.addEventListener('afterprint', function() {
