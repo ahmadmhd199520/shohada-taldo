@@ -18,8 +18,8 @@
   const OVERLAY_MESSAGE = 'هذا الإجراء غير متاح';
 
   const CONFIG = {
-    focusedHideDelay: 2600,
-    afterFocusHideDelay: 2600
+    focusedHideDelay: 700,
+    afterFocusHideDelay: 700
   };
 
   let hideTimer = null;
