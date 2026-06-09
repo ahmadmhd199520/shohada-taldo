@@ -9,6 +9,22 @@
 */
 (function () {
   'use strict';
+  function isTaldoAdminActive() {
+  try {
+    return !!(
+      localStorage.getItem('taldo_admin') ||
+      sessionStorage.getItem('taldo_admin') ||
+      localStorage.getItem('taldoAdmin') ||
+      sessionStorage.getItem('taldoAdmin') ||
+      document.body.classList.contains('admin-mode') ||
+      document.body.classList.contains('is-admin')
+    );
+  } catch (error) {
+    return false;
+  }
+}
+
+if (isTaldoAdminActive()) return;
 
   const CONFIG = {
     overlayId: 'taldoFocusPrivacyGuardOverlay',
