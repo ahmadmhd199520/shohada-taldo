@@ -1619,7 +1619,10 @@ function selectFamily(family) {
 
     function showToast(message) {
       document.getElementById('toastBody').textContent = message;
-      const toast = new bootstrap.Toast(document.getElementById('mainToast'));
+      const toast = new bootstrap.Toast(document.getElementById('mainToast'), {
+      delay: 2500,
+      autohide: true
+    });
       toast.show();
     }
 
