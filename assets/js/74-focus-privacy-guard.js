@@ -9,35 +9,43 @@
 */
 (function () {
   'use strict';
+
+
   function isTaldoAdminActive() {
-  try {
-    return !!(
-      localStorage.getItem('taldo_admin') ||
-      sessionStorage.getItem('taldo_admin') ||
-      localStorage.getItem('taldoAdmin') ||
-      sessionStorage.getItem('taldoAdmin') ||
-      document.body.classList.contains('admin-mode') ||
-      document.body.classList.contains('is-admin')
-    );
-  } catch (error) {
+    try {
+      if (typeof isAdminLoggedIn !== 'undefined' && !!isAdminLoggedIn) return true;
+    } catch (error) {}
+
+    try {
+      if (window.isAdminLoggedIn === true) return true;
+    } catch (error) {}
+
+    try {
+      const savedAdmin = localStorage.getItem('taldo_martyrs_admin');
+      if (savedAdmin && savedAdmin !== 'null' && savedAdmin !== 'undefined' && savedAdmin !== '{}') return true;
+    } catch (error) {}
+
+    try {
+      if (document.documentElement && document.documentElement.classList.contains('taldo-admin-mode')) return true;
+      if (document.body && document.body.classList.contains('taldo-admin-mode')) return true;
+    } catch (error) {}
+
     return false;
   }
-}
-
-if (isTaldoAdminActive()) return;
 
   const CONFIG = {
     overlayId: 'taldoFocusPrivacyGuardOverlay',
     styleId: 'taldoFocusPrivacyGuardStyle',
 
     // مدة بقاء اللوحة بعد الضغط على زر حماية والصفحة ما زالت في الفوكس
-    focusedHideDelay: 1600,
+    focusedHideDelay: 600,
 
     // مدة بقاء اللوحة بعد رجوع الفوكس إلى كروم
-    afterFocusHideDelay: 1600,
+    afterFocusHideDelay: 600,
 
     title: 'تنبيه حماية المحتوى',
-    message: 'هذا الإجراء غير متاح.',
+    message: 'هذا الأرشيف يحترم خصوصية الشهداء وذويهم. يُرجى عدم نسخ أو تصوير المحتوى أو استخدامه خارج سياقه التوثيقي.',
+    smallText: 'تظهر هذه الرسالة كطبقة حماية إضافية عند محاولة النسخ أو التصوير أو مغادرة نافذة الموقع.'
   };
 
   let hideTimer = null;
@@ -119,6 +127,7 @@ if (isTaldoAdminActive()) return;
   }
 
   function ensureOverlay() {
+    if (isTaldoAdminActive()) return null;
     injectStyle();
 
     let overlay = document.getElementById(CONFIG.overlayId);
@@ -146,8 +155,14 @@ if (isTaldoAdminActive()) return;
   }
 
   function showOverlay(options) {
+    if (isTaldoAdminActive()) {
+      hideOverlay();
+      return;
+    }
+
     const opts = options || {};
     const overlay = ensureOverlay();
+    if (!overlay) return;
 
     if (hideTimer) {
       clearTimeout(hideTimer);
