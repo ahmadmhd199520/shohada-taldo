@@ -31,14 +31,13 @@ if (isTaldoAdminActive()) return;
     styleId: 'taldoFocusPrivacyGuardStyle',
 
     // مدة بقاء اللوحة بعد الضغط على زر حماية والصفحة ما زالت في الفوكس
-    focusedHideDelay: 2600,
+    focusedHideDelay: 1600,
 
     // مدة بقاء اللوحة بعد رجوع الفوكس إلى كروم
-    afterFocusHideDelay: 2600,
+    afterFocusHideDelay: 1600,
 
     title: 'تنبيه حماية المحتوى',
-    message: 'هذا الأرشيف يحترم خصوصية الشهداء وذويهم. يُرجى عدم نسخ أو تصوير المحتوى أو استخدامه خارج سياقه التوثيقي.',
-    smallText: 'تظهر هذه الرسالة كطبقة حماية إضافية عند محاولة النسخ أو التصوير أو مغادرة نافذة الموقع.'
+    message: 'هذا الإجراء غير متاح.',
   };
 
   let hideTimer = null;
