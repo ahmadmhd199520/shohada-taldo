@@ -73,8 +73,7 @@ if (isTaldoAdminActive()) return;
         width: min(92vw, 520px);
         border-radius: 26px;
         padding: 24px 20px;
-        background: radial-gradient(circle at top right, rgba(5, 66, 57, 0.96), rgba(0, 0, 0, 0.98)),
-    #000
+        background: linear-gradient(135deg, #0d6efd, #084298);
         color: #fff;
         box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
         border: 1px solid rgba(255, 255, 255, 0.32);
