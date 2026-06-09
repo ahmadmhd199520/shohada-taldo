@@ -3,6 +3,8 @@
   const FORMAT = 'privacy_policy_sections_v1';
   const SESSION_ACCEPTED_KEY = 'taldo_privacy_policy_session_hash';
   const PERSISTENT_ACCEPTED_KEY = 'taldo_privacy_policy_accepted_hash';
+  const PERSISTENT_DONT_SHOW_KEY = 'taldo_privacy_policy_dont_show_again';
+  const PERSISTENT_ACCEPTED_AT_KEY = 'taldo_privacy_policy_accepted_at';
   const MODAL_ID = 'taldoPrivacyConsentModal';
   const ADMIN_CARD_ID = 'taldoPrivacyPolicySettingsCard';
   const ADMIN_TEXTAREA_ID = 'taldoPrivacyPolicyAdminText';
@@ -202,6 +204,18 @@
     return settings || {};
   }
 
+  function hasLoadedPolicyValue() {
+    const settings = getSettingsObject();
+    const adminValue = document.getElementById(ADMIN_TEXTAREA_ID)?.value || '';
+    return [
+      settings[SETTING_KEY],
+      settings.privacy_policy_text,
+      settings.privacy_text,
+      window.__taldoPrivacyPolicyRawValue,
+      adminValue
+    ].some(value => String(value || '').trim());
+  }
+
   function getPolicyRawValue() {
     const settings = getSettingsObject();
     const candidates = [
@@ -242,17 +256,41 @@
   }
 
   function getCurrentPolicyHash() {
+    // نحسب البصمة من النص بعد تحويله لأقسام منظمة حتى لا تتغير البصمة بسبب فروقات بسيطة
+    // في شكل JSON أو المسافات، مع إبقاء بصمة النص الخام للتوافق مع النسخ السابقة.
+    const raw = getPolicyRawValue();
+    const normalized = stringifyPolicySections(parsePolicySections(raw));
+    return hashString(normalized || raw);
+  }
+
+  function getLegacyPolicyRawHash() {
     return hashString(getPolicyRawValue());
   }
 
   function hasAcceptedCurrentPolicy() {
     const currentHash = getCurrentPolicyHash();
+    const legacyHash = getLegacyPolicyRawHash();
+
     try {
-      if (sessionStorage.getItem(SESSION_ACCEPTED_KEY) === currentHash) return true;
+      const sessionValue = sessionStorage.getItem(SESSION_ACCEPTED_KEY);
+      if (sessionValue === currentHash || sessionValue === legacyHash) return true;
     } catch (error) {}
+
     try {
-      if (localStorage.getItem(PERSISTENT_ACCEPTED_KEY) === currentHash) return true;
+      const localValue = localStorage.getItem(PERSISTENT_ACCEPTED_KEY);
+      if (localValue === currentHash || localValue === legacyHash) return true;
+
+      /*
+        حماية من ظهور المودال قبل وصول إعدادات الموقع:
+        أحيانًا يعمل ملف السياسة قبل اكتمال getInitialData، فيُحسب الهاش على النص الافتراضي،
+        ثم بعد وصول النص المحفوظ يتغير الهاش. إذا كان المستخدم اختار سابقًا "عدم الإظهار مجددًا"
+        نمنع ظهور المودال المبكر حتى تصل الإعدادات الفعلية.
+      */
+      if (localStorage.getItem(PERSISTENT_DONT_SHOW_KEY) === '1' && localValue && !hasLoadedPolicyValue()) {
+        return true;
+      }
     } catch (error) {}
+
     return false;
   }
 
@@ -260,7 +298,11 @@
     const currentHash = getCurrentPolicyHash();
     try { sessionStorage.setItem(SESSION_ACCEPTED_KEY, currentHash); } catch (error) {}
     if (dontShowAgain) {
-      try { localStorage.setItem(PERSISTENT_ACCEPTED_KEY, currentHash); } catch (error) {}
+      try {
+        localStorage.setItem(PERSISTENT_ACCEPTED_KEY, currentHash);
+        localStorage.setItem(PERSISTENT_DONT_SHOW_KEY, '1');
+        localStorage.setItem(PERSISTENT_ACCEPTED_AT_KEY, String(Date.now()));
+      } catch (error) {}
     }
   }
 
@@ -324,6 +366,11 @@
         </div>`);
       modal = document.getElementById(MODAL_ID);
 
+      const dontShowInput = document.getElementById('taldoPrivacyDontShowAgain');
+      if (dontShowInput) {
+        try { dontShowInput.checked = localStorage.getItem(PERSISTENT_DONT_SHOW_KEY) === '1'; } catch (error) {}
+      }
+
       const agreeBtn = document.getElementById('taldoPrivacyConsentAgreeBtn');
       if (agreeBtn) {
         agreeBtn.addEventListener('click', function () {
@@ -339,6 +386,11 @@
     if (content) {
       const sections = parsePolicySections(getPolicyRawValue());
       content.innerHTML = renderPolicyAccordionHtml(sections, 'taldoPrivacyConsentPolicyAccordion');
+    }
+
+    const dontShowInput = document.getElementById('taldoPrivacyDontShowAgain');
+    if (dontShowInput) {
+      try { dontShowInput.checked = localStorage.getItem(PERSISTENT_DONT_SHOW_KEY) === '1'; } catch (error) {}
     }
 
     return modal;
