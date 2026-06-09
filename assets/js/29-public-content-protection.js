@@ -152,7 +152,7 @@ function ensureScreenGuardOverlay() {
   return !!document.querySelector('.modal.show, .modal.fade.show, .modal[style*="display: block"]');
 }
   
-function activateScreenGuard(duration = 1800) {
+function activateScreenGuard(duration = 700) {
   if (isProtectionAdmin()) return;
 
   /*
@@ -297,7 +297,7 @@ document.addEventListener('keydown', function(event) {
   const ctrlOrMeta = event.ctrlKey || event.metaKey;
 
   if (keyRaw === 'PrintScreen' || key === 'printscreen') {
-    activateScreenGuard(2600);
+    activateScreenGuard(700);
     clearClipboardIfPossible();
     stopProtectionEventOnly(event);
     return;
@@ -315,13 +315,13 @@ document.addEventListener('keydown', function(event) {
     }
 
     if (key === 's' || key === 'p' || key === 'u') {
-      activateScreenGuard(2200);
+      activateScreenGuard(700);
       stopProtectionEventOnly(event);
       return;
     }
 
     if (event.shiftKey && key === 's') {
-      activateScreenGuard(2200);
+      activateScreenGuard(700);
       stopProtectionEventOnly(event);
       return;
     }
@@ -334,7 +334,7 @@ document.addEventListener('keydown', function(event) {
   const key = keyRaw.toLowerCase();
 
   if (keyRaw === 'PrintScreen' || key === 'printscreen') {
-    activateScreenGuard(2600);
+    activateScreenGuard(700);
     clearClipboardIfPossible();
   }
 }, true);
@@ -345,7 +345,7 @@ document.addEventListener('keydown', function(event) {
 */
 // window.addEventListener('blur', function() {
 //   if (isProtectionAdmin()) return;
-//   activateScreenGuard(1800);
+//   activateScreenGuard(700);
 // }, true);
 
 document.addEventListener('visibilitychange', function() {
@@ -356,7 +356,7 @@ document.addEventListener('visibilitychange', function() {
     وليس عند تغيّر التركيز داخل نفس الصفحة أو أدوات المطوّر.
   */
   if (document.visibilityState === 'hidden') {
-    activateScreenGuard(2200);
+    activateScreenGuard(700);
   }
 }, true);
     
@@ -366,7 +366,7 @@ document.addEventListener('visibilitychange', function() {
 window.addEventListener('beforeprint', function(event) {
   if (isProtectionAdmin()) return;
 
-  activateScreenGuard(8000);
+  activateScreenGuard(700);
 
   try {
     event.preventDefault();
