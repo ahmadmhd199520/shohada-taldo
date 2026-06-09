@@ -20,7 +20,7 @@
 
   const MIN_TOUCHES = 3;
   const MOVE_THRESHOLD = 22;
-  const GUARD_DURATION = 3200;
+  const GUARD_DURATION = 700;
   const TRIGGER_COOLDOWN = 700;
 
   let startTouches = null;
